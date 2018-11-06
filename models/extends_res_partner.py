@@ -18,6 +18,9 @@ class ExtendsResPartner(models.Model):
 
 	@api.model
 	def cron_cuotas_mora(self):
+		print "SE EJECUTOOOOOOOO **************--------------------"
+		print "SE EJECUTOOOOOOOO **************--------------------"
+		print "SE EJECUTOOOOOOOO **************--------------------"
 		cr = self.env.cr
 		uid = self.env.uid
 		partner_obj = self.pool.get('res.partner')

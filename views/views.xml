@@ -1,197 +1,22 @@
 <openerp>
   <data>
 
-    <!-- financiera Clientes -->
-    
-    <record model="ir.ui.view" id="cobranza_mora_cliente_tree">
-      <field name="name">cobranza.mora.tree</field>
-      <field name="model">res.partner</field>
-      <field name="arch" type="xml">
-        <tree string="Clientes" create="false" delete="false">
-          <field name="name"/>
-          <field name="saldo_mora" sum="Total"/>
-        </tree>
-      </field>
-    </record>
-
-    <!-- Filter Tree cobranza -->
-
-    <record model="ir.ui.view" id="filter_cobranza_mora_cliente_view">
-      <field name="name">cobranza.mora.cliente.filter</field>
-      <field name="model">res.partner</field>
-      <field name="arch" type="xml">
-        <search>
-          <filter string="Deudor" invisible="1" name="saldo_mora" domain="[('saldo_mora','>', 0)]"/>
-          <separator/>
-          <field name="name"/>
-          <field name="main_id_number"/>
-        </search>
-      </field>
-    </record>
-
-    <!-- Vista Form Partner -->
-
-    <record id="cobranza_mora_cliente_form"  model="ir.ui.view">
-      <field name="name">cobranza.mora.form</field>
-      <field name="model">res.partner</field>
-      <field name="arch" type="xml">
-        <form create="false">
-          <header>
-          </header>
-          <sheet>
-            <group>
-              <field name="name" readonly="1"/>
-              <field name="phone" readonly="1"/>
-              <field name="mobile" readonly="1"/>
-              <field name="email" readonly="1"/>
-            </group>
-            <!-- <label string="CONTACTOS"/> -->
-            <notebook>
-              <page string="CONTACTOS">
-                <field name="child_ids" readonly="1">
-                  <tree>
-                    <field name="name" readonly="1"/>
-                    <field name="title" readonly="1"/>
-                    <field name="phone" readonly="1"/>
-                    <field name="mobile" readonly="1"/>
-                    <field name="email" readonly="1"/>
-                    <field name="function" readonly="1"/>
-                    <field name="comment" readonly="1"/>
-                  </tree>
-                </field>
-              </page>
-            </notebook>
-            <!-- <label string="DEUDA"/> -->
-            <notebook>
-              <page string="DEUDA">
-                <field name="cuota_mora_ids" readonly="1">
-                  <tree decoration-success="state == 'cobrada'" decoration-danger="state_mora in ['moraMedia', 'moraTardia', 'incobrable']" decoration-warning="state_mora in ['preventiva', 'moraTemprana']" decoration-info="state == 'borrador'" decoration-muted="state == 'cobrada'" string="Cuotas" limit="5">
-                    <!-- <field name="cliente_id"/> -->
-                    <!-- <field name="main_id_number"/> -->
-                    <field name="display_numero_cuota"/>
-                    <field name="prestamo_id"/>
-                    <!-- <field name="responsable_id" invisible="1"/> -->
-                    <field name="fecha_vencimiento"/>
-                    <field name="saldo_capital" widget="monetary" invisible="1"/>
-                    <field name="capital" widget="monetary" sum="Total"/>
-                    <field name="interes" widget="monetary" sum="Total"/>
-                    <field name="cuota_pura" widget="monetary" sum="Total"/>
-                    <field name="punitorios" widget="monetary" sum="Total"/>
-                    <field name="otros_gastos" widget="monetary" sum="Total"/>
-                    <field name="iva" widget="monetary" sum="Total"/>
-                    <field name="total" widget="monetary" sum="Total"/>
-                    <field name="cobrado" widget="monetary" sum="Total"/>
-                    <field name="saldo" widget="monetary" sum="Total"/>
-                    <field name="ultima_fecha_cobro" invisible="1"/>
-                    <field name="sucursal_id"/>
-                    <field name="state"/>
-                    <field name="state_mora"/>
-                    <field name="fecha_vencimiento_pre_semana" invisible="1"/>
-                    <field name="fecha_vencimiento_pos_semana" invisible="1"/>
-                  </tree>
-                </field>
-              </page>
-            </notebook>
-            <group>
-              <field name="saldo_mora" readonly="1"/>
-            </group>
-            <!-- <label string="HISTORIAL DE CONVERSACION"/> -->
-            <notebook>
-              <page string="HISTORIAL DE CONVERSACION">
-                <field name="cobranza_historial_conversacion_ids">
-                  <tree limit="5" delete="false" edit="false">
-                    <field name="create_date" readonly="1"/>
-                    <field name="create_uid" readonly="1"/>
-                    <field name="saldo_mora" readonly="1"/>
-                    <field name="conversacion"/>
-                    <field name="estado_id"/>
-                    <field name="proxima_accion_id"/>
-                    <field name="proxima_accion_fecha"/>
-                  </tree>
-                  <form>
-                    <group>
-                      <field name="saldo_mora" readonly="1"/>
-                      <field name="conversacion"/>
-                      <field name="estado_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
-                      <field name="proxima_accion_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
-                      <field name="proxima_accion_fecha"/>
-                    </group>
-                  </form>
-                </field>
-              </page>
-            </notebook>
-          </sheet>
-        </form>
-      </field>
-    </record>
-
-    <record model="ir.actions.act_window" id="cobranza_mora_action">
-      <field name="name">Clientes en mora</field>
-      <field name="res_model">res.partner</field>
-      <field name="view_mode">tree,form</field>
-      <!-- <field name="context">{'search_default_saldo_mora':1}</field> -->
-      <field name="domain">[('saldo_mora','>', 0)]</field>
-      <!--<field name="view_id" ref="financiera_cliente_tree"/>-->
-      <field name="view_ids" eval="[(5, 0, 0), 
-        (0, 0, {'view_mode': 'tree', 'view_id': ref('cobranza_mora_cliente_tree')}),
-        (0, 0, {'view_mode': 'form', 'view_id': ref('cobranza_mora_cliente_form')})]
-        "/>
-    </record>
-
-  <!-- financiera Estado -->
-    
-    <record model="ir.ui.view" id="cobranza_historial_estado_tree">
-      <field name="name">cobranza.historial.conversacion.estado.tree</field>
-      <field name="model">cobranza.historial.conversacion.estado</field>
-      <field name="arch" type="xml">
-        <tree string="Estado en cobranza">
-          <field name="name"/>
-        </tree>
-      </field>
-    </record>
-
-    <record model="ir.actions.act_window" id="cobranza_historial_estado_action">
-      <field name="name">Acciones en cobranza</field>
-      <field name="res_model">cobranza.historial.conversacion.estado</field>
-      <field name="view_mode">tree,form</field>
-      <field name="view_id" ref="cobranza_historial_estado_tree"/>
-    </record>
-
-
-
-  <!-- financiera Accion -->
-    
-    <record model="ir.ui.view" id="cobranza_historial_accion_tree">
-      <field name="name">cobranza.historial.conversacion.accion.tree</field>
-      <field name="model">cobranza.historial.conversacion.accion</field>
-      <field name="arch" type="xml">
-        <tree string="Acciones en cobranza">
-          <field name="name"/>
-        </tree>
-      </field>
-    </record>
-
-    <record model="ir.actions.act_window" id="cobranza_historial_accion_action">
-      <field name="name">Acciones en cobranza</field>
-      <field name="res_model">cobranza.historial.conversacion.accion</field>
-      <field name="view_mode">tree,form</field>
-      <field name="view_id" ref="cobranza_historial_accion_tree"/>
-    </record>
-
     <!-- Top menu item -->
     
-    <menuitem name="Cobranza" id="menu_cobranza" web_icon="financiera_cobranza_mora,static/description/image.png"/>
+    <menuitem name="Cobranza y Seguimiento" id="menu_cobranza" web_icon="financiera_cobranza_mora,static/description/image.png" groups="financiera_cobranza_mora.manager,financiera_cobranza_mora.user"/>
     <!-- groups="financiera_cobranza_mora.manager" -->
 
     <!-- Submenu -->
-     <menuitem name="Clientes morosos" id="menu_morosos" sequence="1" parent="menu_cobranza"/>
-     <menuitem name="Configuracion" id="menu_config" sequence="2" parent="menu_cobranza"/>
+    <menuitem name="Sesion de cobranza" id="menu_sesion" sequence="1" parent="menu_cobranza"/>
+     <menuitem name="Deudores" id="menu_morosos" sequence="2" parent="menu_cobranza"/>
+     <menuitem name="Configuracion" id="menu_config" sequence="3" parent="menu_cobranza"/>
 
      <!-- Action -->
-     <menuitem name="Lista" id="menu_morosos_action" parent="menu_morosos" 
+     <menuitem name="Sesiones" id="menu_sesion_action" parent="menu_sesion" 
+      action="cobranza_sesion_action"/>
+
+     <menuitem name="Deudores" id="menu_morosos_action" parent="menu_morosos" 
       action="cobranza_mora_action" />
-     <!-- <menuitem name="Sesion" id="menu_morosos_action" parent="menu_morosos" 
-      action="cobranza_mora_action" groups="financiera_cobranza_mora.manager"/> -->
 
      <menuitem name="Estados" id="menu_estados_action" parent="menu_config" 
       action="cobranza_historial_estado_action" sequence="1"/>

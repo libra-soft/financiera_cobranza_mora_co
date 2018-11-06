@@ -1,0 +1,57 @@
+<openerp>
+  <data>
+
+  <!-- financiera Sesion -->
+    
+    <record model="ir.ui.view" id="cobranza_sesion_tree">
+      <field name="name">cobranza.sesion.tree</field>
+      <field name="model">cobranza.sesion</field>
+      <field name="arch" type="xml">
+        <tree string="Sesion de cobranza">
+          <field name="fecha"/>
+          <field name="create_uid"/>
+          <field name="item_ids"/>
+          <field name="process_time"/>
+          <field name="process_minutes"/>
+          <field name="process_time_finish"/>
+          <field name="state"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="cobranza_sesion_form">
+      <field name="name">cobranza.sesion.form</field>
+      <field name="model">cobranza.sesion</field>
+      <field name="arch" type="xml">
+        <form string="Sesion de cobranza">
+          <header>
+            <button name="iniciar_cobranza" class="oe_highlight" states="borrador" string="Iniciar Cobranza" type="object" />
+            <field name="state" widget="statusbar"/>
+          </header>
+          <sheet>
+            <group>
+              <field name="fecha" readonly="1"/>
+              <field name="create_uid" readonly="1"/>
+              <field name="process_time" readonly="1"/>
+              <field name="process_minutes" readonly="1"/>
+              <field name="process_time_finish" readonly="1"/>
+            </group>
+            <notebook>
+              <page string="Deudores" readonly="1">
+                <field name="item_ids"/>
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="cobranza_sesion_action">
+      <field name="name">Sesiones</field>
+      <field name="res_model">cobranza.sesion</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_id" ref="cobranza_sesion_tree"/>
+    </record>
+
+  </data>
+</openerp>

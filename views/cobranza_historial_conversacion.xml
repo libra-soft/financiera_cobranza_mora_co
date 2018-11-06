@@ -1,0 +1,43 @@
+<openerp>
+  <data>
+
+  <!-- financiera Estado -->
+    
+    <record model="ir.ui.view" id="cobranza_historial_estado_tree">
+      <field name="name">cobranza.historial.conversacion.estado.tree</field>
+      <field name="model">cobranza.historial.conversacion.estado</field>
+      <field name="arch" type="xml">
+        <tree string="Estado en cobranza">
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="cobranza_historial_estado_action">
+      <field name="name">Acciones en cobranza</field>
+      <field name="res_model">cobranza.historial.conversacion.estado</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_id" ref="cobranza_historial_estado_tree"/>
+    </record>
+
+  <!-- financiera Accion -->
+    
+    <record model="ir.ui.view" id="cobranza_historial_accion_tree">
+      <field name="name">cobranza.historial.conversacion.accion.tree</field>
+      <field name="model">cobranza.historial.conversacion.accion</field>
+      <field name="arch" type="xml">
+        <tree string="Acciones en cobranza">
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="cobranza_historial_accion_action">
+      <field name="name">Acciones en cobranza</field>
+      <field name="res_model">cobranza.historial.conversacion.accion</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_id" ref="cobranza_historial_accion_tree"/>
+    </record>
+
+  </data>
+</openerp>
