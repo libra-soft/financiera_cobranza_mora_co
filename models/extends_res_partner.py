@@ -15,6 +15,8 @@ class ExtendsResPartner(models.Model):
 	cuota_mora_ids = fields.One2many('financiera.prestamo.cuota', 'partner_cuota_mora_id', 'Cuotas en mora')
 	saldo_mora = fields.Float('Saldo en mora', digits=(16, 2))
 	cobranza_historial_conversacion_ids = fields.One2many('cobranza.historial.conversacion', 'partner_id', 'Historial de conversacion')
+	cobranza_disponible = fields.Boolean('Disponible', default=True)
+	cobranza_proxima_accion_fecha = fields.Datetime('Fecha')
 
 	@api.model
 	def cron_cuotas_mora(self):
@@ -51,6 +53,43 @@ class ExtendsResPartner(models.Model):
 			saldo += cuota_id.saldo
 		self.saldo_mora = saldo
 
+	@api.model
+	def cobranza_siguiente_deudor(self):
+		cr = self.env.cr
+		uid = self.env.uid
+		ret_dudor_id = None
+		deudor_obj = self.pool.get('res.partner')
+		deudor_primera_accion_ids = deudor_obj.search(cr, uid, [
+			('saldo_mora', '>', 0),
+			('cobranza_proxima_accion_fecha', '=', False)
+		])
+		print "deudores primera accion"
+		print deudor_primera_accion_ids
+		if len(deudor_primera_accion_ids) > 0:
+			print "dudor primera accion"
+			print deudor_primera_accion_ids[0]
+			ret_dudor_id = deudor_obj.browse(cr, uid, deudor_primera_accion_ids[0])
+			ret_dudor_id.cobranza_disponible = False
+			print ret_dudor_id
+		else:
+			deudor_ids = deudor_obj.search(cr, uid, [
+				('saldo_mora', '>', 0),
+				('cobranza_disponible', '=', True),
+			], order='cobranza_proxima_accion_fecha asc', limit=1)
+			print deudor_ids
+			if len(deudor_ids) > 0:
+				partner_id = deudor_obj.browse(cr, uid, deudor_ids[0])
+				print partner_id
+				if partner_id.cobranza_proxima_accion_fecha <= datetime.now():
+					ret_dudor_id = partner_id
+				else:
+					proxima_fecha = partner_id.cobranza_proxima_accion_fecha
+		return ret_dudor_id
+
+	# @api.one
+	# def actualizar_deudor(self):
+		
+
 class ExtendsFinancieraPrestamoCuota(models.Model):
 	_name = 'financiera.prestamo.cuota'
 	_inherit = 'financiera.prestamo.cuota'
@@ -61,62 +100,3 @@ class ExtendsFinancieraPrestamoCuota(models.Model):
 	def confirmar_cobrar_cuota(self):
 		rec = super(ExtendsFinancieraPrestamoCuota, self).confirmar_cobrar_cuota()
 		self.cliente_id.compute_cuotas_mora()
-
-class CobranzaHistorialConversacion(models.Model):
-	_name = 'cobranza.historial.conversacion'
-
-	_order = 'id desc'
-	partner_id = fields.Many2one('res.partner')
-	conversacion = fields.Char('Conversacion')
-	estado_id = fields.Many2one('cobranza.historial.conversacion.estado', 'Estado')
-	proxima_accion_id = fields.Many2one('cobranza.historial.conversacion.accion', 'Proxima accion')
-	proxima_accion_fecha = fields.Datetime('Fecha')
-	saldo_mora = fields.Float('Saldo en mora', digits=(16, 2), readonly=True)
-
-	@api.model
-	def create(self, values):
-		rec = super(CobranzaHistorialConversacion, self).create(values)
-		rec.update({
-			'saldo_mora': rec.partner_id.saldo_mora,
-		})
-		return rec
-
-class CobranzaHistorialConversacionEstado(models.Model):
-	_name = 'cobranza.historial.conversacion.estado'
-
-	name = fields.Char('Estado')
-
-
-class CobranzaHistorialConversacionAccion(models.Model):
-	_name = 'cobranza.historial.conversacion.accion'
-
-	name = fields.Char('Accion')
-
-class SessionCobranza(models.Model):
-	_name = 'cobranza.session'
-
-	fecha = fields.Date('Fecha', required=True, default=lambda *a: time.strftime('%Y-%m-%d'))
-	current_user = fields.Many2one('res.users','Current User', default=lambda self: self.env.user)
-	state = fields.Selection([('preparado', 'Preparado'), ('proceso', 'En proceso'), ('finalizado', 'Finalizado')], string='Estado', readonly=True, default='preparado')
-	# Control time
-	process_time = fields.Datetime('Hora de proceso')
-	process_minutes = fields.Float('Minutos en proceso', compute='_compute_process_minutes')
-	process_time_finish = fields.Datetime('Hora finalizacion de proceso')
-
-
-	@api.one
-	def _compute_process_minutes(self):
-		datetimeFormat = '%Y-%m-%d %H:%M:%S'
-		date_start = None
-		date_finish = datetime.now()
-		if self.process_time_finish:
-			date_finish = datetime.strptime(self.process_time_finish,datetimeFormat)
-		if self.process_time:
-			date_start = self.process_time
-			start = datetime.strptime(date_start, datetimeFormat)
-			finish = date_finish
-			result = finish - start
-			minutos = result.seconds / 60
-			self.process_minutes = minutos
-		else:
-			self.process_minutes = 0

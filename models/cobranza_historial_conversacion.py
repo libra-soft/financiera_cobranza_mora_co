@@ -25,6 +25,9 @@ class CobranzaHistorialConversacion(models.Model):
 		rec.update({
 			'saldo_mora': rec.partner_id.saldo_mora,
 		})
+		rec.partner_id.cobranza_proxima_accion_fecha = values['proxima_accion_fecha']
+		print "PROXIMA ACCION FECHA"
+		print rec.partner_id.cobranza_proxima_accion_fecha
 		return rec
 
 class CobranzaHistorialConversacionEstado(models.Model):

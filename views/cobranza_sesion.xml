@@ -25,7 +25,8 @@
       <field name="arch" type="xml">
         <form string="Sesion de cobranza">
           <header>
-            <button name="iniciar_cobranza" class="oe_highlight" states="borrador" string="Iniciar Cobranza" type="object" />
+            <button name="siguiente_item" class="oe_highlight" states="borrador,proceso" string="Siguiente Deudor" type="object" />
+            <button name="finalizar_sesion" class="oe_highlight" states="proceso" string="Finalizar Cobranza" type="object" />
             <field name="state" widget="statusbar"/>
           </header>
           <sheet>
@@ -38,7 +39,18 @@
             </group>
             <notebook>
               <page string="Deudores" readonly="1">
-                <field name="item_ids"/>
+                <field name="item_ids">
+                  <tree create="false" delete="false" edit="false">
+                    <field name="partner_id"/>
+                    <field name="estado_id"/>
+                    <field name="proxima_accion_id"/>
+                    <field name="proxima_accion_fecha"/>
+                    <field name="saldo_mora"/>
+                    <field name="process_time"/>
+                    <field name="process_minutes"/>
+                    <field name="process_time_finish"/>
+                  </tree>
+                </field>
               </page>
             </notebook>
           </sheet>

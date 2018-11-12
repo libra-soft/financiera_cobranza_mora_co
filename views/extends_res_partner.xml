@@ -7,8 +7,10 @@
       <field name="name">cobranza.mora.tree</field>
       <field name="model">res.partner</field>
       <field name="arch" type="xml">
-        <tree string="Clientes" create="false" delete="false">
+        <tree string="Clientes" create="false" delete="false" default_order='cobranza_proxima_accion_fecha asc'>
+          <field name="id"/>
           <field name="name"/>
+          <field name="cobranza_proxima_accion_fecha"/>
           <field name="saldo_mora" sum="Total"/>
         </tree>
       </field>
@@ -112,9 +114,9 @@
                     <group>
                       <field name="saldo_mora" readonly="1"/>
                       <field name="conversacion"/>
-                      <field name="estado_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
-                      <field name="proxima_accion_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
-                      <field name="proxima_accion_fecha"/>
+                      <field name="estado_id" required="1" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
+                      <field name="proxima_accion_id" required="1" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
+                      <field name="proxima_accion_fecha" required="1"/>
                     </group>
                   </form>
                 </field>
@@ -137,6 +139,116 @@
         (0, 0, {'view_mode': 'form', 'view_id': ref('cobranza_mora_cliente_form')})]
         "/>
     </record>
+
+    <!-- Vista Form Partner Deudor para Sesion -->
+
+    <record id="cobranza_mora_cliente_sesion_form"  model="ir.ui.view">
+      <field name="name">cobranza.mora.form</field>
+      <field name="model">res.partner</field>
+      <field name="arch" type="xml">
+        <form create="false">
+          <header>
+          </header>
+          <sheet>
+            <group>
+              <field name="name" readonly="1"/>
+              <field name="phone" readonly="1"/>
+              <field name="mobile" readonly="1"/>
+              <field name="email" readonly="1"/>
+            </group>
+            <!-- <label string="CONTACTOS"/> -->
+            <notebook>
+              <page string="CONTACTOS">
+                <field name="child_ids" readonly="1">
+                  <tree>
+                    <field name="name" readonly="1"/>
+                    <field name="title" readonly="1"/>
+                    <field name="phone" readonly="1"/>
+                    <field name="mobile" readonly="1"/>
+                    <field name="email" readonly="1"/>
+                    <field name="function" readonly="1"/>
+                    <field name="comment" readonly="1"/>
+                  </tree>
+                </field>
+              </page>
+            </notebook>
+            <!-- <label string="DEUDA"/> -->
+            <notebook>
+              <page string="DEUDA">
+                <field name="cuota_mora_ids" readonly="1">
+                  <tree decoration-success="state == 'cobrada'" decoration-danger="state_mora in ['moraMedia', 'moraTardia', 'incobrable']" decoration-warning="state_mora in ['preventiva', 'moraTemprana']" decoration-info="state == 'borrador'" decoration-muted="state == 'cobrada'" string="Cuotas" limit="5">
+                    <!-- <field name="cliente_id"/> -->
+                    <!-- <field name="main_id_number"/> -->
+                    <field name="display_numero_cuota"/>
+                    <field name="prestamo_id"/>
+                    <!-- <field name="responsable_id" invisible="1"/> -->
+                    <field name="fecha_vencimiento"/>
+                    <field name="saldo_capital" widget="monetary" invisible="1"/>
+                    <field name="capital" widget="monetary" sum="Total"/>
+                    <field name="interes" widget="monetary" sum="Total"/>
+                    <field name="cuota_pura" widget="monetary" sum="Total"/>
+                    <field name="punitorios" widget="monetary" sum="Total"/>
+                    <field name="otros_gastos" widget="monetary" sum="Total"/>
+                    <field name="iva" widget="monetary" sum="Total"/>
+                    <field name="total" widget="monetary" sum="Total"/>
+                    <field name="cobrado" widget="monetary" sum="Total"/>
+                    <field name="saldo" widget="monetary" sum="Total"/>
+                    <field name="ultima_fecha_cobro" invisible="1"/>
+                    <field name="sucursal_id"/>
+                    <field name="state"/>
+                    <field name="state_mora"/>
+                    <field name="fecha_vencimiento_pre_semana" invisible="1"/>
+                    <field name="fecha_vencimiento_pos_semana" invisible="1"/>
+                  </tree>
+                </field>
+              </page>
+            </notebook>
+            <group>
+              <field name="saldo_mora" readonly="1"/>
+            </group>
+            <!-- <label string="HISTORIAL DE CONVERSACION"/> -->
+            <notebook>
+              <page string="HISTORIAL DE CONVERSACION">
+                <field name="cobranza_historial_conversacion_ids">
+                  <tree limit="5" delete="false" edit="false">
+                    <field name="create_date" readonly="1"/>
+                    <field name="create_uid" readonly="1"/>
+                    <field name="saldo_mora" readonly="1"/>
+                    <field name="conversacion"/>
+                    <field name="estado_id"/>
+                    <field name="proxima_accion_id"/>
+                    <field name="proxima_accion_fecha"/>
+                  </tree>
+                  <form>
+                    <group>
+                      <field name="saldo_mora" readonly="1"/>
+                      <field name="conversacion"/>
+                      <field name="estado_id" required="1" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
+                      <field name="proxima_accion_id" required="1" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
+                      <field name="proxima_accion_fecha" required="1"/>
+                    </group>
+                  </form>
+                </field>
+              </page>
+            </notebook>
+          </sheet>
+          <footer>
+            <button name="write" type="object" string="Guardar" class="oe_highlight"/>
+            <button name="cancel" string="Cancel" special="cancel" class="oe_link"/> 
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="cobranza_mora_sesion_action">
+      <field name="name">Sesion de cobranza</field>
+      <field name="res_model">res.partner</field>
+      <field name="view_mode">form</field>
+      <field name="view_ids" eval="[(5, 0, 0), 
+        (0, 0, {'view_mode': 'form', 'view_id': ref('cobranza_mora_cliente_sesion_form')})]
+        "/>
+    </record>
+
 
   </data>
 </openerp>
