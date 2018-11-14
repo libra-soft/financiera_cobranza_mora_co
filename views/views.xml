@@ -8,7 +8,7 @@
 
     <!-- Submenu -->
     <menuitem name="Sesion de cobranza" id="menu_sesion" sequence="1" parent="menu_cobranza"/>
-     <menuitem name="Deudores" id="menu_morosos" sequence="2" parent="menu_cobranza"/>
+     <menuitem name="Deudores" id="menu_morosos" sequence="2" parent="menu_cobranza" groups="financiera_cobranza_mora.manager,financiera_cobranza_mora.user"/>
      <menuitem name="Configuracion" id="menu_config" sequence="3" parent="menu_cobranza"/>
 
      <!-- Action -->
@@ -16,7 +16,7 @@
       action="cobranza_sesion_action"/>
 
      <menuitem name="Deudores" id="menu_morosos_action" parent="menu_morosos" 
-      action="cobranza_mora_action" />
+      action="cobranza_mora_action" groups="financiera_cobranza_mora.manager,financiera_cobranza_mora.user"/>
 
      <menuitem name="Estados" id="menu_estados_action" parent="menu_config" 
       action="cobranza_historial_estado_action" sequence="1"/>

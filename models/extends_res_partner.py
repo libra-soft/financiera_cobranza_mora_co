@@ -16,13 +16,13 @@ class ExtendsResPartner(models.Model):
 	saldo_mora = fields.Float('Saldo en mora', digits=(16, 2))
 	cobranza_historial_conversacion_ids = fields.One2many('cobranza.historial.conversacion', 'partner_id', 'Historial de conversacion')
 	cobranza_disponible = fields.Boolean('Disponible', default=True)
+	# Estado actual
+	cobranza_estado_id = fields.Many2one('cobranza.historial.conversacion.estado', 'Estado')
+	cobranza_proxima_accion_id = fields.Many2one('cobranza.historial.conversacion.accion', 'Proxima accion')
 	cobranza_proxima_accion_fecha = fields.Datetime('Fecha')
 
 	@api.model
 	def cron_cuotas_mora(self):
-		print "SE EJECUTOOOOOOOO **************--------------------"
-		print "SE EJECUTOOOOOOOO **************--------------------"
-		print "SE EJECUTOOOOOOOO **************--------------------"
 		cr = self.env.cr
 		uid = self.env.uid
 		partner_obj = self.pool.get('res.partner')
@@ -61,27 +61,22 @@ class ExtendsResPartner(models.Model):
 		deudor_obj = self.pool.get('res.partner')
 		deudor_primera_accion_ids = deudor_obj.search(cr, uid, [
 			('saldo_mora', '>', 0),
+			('cobranza_disponible', '=', True),
 			('cobranza_proxima_accion_fecha', '=', False)
 		])
-		print "deudores primera accion"
-		print deudor_primera_accion_ids
 		if len(deudor_primera_accion_ids) > 0:
-			print "dudor primera accion"
-			print deudor_primera_accion_ids[0]
 			ret_dudor_id = deudor_obj.browse(cr, uid, deudor_primera_accion_ids[0])
 			ret_dudor_id.cobranza_disponible = False
-			print ret_dudor_id
 		else:
 			deudor_ids = deudor_obj.search(cr, uid, [
 				('saldo_mora', '>', 0),
 				('cobranza_disponible', '=', True),
 			], order='cobranza_proxima_accion_fecha asc', limit=1)
-			print deudor_ids
 			if len(deudor_ids) > 0:
 				partner_id = deudor_obj.browse(cr, uid, deudor_ids[0])
-				print partner_id
 				if partner_id.cobranza_proxima_accion_fecha <= datetime.now():
 					ret_dudor_id = partner_id
+					ret_dudor_id.cobranza_disponible = False
 				else:
 					proxima_fecha = partner_id.cobranza_proxima_accion_fecha
 		return ret_dudor_id

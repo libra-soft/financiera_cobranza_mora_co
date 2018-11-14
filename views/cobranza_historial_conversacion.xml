@@ -32,6 +32,30 @@
       </field>
     </record>
 
+    <record model="ir.ui.view" id="cobranza_historial_accion_form">
+      <field name="name">cobranza.historial.conversacion.accion.form</field>
+      <field name="model">cobranza.historial.conversacion.accion</field>
+      <field name="arch" type="xml">
+        <form string="Acciones en cobranza">
+          <sheet>
+            <group>
+              <group>
+                <field name="name"/>
+                <field name="invervalo_unidad"/>
+                <field name="intervalo_cantidad"/>
+              </group>
+              <group>
+                <field name="accion_siguiente_1"/>
+                <field name="accion_siguiente_2"/>
+                <field name="accion_siguiente_3"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+
     <record model="ir.actions.act_window" id="cobranza_historial_accion_action">
       <field name="name">Acciones en cobranza</field>
       <field name="res_model">cobranza.historial.conversacion.accion</field>

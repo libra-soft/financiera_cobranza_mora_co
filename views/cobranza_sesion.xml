@@ -10,6 +10,7 @@
         <tree string="Sesion de cobranza">
           <field name="fecha"/>
           <field name="create_uid"/>
+          <field name="name"/>
           <field name="item_ids"/>
           <field name="process_time"/>
           <field name="process_minutes"/>
@@ -62,6 +63,7 @@
       <field name="name">Sesiones</field>
       <field name="res_model">cobranza.sesion</field>
       <field name="view_mode">tree,form</field>
+      <field name="domain">[('create_uid', '=', uid)]</field>
       <field name="view_id" ref="cobranza_sesion_tree"/>
     </record>
 

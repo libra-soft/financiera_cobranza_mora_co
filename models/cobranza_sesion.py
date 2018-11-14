@@ -10,6 +10,7 @@ import numpy as np
 class CobranzaSesion(models.Model):
 	_name = 'cobranza.sesion'
 
+	_order = 'id desc'
 	name = fields.Char('Nombre')
 	fecha = fields.Date('Fecha', required=True, default=lambda *a: time.strftime('%Y-%m-%d'))
 	current_user = fields.Many2one('res.users','Current User', default=lambda self: self.env.user)
@@ -78,9 +79,6 @@ class CobranzaSesion(models.Model):
 				deudor_id = self.current_item_id.partner_id
 		
 		if deudor_id != None:
-			print 'tenemos el siguente deudor'
-			print deudor_id
-			print self
 			# Creamos item de cobranza
 			if len(self.current_item_id) == 0 or self.check_finish_current_item():
 				csi_values = {
@@ -92,18 +90,18 @@ class CobranzaSesion(models.Model):
 				new_item_id = self.env['cobranza.sesion.item'].create(csi_values)
 				self.item_ids = [new_item_id.id]
 				self.current_item_id = new_item_id.id
-				print "hola1"
 				self.count_item_historial = len(deudor_id.cobranza_historial_conversacion_ids)
-				print self.count_item_historial
-			
-			print "hola 3"
+
 			action = self.env.ref('financiera_cobranza_mora.cobranza_mora_sesion_action')
 			result = action.read()[0]
 			form_view = self.env.ref('financiera_cobranza_mora.cobranza_mora_cliente_sesion_form')
 			result['views'] = [(form_view.id, 'form')]
 			result['res_id'] = deudor_id.id
 			result['target'] = 'new'
-			return result
+		else:
+			raise ValidationError("No quedan deudores disponibles. Revise la lista de deudores para ver la fecha de la proxima accion.")
+			
+		return result
 
 	@api.one
 	def finalizar_sesion(self):

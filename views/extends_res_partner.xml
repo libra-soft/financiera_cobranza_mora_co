@@ -7,9 +7,11 @@
       <field name="name">cobranza.mora.tree</field>
       <field name="model">res.partner</field>
       <field name="arch" type="xml">
-        <tree string="Clientes" create="false" delete="false" default_order='cobranza_proxima_accion_fecha asc'>
+        <tree string="Clientes" create="false" delete="false" decoration-danger="cobranza_proxima_accion_fecha &lt;= current_date" default_order='cobranza_proxima_accion_fecha asc'>
           <field name="id"/>
           <field name="name"/>
+          <field name="cobranza_estado_id"/>
+          <field name="cobranza_proxima_accion_id"/>
           <field name="cobranza_proxima_accion_fecha"/>
           <field name="saldo_mora" sum="Total"/>
         </tree>
@@ -47,7 +49,6 @@
               <field name="mobile" readonly="1"/>
               <field name="email" readonly="1"/>
             </group>
-            <!-- <label string="CONTACTOS"/> -->
             <notebook>
               <page string="CONTACTOS">
                 <field name="child_ids" readonly="1">
@@ -63,16 +64,12 @@
                 </field>
               </page>
             </notebook>
-            <!-- <label string="DEUDA"/> -->
             <notebook>
               <page string="DEUDA">
                 <field name="cuota_mora_ids" readonly="1">
                   <tree decoration-success="state == 'cobrada'" decoration-danger="state_mora in ['moraMedia', 'moraTardia', 'incobrable']" decoration-warning="state_mora in ['preventiva', 'moraTemprana']" decoration-info="state == 'borrador'" decoration-muted="state == 'cobrada'" string="Cuotas" limit="5">
-                    <!-- <field name="cliente_id"/> -->
-                    <!-- <field name="main_id_number"/> -->
                     <field name="display_numero_cuota"/>
                     <field name="prestamo_id"/>
-                    <!-- <field name="responsable_id" invisible="1"/> -->
                     <field name="fecha_vencimiento"/>
                     <field name="saldo_capital" widget="monetary" invisible="1"/>
                     <field name="capital" widget="monetary" sum="Total"/>
@@ -97,10 +94,9 @@
             <group>
               <field name="saldo_mora" readonly="1"/>
             </group>
-            <!-- <label string="HISTORIAL DE CONVERSACION"/> -->
             <notebook>
               <page string="HISTORIAL DE CONVERSACION">
-                <field name="cobranza_historial_conversacion_ids">
+                <field name="cobranza_historial_conversacion_ids" context="{'active_id':id}">
                   <tree limit="5" delete="false" edit="false">
                     <field name="create_date" readonly="1"/>
                     <field name="create_uid" readonly="1"/>
@@ -115,6 +111,31 @@
                       <field name="saldo_mora" readonly="1"/>
                       <field name="conversacion"/>
                       <field name="estado_id" required="1" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
+                    </group>
+                    <group>
+                      <field name="acciones_sugeridas" widget="radio" options="{'horizontal': true}" style="width:80%%"/>
+
+                      <label for="log_next_activity_1"/>
+                      <div align="left">
+                        <field name="accion_siguiente_1" invisible="1"/>
+                        <button name="log_next_activity_1" type="object" class="btn-link" attrs="{'invisible': [('char_accion_siguiente_1', '=', False)]}">
+                          <field name="char_accion_siguiente_1" readonly="1"/>
+                        </button>
+                        <span attrs="{'invisible': [('accion_siguiente_2','=',False)]}">|</span>
+                        
+                        <field name="accion_siguiente_2" invisible="1"/>
+                        <button name="log_next_activity_2" type="object" class="btn-link" attrs="{'invisible': [('char_accion_siguiente_2', '=', False)]}">
+                            <field name="char_accion_siguiente_2" readonly="1"/>
+                        </button>
+                        
+                        <field name="accion_siguiente_3" invisible="1"/>
+                        <span attrs="{'invisible': [('accion_siguiente_3','=',False)]}">|</span>
+                        <button name="log_next_activity_3" type="object" class="btn-link" attrs="{'invisible': [('char_accion_siguiente_3', '=', False)]}">
+                            <field name="char_accion_siguiente_3" readonly="1"/>
+                        </button>
+                      </div>
+                    </group>
+                    <group>
                       <field name="proxima_accion_id" required="1" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
                       <field name="proxima_accion_fecha" required="1"/>
                     </group>
@@ -156,7 +177,6 @@
               <field name="mobile" readonly="1"/>
               <field name="email" readonly="1"/>
             </group>
-            <!-- <label string="CONTACTOS"/> -->
             <notebook>
               <page string="CONTACTOS">
                 <field name="child_ids" readonly="1">
@@ -172,16 +192,12 @@
                 </field>
               </page>
             </notebook>
-            <!-- <label string="DEUDA"/> -->
             <notebook>
               <page string="DEUDA">
                 <field name="cuota_mora_ids" readonly="1">
                   <tree decoration-success="state == 'cobrada'" decoration-danger="state_mora in ['moraMedia', 'moraTardia', 'incobrable']" decoration-warning="state_mora in ['preventiva', 'moraTemprana']" decoration-info="state == 'borrador'" decoration-muted="state == 'cobrada'" string="Cuotas" limit="5">
-                    <!-- <field name="cliente_id"/> -->
-                    <!-- <field name="main_id_number"/> -->
                     <field name="display_numero_cuota"/>
                     <field name="prestamo_id"/>
-                    <!-- <field name="responsable_id" invisible="1"/> -->
                     <field name="fecha_vencimiento"/>
                     <field name="saldo_capital" widget="monetary" invisible="1"/>
                     <field name="capital" widget="monetary" sum="Total"/>
@@ -205,11 +221,11 @@
             </notebook>
             <group>
               <field name="saldo_mora" readonly="1"/>
+
             </group>
-            <!-- <label string="HISTORIAL DE CONVERSACION"/> -->
             <notebook>
               <page string="HISTORIAL DE CONVERSACION">
-                <field name="cobranza_historial_conversacion_ids">
+                <field name="cobranza_historial_conversacion_ids" context="{'active_id':id}">
                   <tree limit="5" delete="false" edit="false">
                     <field name="create_date" readonly="1"/>
                     <field name="create_uid" readonly="1"/>
@@ -225,6 +241,23 @@
                       <field name="conversacion"/>
                       <field name="estado_id" required="1" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
                       <field name="proxima_accion_id" required="1" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
+                      <field name="accion_siguiente_1" readonly="1"/>
+                      <!-- <div attrs="{'invisible': ['|', ('last_activity_id', '=', False), ('next_activity_id', '!=', False)]}"> -->
+                        <label for="log_next_activity_1"/>
+                        <button name="log_next_activity_1" type="object" class="btn-link" attrs="{'invisible': [('accion_siguiente_1','=',False)]}">
+                            <field name="accion_siguiente_1" readonly="1"/>
+                        </button>
+                        <!-- <span attrs="{'invisible': [('next_activity_2','=',False)]}">|</span> -->
+                        
+                        <!-- <button name="log_next_activity_2" type="object" class="btn-link" attrs="{'invisible': [('next_activity_2','=',False)]}">
+                            <field name="next_activity_2" readonly="1"/>
+                        </button> -->
+                        
+                        <!-- <span attrs="{'invisible': [('next_activity_3','=',False)]}">|</span> -->
+                        <!-- <button name="log_next_activity_3" type="object" class="btn-link" attrs="{'invisible': [('next_activity_3','=',False)]}">
+                            <field name="next_activity_3" readonly="1"/>
+                        </button> -->
+                      <!-- </div> -->
                       <field name="proxima_accion_fecha" required="1"/>
                     </group>
                   </form>
