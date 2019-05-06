@@ -8,9 +8,7 @@
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
-        <field name="nextcall"
-               eval="(datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d 02:00:00')"
-               />
+        <field name="nextcall" >2019-01-01 04:00:00</field>
         <field name="model">res.partner</field>
         <field name="function">cron_cuotas_mora</field>
     </record>

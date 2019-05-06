@@ -28,6 +28,7 @@
           <header>
             <button name="siguiente_item" class="oe_highlight" states="borrador,proceso" string="Siguiente Deudor" type="object" />
             <button name="finalizar_sesion" class="oe_highlight" states="proceso" string="Finalizar Cobranza" type="object" />
+            <button name="editar_item" string="Editar Deudor Actual" type="object" />
             <field name="state" widget="statusbar"/>
           </header>
           <sheet>

@@ -38,9 +38,9 @@ class ExtendsResPartner(models.Model):
 		self.cuota_mora_ids = None
 		cuota_obj = self.pool.get('financiera.prestamo.cuota')
 		cuota_ids = cuota_obj.search(cr, uid, [
-			('cliente_id', '=', self.id),
-			('state_mora', '!=', 'normal'),
-			('state', 'in', ('activa', 'facturado')),
+			('partner_id', '=', self.id),
+			('state_mora', 'not in', ('preventiva', 'normal')),
+			('state', 'in', ('activa', 'judicial', 'incobrable')),
 		])
 		self.cuota_mora_ids = cuota_ids
 		self._saldo_mora()
@@ -81,17 +81,13 @@ class ExtendsResPartner(models.Model):
 					proxima_fecha = partner_id.cobranza_proxima_accion_fecha
 		return ret_dudor_id
 
-	# @api.one
-	# def actualizar_deudor(self):
-		
-
 class ExtendsFinancieraPrestamoCuota(models.Model):
 	_name = 'financiera.prestamo.cuota'
 	_inherit = 'financiera.prestamo.cuota'
 
 	partner_cuota_mora_id = fields.Many2one('res.partner', "Cuota en mora")
 
-	@api.one
-	def confirmar_cobrar_cuota(self):
-		rec = super(ExtendsFinancieraPrestamoCuota, self).confirmar_cobrar_cuota()
-		self.cliente_id.compute_cuotas_mora()
+	# @api.one
+	# def confirmar_cobrar_cuota(self):
+	# 	rec = super(ExtendsFinancieraPrestamoCuota, self).confirmar_cobrar_cuota()
+	# 	self.cliente_id.compute_cuotas_mora()

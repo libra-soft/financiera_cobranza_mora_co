@@ -71,17 +71,18 @@
                     <field name="display_numero_cuota"/>
                     <field name="prestamo_id"/>
                     <field name="fecha_vencimiento"/>
-                    <field name="saldo_capital" widget="monetary" invisible="1"/>
-                    <field name="capital" widget="monetary" sum="Total"/>
-                    <field name="interes" widget="monetary" sum="Total"/>
-                    <field name="cuota_pura" widget="monetary" sum="Total"/>
-                    <field name="punitorios" widget="monetary" sum="Total"/>
-                    <field name="otros_gastos" widget="monetary" sum="Total"/>
-                    <field name="iva" widget="monetary" sum="Total"/>
-                    <field name="total" widget="monetary" sum="Total"/>
-                    <field name="cobrado" widget="monetary" sum="Total"/>
-                    <field name="saldo" widget="monetary" sum="Total"/>
-                    <field name="ultima_fecha_cobro" invisible="1"/>
+                    <field name="capital" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                    <field name="interes" widget='monetary' options="{'currency_field': 'currency_id'}" readonly="1"/>
+                    <field name="interes_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="punitorio" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="punitorio_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="seguro" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                    <field name="seguro_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="ajuste" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="ajuste_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="total" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
+                    <field name="cobrado" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
+                    <field name="saldo" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
                     <field name="sucursal_id"/>
                     <field name="state"/>
                     <field name="state_mora"/>
@@ -203,13 +204,13 @@
                     <field name="capital" widget="monetary" sum="Total"/>
                     <field name="interes" widget="monetary" sum="Total"/>
                     <field name="cuota_pura" widget="monetary" sum="Total"/>
-                    <field name="punitorios" widget="monetary" sum="Total"/>
-                    <field name="otros_gastos" widget="monetary" sum="Total"/>
-                    <field name="iva" widget="monetary" sum="Total"/>
+                    <!-- <field name="punitorios" widget="monetary" sum="Total"/> -->
+                    <!-- <field name="otros_gastos" widget="monetary" sum="Total"/> -->
+                    <!-- <field name="iva" widget="monetary" sum="Total"/> -->
                     <field name="total" widget="monetary" sum="Total"/>
                     <field name="cobrado" widget="monetary" sum="Total"/>
                     <field name="saldo" widget="monetary" sum="Total"/>
-                    <field name="ultima_fecha_cobro" invisible="1"/>
+                    <!-- <field name="ultima_fecha_cobro" invisible="1"/> -->
                     <field name="sucursal_id"/>
                     <field name="state"/>
                     <field name="state_mora"/>

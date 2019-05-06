@@ -3,7 +3,7 @@
 
     <!-- Top menu item -->
     
-    <menuitem name="Cobranza y Seguimiento" id="menu_cobranza" web_icon="financiera_cobranza_mora,static/description/image.png" groups="financiera_cobranza_mora.manager,financiera_cobranza_mora.user"/>
+    <menuitem name="Cobranza y Seguimiento" id="menu_cobranza" web_icon="financiera_cobranza_mora,static/description/image.png"/>
     <!-- groups="financiera_cobranza_mora.manager" -->
 
     <!-- Submenu -->

@@ -25,11 +25,11 @@
     'data': [
         'security/user_groups.xml',
         'security/ir.model.access.csv',
-        'views/views.xml',
         'views/cobranza_historial_conversacion.xml',
         'views/cobranza_sesion.xml',
         'views/extends_res_partner.xml',
         'views/templates.xml',
+        'views/views.xml',
         'data/ir_cron.xml',
     ],
     # only loaded in demonstration mode
