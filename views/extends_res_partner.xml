@@ -8,9 +8,9 @@
       <field name="model">res.partner</field>
       <field name="arch" type="xml">
         <tree string="Clientes" create="false" delete="false" decoration-danger="cobranza_proxima_accion_fecha &lt;= current_date" default_order='cobranza_proxima_accion_fecha asc'>
-          <field name="id"/>
+          <field name="id" invisible="1"/>
           <field name="name"/>
-          <field name="cobranza_estado_id"/>
+          <field name="cobranza_estado_id" invisible="1"/>
           <field name="cobranza_proxima_accion_id"/>
           <field name="cobranza_proxima_accion_fecha"/>
           <field name="saldo_mora" sum="Total"/>
@@ -98,12 +98,12 @@
             <notebook>
               <page string="HISTORIAL DE CONVERSACION">
                 <field name="cobranza_historial_conversacion_ids" context="{'active_id':id}">
-                  <tree limit="5" delete="false" edit="false">
+                  <tree limit="5" delete="false">
                     <field name="create_date" readonly="1"/>
                     <field name="create_uid" readonly="1"/>
                     <field name="saldo_mora" readonly="1"/>
                     <field name="conversacion"/>
-                    <field name="estado_id"/>
+                    <field name="estado_id" invisible="1"/>
                     <field name="proxima_accion_id"/>
                     <field name="proxima_accion_fecha"/>
                   </tree>
@@ -111,7 +111,7 @@
                     <group>
                       <field name="saldo_mora" readonly="1"/>
                       <field name="conversacion"/>
-                      <field name="estado_id" required="1" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
+                      <field name="estado_id" invisible="1" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
                     </group>
                     <group>
                       <field name="acciones_sugeridas" widget="radio" options="{'horizontal': true}" style="width:80%%"/>
@@ -232,7 +232,7 @@
                     <field name="create_uid" readonly="1"/>
                     <field name="saldo_mora" readonly="1"/>
                     <field name="conversacion"/>
-                    <field name="estado_id"/>
+                    <field name="estado_id" invisible="1"/>
                     <field name="proxima_accion_id"/>
                     <field name="proxima_accion_fecha"/>
                   </tree>
@@ -240,7 +240,7 @@
                     <group>
                       <field name="saldo_mora" readonly="1"/>
                       <field name="conversacion"/>
-                      <field name="estado_id" required="1" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
+                      <field name="estado_id" invisible="1" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
                       <field name="proxima_accion_id" required="1" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
                       <field name="accion_siguiente_1" readonly="1"/>
                       <!-- <div attrs="{'invisible': ['|', ('last_activity_id', '=', False), ('next_activity_id', '!=', False)]}"> -->

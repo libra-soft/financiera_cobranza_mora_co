@@ -44,7 +44,7 @@
                 <field name="item_ids">
                   <tree create="false" delete="false" edit="false">
                     <field name="partner_id"/>
-                    <field name="estado_id"/>
+                    <field name="estado_id" invisible="1"/>
                     <field name="proxima_accion_id"/>
                     <field name="proxima_accion_fecha"/>
                     <field name="saldo_mora"/>
