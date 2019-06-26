@@ -7,14 +7,29 @@
       <field name="name">cobranza.historial.conversacion.estado.tree</field>
       <field name="model">cobranza.historial.conversacion.estado</field>
       <field name="arch" type="xml">
-        <tree string="Estado en cobranza">
+        <tree string="Estado de cobranza">
           <field name="name"/>
+          <field name="company_id" groups="base.group_erp_manager"/>
         </tree>
       </field>
     </record>
 
+    <record model="ir.ui.view" id="cobranza_historial_estado_form">
+      <field name="name">cobranza.historial.conversacion.estado.form</field>
+      <field name="model">cobranza.historial.conversacion.estado</field>
+      <field name="arch" type="xml">
+        <form string="Estado de cobranza">
+          <sheet>
+            <group>
+              <field name="name"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
     <record model="ir.actions.act_window" id="cobranza_historial_estado_action">
-      <field name="name">Acciones en cobranza</field>
+      <field name="name">Estado de cobranza</field>
       <field name="res_model">cobranza.historial.conversacion.estado</field>
       <field name="view_mode">tree,form</field>
       <field name="view_id" ref="cobranza_historial_estado_tree"/>
@@ -28,6 +43,7 @@
       <field name="arch" type="xml">
         <tree string="Acciones en cobranza">
           <field name="name"/>
+          <field name="company_id" groups="base.group_erp_manager"/>
         </tree>
       </field>
     </record>

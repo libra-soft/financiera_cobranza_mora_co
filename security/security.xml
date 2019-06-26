@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <!-- <data noupdate="0"> -->
+        <record id="cobranza_sesion_comp_rule" model="ir.rule">
+            <field name="name">Cobranza Sesion multi-company</field>
+            <field name="model_id" ref="model_cobranza_sesion"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">['|', ('company_id','=',False), ('company_id','child_of',[user.company_id.id])]</field>
+        </record>
+
+        <record id="cobranza_sesion_item_comp_rule" model="ir.rule">
+            <field name="name">Cobranza Sesion Item multi-company</field>
+            <field name="model_id" ref="model_cobranza_sesion_item"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">['|', ('company_id','=',False), ('company_id','child_of',[user.company_id.id])]</field>
+        </record>
+
+        <record id="cobranza_historial_conversacion_comp_rule" model="ir.rule">
+            <field name="name">Cobranza Historial Conversasion multi-company</field>
+            <field name="model_id" ref="model_cobranza_historial_conversacion"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">['|', ('company_id','=',False), ('company_id','child_of',[user.company_id.id])]</field>
+        </record>
+
+        <record id="cobranza_historial_conversacion_estado_comp_rule" model="ir.rule">
+            <field name="name">Cobranza Historial Conversacion Estado multi-company</field>
+            <field name="model_id" ref="model_cobranza_historial_conversacion_estado"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">['|', ('company_id','=',False), ('company_id','child_of',[user.company_id.id])]</field>
+        </record>
+
+        <record id="cobranza_historial_conversacion_accion_comp_rule" model="ir.rule">
+            <field name="name">Cobranza Historial Conversacion Accion multi-company</field>
+            <field name="model_id" ref="model_cobranza_historial_conversacion_accion"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">['|', ('company_id','=',False), ('company_id','child_of',[user.company_id.id])]</field>
+        </record>
+    <!-- </data>  -->
+</openerp>

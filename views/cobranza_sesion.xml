@@ -16,7 +16,20 @@
           <field name="process_minutes"/>
           <field name="process_time_finish"/>
           <field name="state"/>
+          <field name="company_id"/>
         </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="filter_cobranza_sesion_view">
+      <field name="name">cobranza.sesion.filter</field>
+      <field name="model">cobranza.sesion</field>
+      <field name="arch" type="xml">
+        <search>
+          <filter string="Mis sesiones" name="mis_sesiones" domain="[('create_uid', '=', uid)]"/>
+          <field name="create_uid"/>
+          <field name="name"/>
+        </search>
       </field>
     </record>
 
@@ -27,14 +40,15 @@
         <form string="Sesion de cobranza">
           <header>
             <button name="siguiente_item" class="oe_highlight" states="borrador,proceso" string="Siguiente Deudor" type="object" />
-            <button name="finalizar_sesion" class="oe_highlight" states="proceso" string="Finalizar Cobranza" type="object" />
-            <button name="editar_item" string="Editar Deudor Actual" type="object" />
+            <button name="finalizar_sesion" class="oe_highlight" states="borrador,proceso" string="Finalizar Cobranza" type="object" />
+            <button name="editar_item" string="Editar Deudor Actual" states="proceso" type="object" />
             <field name="state" widget="statusbar"/>
           </header>
           <sheet>
             <group>
               <field name="fecha" readonly="1"/>
               <field name="create_uid" readonly="1"/>
+              <field name="company_id" groups="base.group_erp_manager"/>
               <field name="process_time" readonly="1"/>
               <field name="process_minutes" readonly="1"/>
               <field name="process_time_finish" readonly="1"/>
@@ -64,7 +78,7 @@
       <field name="name">Sesiones</field>
       <field name="res_model">cobranza.sesion</field>
       <field name="view_mode">tree,form</field>
-      <field name="domain">[('create_uid', '=', uid)]</field>
+      <field name="context">{'search_default_mis_sesiones':1}</field>
       <field name="view_id" ref="cobranza_sesion_tree"/>
     </record>
 

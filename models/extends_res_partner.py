@@ -57,29 +57,32 @@ class ExtendsResPartner(models.Model):
 	def cobranza_siguiente_deudor(self):
 		cr = self.env.cr
 		uid = self.env.uid
-		ret_dudor_id = None
+		current_user = self.env['res.users'].browse(uid)
+		ret_deudor_id = None
 		deudor_obj = self.pool.get('res.partner')
 		deudor_primera_accion_ids = deudor_obj.search(cr, uid, [
 			('saldo_mora', '>', 0),
 			('cobranza_disponible', '=', True),
-			('cobranza_proxima_accion_fecha', '=', False)
+			('cobranza_proxima_accion_fecha', '=', False),
+			('company_id', '=', current_user.company_id.id),
 		])
 		if len(deudor_primera_accion_ids) > 0:
-			ret_dudor_id = deudor_obj.browse(cr, uid, deudor_primera_accion_ids[0])
-			ret_dudor_id.cobranza_disponible = False
+			ret_deudor_id = deudor_obj.browse(cr, uid, deudor_primera_accion_ids[0])
+			ret_deudor_id.cobranza_disponible = False
 		else:
 			deudor_ids = deudor_obj.search(cr, uid, [
 				('saldo_mora', '>', 0),
 				('cobranza_disponible', '=', True),
+				('company_id', '=', current_user.company_id.id),
 			], order='cobranza_proxima_accion_fecha asc', limit=1)
 			if len(deudor_ids) > 0:
 				partner_id = deudor_obj.browse(cr, uid, deudor_ids[0])
-				if partner_id.cobranza_proxima_accion_fecha <= datetime.now():
-					ret_dudor_id = partner_id
-					ret_dudor_id.cobranza_disponible = False
+				if partner_id.cobranza_proxima_accion_fecha != None and partner_id.cobranza_proxima_accion_fecha <= datetime.now():
+					ret_deudor_id = partner_id
+					ret_deudor_id.cobranza_disponible = False
 				else:
 					proxima_fecha = partner_id.cobranza_proxima_accion_fecha
-		return ret_dudor_id
+		return ret_deudor_id
 
 class ExtendsFinancieraPrestamoCuota(models.Model):
 	_name = 'financiera.prestamo.cuota'

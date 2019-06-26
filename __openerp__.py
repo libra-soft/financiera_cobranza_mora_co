@@ -25,6 +25,7 @@
     'data': [
         'security/user_groups.xml',
         'security/ir.model.access.csv',
+        'security/security.xml',
         'views/cobranza_historial_conversacion.xml',
         'views/cobranza_sesion.xml',
         'views/extends_res_partner.xml',

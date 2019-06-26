@@ -22,6 +22,24 @@ class CobranzaSesion(models.Model):
 	process_time = fields.Datetime('Hora de proceso')
 	process_minutes = fields.Float('Minutos en proceso', compute='_compute_process_minutes')
 	process_time_finish = fields.Datetime('Hora finalizacion de proceso')
+	company_id = fields.Many2one('res.company', 'Empresa', required=False, default=lambda self: self.env['res.company']._company_default_get('cobranza.sesion'))
+
+	@api.model
+	def default_get(self, fields):
+		rec = super(CobranzaSesion, self).default_get(fields)
+		context = dict(self._context or {})
+		active_id = context.get('active_id')
+		cr = self.env.cr
+		uid = self.env.uid
+		current_user = self.env['res.users'].browse(uid)
+		sesion_ids = self.pool.get('cobranza.sesion').search(cr, uid, [
+			('create_uid', '=', current_user.id),
+			('state', 'in', ('borrador', 'proceso')),
+			('company_id', '=', current_user.company_id.id)
+		])
+		if len(sesion_ids) > 0:
+			raise ValidationError("Existe al menos una sesion en borrador o proceso. Finalice todas las sesiones para crear una nueva.")
+		return rec
 
 	@api.model
 	def create(self, values):
@@ -65,11 +83,13 @@ class CobranzaSesion(models.Model):
 	def siguiente_item(self):
 		cr = self.env.cr
 		uid = self.env.uid
+		current_user = self.env['res.users'].browse(uid)
 		deudor_id = None
 		if self.state == 'borrador':
 			# La sesion va a comenzar
 			self.state = 'proceso'
 			self.process_time = datetime.now()
+			# search(cr, uid, [('company_id', '=', current_user.company_id.id)])
 			deudor_id = self.pool.get('res.partner').cobranza_siguiente_deudor(cr, uid)
 		elif self.state == 'proceso':
 			if self.check_finish_current_item():
@@ -86,6 +106,7 @@ class CobranzaSesion(models.Model):
 					'partner_id': deudor_id.id,
 					'saldo_mora': deudor_id.saldo_mora,
 					'process_time': datetime.now(),
+					'company_id': current_user.company_id.id,
 				}
 				new_item_id = self.env['cobranza.sesion.item'].create(csi_values)
 				self.item_ids = [new_item_id.id]
@@ -116,8 +137,9 @@ class CobranzaSesion(models.Model):
 
 	@api.one
 	def finalizar_sesion(self):
-		if self.check_finish_current_item():
-			self.set_finish_current_item()
+		if len(self.item_ids) == 0 or self.check_finish_current_item():
+			if len(self.item_ids) > 0:
+				self.set_finish_current_item()
 			self.process_time_finish = datetime.now()
 			self.state = 'finalizado'
 		else:
@@ -137,6 +159,7 @@ class CobranzaSesionItem(models.Model):
 	process_time = fields.Datetime('Hora de proceso')
 	process_minutes = fields.Float('Minutos en proceso', compute='_compute_process_minutes')
 	process_time_finish = fields.Datetime('Hora finalizacion de proceso')
+	company_id = fields.Many2one('res.company', 'Empresa', required=False, default=lambda self: self.env['res.company']._company_default_get('cobranza.sesion.item'))
 	
 	@api.one
 	def _compute_process_minutes(self):
