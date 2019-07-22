@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
+import time
 from datetime import datetime, timedelta
 from dateutil import relativedelta
 from openerp.exceptions import UserError, ValidationError
@@ -19,7 +20,7 @@ class ExtendsResPartner(models.Model):
 	# Estado actual
 	cobranza_estado_id = fields.Many2one('cobranza.historial.conversacion.estado', 'Estado')
 	cobranza_proxima_accion_id = fields.Many2one('cobranza.historial.conversacion.accion', 'Proxima accion')
-	cobranza_proxima_accion_fecha = fields.Datetime('Fecha')
+	cobranza_proxima_accion_fecha = fields.Datetime('Fecha proxima accion')
 
 	@api.model
 	def cron_cuotas_mora(self):
@@ -70,18 +71,17 @@ class ExtendsResPartner(models.Model):
 			ret_deudor_id = deudor_obj.browse(cr, uid, deudor_primera_accion_ids[0])
 			ret_deudor_id.cobranza_disponible = False
 		else:
+			date_now = datetime.now()
 			deudor_ids = deudor_obj.search(cr, uid, [
 				('saldo_mora', '>', 0),
 				('cobranza_disponible', '=', True),
 				('company_id', '=', current_user.company_id.id),
+				('cobranza_proxima_accion_fecha', '<=', str(date_now))
 			], order='cobranza_proxima_accion_fecha asc', limit=1)
 			if len(deudor_ids) > 0:
 				partner_id = deudor_obj.browse(cr, uid, deudor_ids[0])
-				if partner_id.cobranza_proxima_accion_fecha != None and partner_id.cobranza_proxima_accion_fecha <= datetime.now():
-					ret_deudor_id = partner_id
-					ret_deudor_id.cobranza_disponible = False
-				else:
-					proxima_fecha = partner_id.cobranza_proxima_accion_fecha
+				ret_deudor_id = partner_id
+				ret_deudor_id.cobranza_disponible = False
 		return ret_deudor_id
 
 class ExtendsFinancieraPrestamoCuota(models.Model):

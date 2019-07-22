@@ -16,7 +16,7 @@ class CobranzaHistorialConversacion(models.Model):
 	_order = 'id desc'
 	partner_id = fields.Many2one('res.partner')
 	conversacion = fields.Char('Conversacion')
-	estado_id = fields.Many2one('cobranza.historial.conversacion.estado', 'Estado')
+	estado_id = fields.Many2one('cobranza.historial.conversacion.estado', 'Resultado')
 	proxima_accion_id = fields.Many2one('cobranza.historial.conversacion.accion', 'Proxima accion')
 	proxima_accion_fecha = fields.Datetime('Fecha')
 	saldo_mora = fields.Float('Saldo en mora', digits=(16, 2), readonly=True)
@@ -74,19 +74,14 @@ class CobranzaHistorialConversacion(models.Model):
 
 	@api.model
 	def create(self, values):
-		print("Create -2")
-		print(values)
 		rec = super(CobranzaHistorialConversacion, self).create(values)
-		print("Create -1")
 		rec.update({
 			'saldo_mora': rec.partner_id.saldo_mora,
 		})
-		print("Create 1")
 		rec.partner_id.cobranza_estado_id = values['estado_id']
-		print("Create 2")
 		rec.partner_id.cobranza_proxima_accion_id = values['proxima_accion_id']
 		rec.partner_id.cobranza_proxima_accion_fecha = values['proxima_accion_fecha']
-		print("Create 3")
+		rec.partner_id.cobranza_disponible = True
 		return rec
 
 

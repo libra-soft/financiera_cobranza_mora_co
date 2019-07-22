@@ -75,7 +75,7 @@
                     <field name="display_numero_cuota"/>
                     <field name="prestamo_id"/>
                     <field name="fecha_vencimiento"/>
-                    <field name="capital" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                    <!-- <field name="capital" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
                     <field name="interes" widget='monetary' options="{'currency_field': 'currency_id'}" readonly="1"/>
                     <field name="interes_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                     <field name="punitorio" widget="monetary" options="{'currency_field': 'currency_id'}"/>
@@ -83,7 +83,7 @@
                     <field name="seguro" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
                     <field name="seguro_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                     <field name="ajuste" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                    <field name="ajuste_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="ajuste_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/> -->
                     <field name="total" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
                     <field name="cobrado" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
                     <field name="saldo" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
@@ -113,8 +113,8 @@
                   </tree>
                   <form>
                     <group>
-                      <field name="saldo_mora" readonly="1"/>
-                      <field name="conversacion"/>
+                      <!-- <field name="saldo_mora" invisible="1"/> -->
+                      <field name="conversacion" widget="text"/>
                       <field name="estado_id" invisible="0" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
                     </group>
                     <group>
@@ -205,7 +205,7 @@
                     <field name="display_numero_cuota"/>
                     <field name="prestamo_id"/>
                     <field name="fecha_vencimiento"/>
-                    <field name="capital" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                    <!-- <field name="capital" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
                     <field name="interes" widget='monetary' options="{'currency_field': 'currency_id'}" readonly="1"/>
                     <field name="interes_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                     <field name="punitorio" widget="monetary" options="{'currency_field': 'currency_id'}"/>
@@ -213,7 +213,7 @@
                     <field name="seguro" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
                     <field name="seguro_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                     <field name="ajuste" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                    <field name="ajuste_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="ajuste_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/> -->
                     <field name="total" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
                     <field name="cobrado" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
                     <field name="saldo" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
