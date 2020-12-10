@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <odoo>
-<!--  noupdate="0" -->
+	<data noupdate="1">
     <record id="ir_cron_update_cobranza_mora_cliente" model="ir.cron">
         <field name="name">Cobranza - Actualizar Deuda de Clientes</field>
         <field name="user_id" ref="base.user_root" />
@@ -11,6 +11,7 @@
         <field name="nextcall" >2019-01-01 04:00:00</field>
         <field name="model">res.partner</field>
         <field name="function">cron_cuotas_mora</field>
-    </record>
+		</record>
+	</data>
 
 </odoo>
