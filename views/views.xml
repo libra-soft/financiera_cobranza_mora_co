@@ -7,9 +7,9 @@
     <!-- groups="financiera_cobranza_mora.manager" -->
 
     <!-- Submenu -->
-    <menuitem name="Sesion de cobranza" id="menu_sesion" sequence="1" parent="menu_cobranza"/>
-     <menuitem name="Deudores" id="menu_morosos" sequence="2" parent="menu_cobranza" groups="financiera_cobranza_mora.manager,financiera_cobranza_mora.user"/>
-     <menuitem name="Configuracion" id="menu_config" sequence="3" parent="menu_cobranza"/>
+    <menuitem name="Sesion de cobranza" id="menu_sesion" sequence="10" parent="menu_cobranza"/>
+     <menuitem name="Deudores" id="menu_morosos" sequence="20" parent="menu_cobranza" groups="financiera_cobranza_mora.manager,financiera_cobranza_mora.user"/>
+     <menuitem name="Configuracion" id="menu_config" sequence="30" parent="menu_cobranza"/>
 
      <!-- Action -->
      <menuitem name="Sesiones" id="menu_sesion_action" parent="menu_sesion" 
