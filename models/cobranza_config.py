@@ -11,7 +11,7 @@ class FinancieraCobranzaConfig(models.Model):
 	_name = 'financiera.cobranza.config'
 
 	name = fields.Char("Nombre")
-	fecha = fields.Date("Fecha ultima actualizacion")
+	fecha = fields.Datetime("Fecha ultima actualizacion")
 	mora_ids = fields.One2many('res.partner.mora', "config_id", "Segmentos")
 	company_id = fields.Many2one('res.company', 'Empresa', required=False, default=lambda self: self.env['res.company']._company_default_get('financiera.cobranza.config'))
 	
@@ -26,7 +26,7 @@ class FinancieraCobranzaConfig(models.Model):
 
 	@api.one
 	def actualizar_deudores(self):
-		self.fecha = date.today()
+		self.fecha = datetime.now()
 		partner_obj = self.pool.get('res.partner')
 		partner_ids = partner_obj.search(self.env.cr, self.env.uid, [
 			('company_id', '=', self.company_id.id),
