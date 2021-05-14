@@ -1,0 +1,90 @@
+<openerp>
+  <data>
+
+  <!-- financiera Sesion -->
+    
+    <record model="ir.ui.view" id="cobranza_config_tree">
+      <field name="name">financiera.cobranza.config.tree</field>
+      <field name="model">financiera.cobranza.config</field>
+      <field name="arch" type="xml">
+        <tree string="Configuracion" create="false" edit="false" delete="false">
+          <field name="name"/>
+					<field name="fecha"/>
+          <field name="company_id"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="cobranza_config_form">
+      <field name="name">financiera.cobranza.config.form</field>
+      <field name="model">financiera.cobranza.config</field>
+      <field name="arch" type="xml">
+        <form string="Sesion de cobranza" create="false" delete="false">
+          <header>
+            <button name="actualizar_deudores" class="oe_highlight" string="Actualizar Deudores" type="object" />
+          </header>
+          <sheet>
+						<group>
+							<group>
+								<field name="company_id" groups="base.group_erp_manager"/>
+								<field name="name" readonly="1"/>
+								<field name="fecha" readonly="1"/>
+							</group>
+							<group>
+							</group>
+						</group>
+            <notebook>
+              <page string="Segmentos" readonly="1">
+                <field name="mora_ids">
+									<tree>
+										<field name="orden"/>
+										<field name="name"/>
+										<field name="activo"/>
+										<field name="monto" sum="Total cartera"/>
+										<field name="porcentaje" sum="Total %"/>
+										<field name="partner_cantidad" sum="Total"/>
+									</tree>
+									<form string="Segmento">
+										<sheet>
+											<group>
+												<field name="name"/>
+												<field name="orden"/>
+												<field name="activo"/>
+												<field name="dia_inicial_impago"/>
+												<field name="dia_final_impago"/>
+											</group>
+											<notebook>
+												<page name="clientes" string="Deudores">
+													<field name="partner_ids">
+														<tree>
+															<field name="name"/>
+															<field name="mora_id" widget="many2many_tags"/>
+															<field name="cobranza_estado_id"/>
+															<field name="cobranza_proxima_accion_id"/>
+															<field name="cobranza_proxima_accion_fecha"/>
+															<field name="saldo_mora" sum="Total"/>
+															<field name="cobranza_disponible" invisible="0"/>
+															<field name="company_id" groups="base.group_erp_manager"/>
+														</tree>
+													</field>
+												</page>
+											</notebook>
+										</sheet>
+									</form>
+								</field>
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="cobranza_config_action">
+      <field name="name">Configuracion</field>
+      <field name="res_model">financiera.cobranza.config</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_id" ref="cobranza_config_tree"/>
+    </record>
+
+  </data>
+</openerp>

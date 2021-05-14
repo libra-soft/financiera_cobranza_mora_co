@@ -1,4 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+manager_financiera_cobranza_cobranza_config,financiera.cobranza.config,model_financiera_cobranza_config,financiera_cobranza_mora.manager,1,1,1,0
+user_financiera_cobranza_cobranza_config,financiera.cobranza.config,model_financiera_cobranza_config,financiera_cobranza_mora.user,1,1,1,0
+
 manager_financiera_cobranza_historial_conversacion,cobranza.historial.conversacion,model_cobranza_historial_conversacion,financiera_cobranza_mora.manager,1,1,1,0
 user_financiera_cobranza_historial_conversacion,cobranza.historial.conversacion,model_cobranza_historial_conversacion,financiera_cobranza_mora.user,1,1,1,0
 
@@ -13,3 +16,6 @@ user_financiera_cobranza_sesion,cobranza.sesion,model_cobranza_sesion,financiera
 
 manager_financiera_cobranza_sesion_item,cobranza.sesion.item,model_cobranza_sesion_item,financiera_cobranza_mora.manager,1,1,1,0
 user_financiera_cobranza_sesion_item,cobranza.sesion.item,model_cobranza_sesion_item,financiera_cobranza_mora.user,1,1,1,0
+
+manager_res_partner_mora,res.partner.mora,model_res_partner_mora,financiera_cobranza_mora.manager,1,1,1,0
+user_res_partner_mora,res.partner.mora,model_res_partner_mora,financiera_cobranza_mora.user,1,1,1,0

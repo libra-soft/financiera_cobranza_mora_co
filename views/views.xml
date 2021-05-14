@@ -18,10 +18,12 @@
      <menuitem name="Deudores" id="menu_morosos_action" parent="menu_morosos" 
       action="cobranza_mora_action" groups="financiera_cobranza_mora.manager,financiera_cobranza_mora.user"/>
 
-     <menuitem name="Estados" id="menu_estados_action" parent="menu_config" 
-      action="cobranza_historial_estado_action" sequence="1"/>
-     <menuitem name="Acciones" id="menu_acciones_action" parent="menu_config" 
-      action="cobranza_historial_accion_action" sequence="2"/>
+		<menuitem name="Configuracion" id="menu_config_action" parent="menu_config" 
+      action="cobranza_config_action" sequence="1"/>
+     <menuitem name="Estados de conversacion" id="menu_estados_action" parent="menu_config" 
+      action="cobranza_historial_estado_action" sequence="10"/>
+     <menuitem name="Acciones de conversacion" id="menu_acciones_action" parent="menu_config" 
+      action="cobranza_historial_accion_action" sequence="20"/>
 
   </data>
 </openerp>

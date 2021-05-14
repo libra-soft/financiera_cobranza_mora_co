@@ -14,38 +14,28 @@ class ExtendsResPartner(models.Model):
 	_inherit = 'res.partner'
 
 	cuota_mora_ids = fields.One2many('financiera.prestamo.cuota', 'partner_cuota_mora_id', 'Cuotas en mora')
-	saldo_mora = fields.Float('Saldo en mora', digits=(16, 2))
+	saldo_mora = fields.Float('Deuda en mora', digits=(16, 2))
+	saldo_total = fields.Float('Deuda total', digits=(16, 2))
 	cobranza_historial_conversacion_ids = fields.One2many('cobranza.historial.conversacion', 'partner_id', 'Historial de conversacion')
 	cobranza_disponible = fields.Boolean('Disponible', default=True)
 	# Estado actual
 	cobranza_estado_id = fields.Many2one('cobranza.historial.conversacion.estado', 'Estado')
 	cobranza_proxima_accion_id = fields.Many2one('cobranza.historial.conversacion.accion', 'Proxima accion')
 	cobranza_proxima_accion_fecha = fields.Datetime('Fecha proxima accion')
-
-	@api.model
-	def cron_cuotas_mora(self):
-		cr = self.env.cr
-		uid = self.env.uid
-		partner_obj = self.pool.get('res.partner')
-		partner_ids = partner_obj.search(cr, uid, [])
-		for _id in partner_ids:
-			partner_id = partner_obj.browse(cr, uid, _id)
-			partner_id.compute_cuotas_mora()
+	# Estado de mora
+	mora_id = fields.Many2one('res.partner.mora', 'Segmento')
 
 	@api.one
 	def compute_cuotas_mora(self):
-		cr = self.env.cr
-		uid = self.env.uid
 		self.cuota_mora_ids = None
 		cuota_obj = self.pool.get('financiera.prestamo.cuota')
-		cuota_ids = cuota_obj.search(cr, uid, [
+		cuota_ids = cuota_obj.search(self.env.cr, self.env.uid, [
 			('partner_id', '=', self.id),
 			('state_mora', 'not in', ('preventiva', 'normal')),
 			('state', 'in', ('activa', 'judicial', 'incobrable')),
 		])
 		self.cuota_mora_ids = cuota_ids
 		self._saldo_mora()
-
 
 	@api.one
 	def _saldo_mora(self):
@@ -89,8 +79,3 @@ class ExtendsFinancieraPrestamoCuota(models.Model):
 	_inherit = 'financiera.prestamo.cuota'
 
 	partner_cuota_mora_id = fields.Many2one('res.partner', "Cuota en mora")
-
-	# @api.one
-	# def confirmar_cobrar_cuota(self):
-	# 	rec = super(ExtendsFinancieraPrestamoCuota, self).confirmar_cobrar_cuota()
-	# 	self.cliente_id.compute_cuotas_mora()

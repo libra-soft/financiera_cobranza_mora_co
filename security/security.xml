@@ -35,5 +35,19 @@
             <field eval="True" name="global"/>
             <field name="domain_force">['|', ('company_id','=',False), ('company_id','child_of',[user.company_id.id])]</field>
         </record>
+
+				<record id="cobranza_config_rule" model="ir.rule">
+					<field name="name">Cobranza Config multi-company</field>
+					<field name="model_id" ref="model_financiera_cobranza_config"/>
+					<field eval="True" name="global"/>
+					<field name="domain_force">['|', ('company_id','=',False), ('company_id','child_of',[user.company_id.id])]</field>
+			</record>
+
+			<record id="partner_mora_rule" model="ir.rule">
+				<field name="name">Partner Mora multi-company</field>
+				<field name="model_id" ref="model_res_partner_mora"/>
+				<field eval="True" name="global"/>
+				<field name="domain_force">['|', ('company_id','=',False), ('company_id','child_of',[user.company_id.id])]</field>
+		</record>
     <!-- </data>  -->
 </openerp>

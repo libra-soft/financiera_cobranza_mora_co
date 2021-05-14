@@ -10,10 +10,12 @@
         <tree string="Clientes" create="false" delete="false" decoration-danger="cobranza_proxima_accion_fecha &lt;= current_date" default_order='cobranza_proxima_accion_fecha asc'>
           <field name="id" invisible="1"/>
           <field name="name"/>
+					<field name="mora_id" widget="many2many_tags"/>
           <field name="cobranza_estado_id"/>
           <field name="cobranza_proxima_accion_id"/>
           <field name="cobranza_proxima_accion_fecha"/>
-          <field name="saldo_mora" sum="Total"/>
+          <field name="saldo_mora" sum="Deuda en Mora"/>
+					<field name="saldo_total" sum="Deuda Total"/>
           <field name="cobranza_disponible" invisible="0"/>
           <field name="company_id" groups="base.group_erp_manager"/>
         </tree>
@@ -29,8 +31,12 @@
         <search>
           <filter string="Deudor" invisible="1" name="saldo_mora" domain="[('saldo_mora','>', 0)]"/>
           <separator/>
-          <field name="name"/>
-          <field name="main_id_number"/>
+          <field name="name" string="Nombre"/>
+          <field name="main_id_number" string="Identificacion principal"/>
+					<separator/>
+					<field name="mora_id" string="Segmento"/>
+					<separator/>
+					<filter name="group_mora_id" string="Segmento" context="{'group_by':'mora_id'}"/>
         </search>
       </field>
     </record>
