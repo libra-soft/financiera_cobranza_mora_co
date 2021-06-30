@@ -1,6 +1,65 @@
 <openerp>
   <data>
 
+		<!-- Calendario promesa de pagos -->
+
+	<record id="view_promesas_pago_calendar" model="ir.ui.view">
+		<field name="name">cobranza.historial.conversacion.calendar</field>
+		<field name="model">cobranza.historial.conversacion</field>
+		<field name="arch" type="xml">
+			<calendar string="Promesas de pago" color="partner_id" date_start="fecha_promesa_de_pago" mode="month">
+				<field name="partner_id"/>
+				<field name="saldo_mora"/>
+				<!-- <field name="fecha_promesa_de_pago"/> -->
+			</calendar>
+			<!-- <calendar string="Meetings" date_start="start" date_stop="stop" date_delay="duration" all_day="allday" 
+											display="[name]" color="color_partner_id" attendee="partner_ids" avatar_model="res.partner"
+											use_contacts="True" event_open_popup="%(calendar.view_calendar_event_form_popup)s">
+						<field name="name"/>
+						<field name="user_id"/>
+						<field name="color_partner_id"/>
+						<field name="partner_ids"/>
+				</calendar> -->
+		</field>
+	</record>
+
+	<record model="ir.ui.view" id="view_promesas_pago_tree">
+		<field name="name">cobranza.historial.conversacion.tree</field>
+		<field name="model">cobranza.historial.conversacion</field>
+		<field name="arch" type="xml">
+			<tree string="Pormesas de pago" create="false" delete="false">
+				<field name="create_date" string="Fecha" readonly="1"/>
+				<field name="create_uid" string="Creado por" readonly="1"/>
+				<field name="partner_id" readonly="1"/>
+				<field name="saldo_mora" readonly="1"/>
+				<field name="numero" attrs="{'readonly': [('registro_editable','=', False)]}" required="1"/>
+				<field name="respondio" attrs="{'readonly': [('registro_editable','=', False)]}" required="1"/>
+				<field name="conversacion" attrs="{'readonly': [('registro_editable','=', False)]}"/>
+				<field name="estado_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" 
+					attrs="{'readonly': [('registro_editable','=', False)]}" required="1"/>
+				<field name="es_promesa_de_pago" attrs="{'readonly': [('registro_editable','=', False)]}"/>
+				<field name="fecha_promesa_de_pago" 
+					attrs="{'required': [('es_promesa_de_pago','=',True)],'invisible': [('es_promesa_de_pago','=',False)],'readonly': [('registro_editable','=', False)]}"/>
+				<field name="proxima_accion_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" 
+					attrs="{'readonly': [('registro_editable','=', False)]}" required="1"/>
+				<field name="proxima_accion_fecha" attrs="{'readonly': [('registro_editable','=', False)]}" required="1"/>
+				<field name="registro_editable" invisible="1"/>
+				<field name="company_id" groups="base.group_erp_manager"/>
+			</tree>
+		</field>
+	</record>
+
+	<record model="ir.actions.act_window" id="calendar_promesa_pago_action">
+		<field name="name">Promesa de pago</field>
+		<field name="res_model">cobranza.historial.conversacion</field>
+		<field name="view_mode">calendar,tree</field>
+		<field name="domain">[('es_promesa_de_pago','=', True)]</field>
+		<!--<field name="view_id" ref="financiera_cliente_tree"/>-->
+		<field name="view_ids" eval="[(5, 0, 0), 
+			(0, 0, {'view_mode': 'calendar', 'view_id': ref('view_promesas_pago_calendar')}),
+			(0, 0, {'view_mode': 'tree', 'view_id': ref('view_promesas_pago_tree')})]"/>
+	</record>
+
   <!-- financiera Estado -->
     
     <record model="ir.ui.view" id="cobranza_historial_estado_tree">
@@ -35,6 +94,7 @@
       <field name="view_id" ref="cobranza_historial_estado_tree"/>
     </record>
 
+		
   <!-- financiera Accion -->
     
     <record model="ir.ui.view" id="cobranza_historial_accion_tree">
@@ -79,5 +139,6 @@
       <field name="view_id" ref="cobranza_historial_accion_tree"/>
     </record>
 
+		
   </data>
 </openerp>

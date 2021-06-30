@@ -30,6 +30,7 @@
       <field name="arch" type="xml">
         <search>
           <filter string="Deudor" invisible="1" name="saldo_mora" domain="[('saldo_mora','>', 0)]"/>
+					<filter string="Proxima accion vencida" name="proxima_accion_vencida"  domain="[('saldo_mora','>', 0), '|', ('cobranza_proxima_accion_fecha','&lt;=', (context_today()).strftime('%%Y-%%m-%%d')),('cobranza_proxima_accion_fecha','=', False)]"/>
           <separator/>
           <field name="name" string="Nombre"/>
           <field name="main_id_number" string="Identificacion principal"/>
@@ -61,15 +62,13 @@
             </group>
             <notebook>
               <page string="CONTACTOS">
-                <field name="child_ids" readonly="1">
+                <field name="contacto_ids" readonly="1">
                   <tree>
                     <field name="name" readonly="1"/>
-                    <field name="title" readonly="1"/>
-                    <field name="phone" readonly="1"/>
-                    <field name="mobile" readonly="1"/>
+                    <field name="relacion" readonly="1"/>
+                    <field name="telefono" readonly="1"/>
+                    <field name="movil" readonly="1"/>
                     <field name="email" readonly="1"/>
-                    <field name="function" readonly="1"/>
-                    <field name="comment" readonly="1"/>
                   </tree>
                 </field>
               </page>
@@ -81,15 +80,6 @@
                     <field name="display_numero_cuota"/>
                     <field name="prestamo_id"/>
                     <field name="fecha_vencimiento"/>
-                    <!-- <field name="capital" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-                    <field name="interes" widget='monetary' options="{'currency_field': 'currency_id'}" readonly="1"/>
-                    <field name="interes_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                    <field name="punitorio" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                    <field name="punitorio_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                    <field name="seguro" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-                    <field name="seguro_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                    <field name="ajuste" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                    <field name="ajuste_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/> -->
                     <field name="total" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
                     <field name="cobrado" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
                     <field name="saldo" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
@@ -98,6 +88,10 @@
                     <field name="state_mora"/>
                     <field name="fecha_vencimiento_pre_semana" invisible="1"/>
                     <field name="fecha_vencimiento_pos_semana" invisible="1"/>
+										<button name="button_actualizar_estado" type="object" string="Actualizar estado cupon" class="oe_highlight"/>
+										<button name="pagos_360_renovas_solicitud" type="object" string="Renovar cupon" class="oe_highlight"/>
+										<button name="action_cupon_sent" type="object" string="Enviar cupon por email" class="oe_highlight"/>
+										<button name="mobbex_subscriber_execution" type="object" string="Ejecutar suscripcion" class="oe_highlight" confirm="Esta seguro?"/>
                   </tree>
                 </field>
               </page>
@@ -106,9 +100,9 @@
               <field name="saldo_mora" readonly="1"/>
             </group>
             <notebook>
-              <page string="HISTORIAL DE CONVERSACION">
+              <page string="HISTORIAL DE CONTACTABILIDAD">
                 <field name="cobranza_historial_conversacion_ids" context="{'active_id':id}">
-                  <tree limit="5" delete="false">
+                  <tree limit="5" delete="false" editable="1">
                     <field name="create_date" readonly="1"/>
                     <field name="create_uid" readonly="1"/>
                     <field name="saldo_mora" readonly="1"/>
@@ -117,40 +111,6 @@
                     <field name="proxima_accion_id"/>
                     <field name="proxima_accion_fecha"/>
                   </tree>
-                  <form>
-                    <group>
-                      <!-- <field name="saldo_mora" invisible="1"/> -->
-                      <field name="conversacion" widget="text"/>
-                      <field name="estado_id" invisible="0" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
-                    </group>
-                    <group>
-                      <field name="acciones_sugeridas" widget="radio" options="{'horizontal': true}" style="width:80%%"/>
-
-                      <label for="log_next_activity_1"/>
-                      <div align="left">
-                        <field name="accion_siguiente_1" invisible="1"/>
-                        <button name="log_next_activity_1" type="object" class="btn-link" attrs="{'invisible': [('char_accion_siguiente_1', '=', False)]}">
-                          <field name="char_accion_siguiente_1" readonly="1"/>
-                        </button>
-                        <span attrs="{'invisible': [('accion_siguiente_2','=',False)]}">|</span>
-                        
-                        <field name="accion_siguiente_2" invisible="1"/>
-                        <button name="log_next_activity_2" type="object" class="btn-link" attrs="{'invisible': [('char_accion_siguiente_2', '=', False)]}">
-                            <field name="char_accion_siguiente_2" readonly="1"/>
-                        </button>
-                        
-                        <field name="accion_siguiente_3" invisible="1"/>
-                        <span attrs="{'invisible': [('accion_siguiente_3','=',False)]}">|</span>
-                        <button name="log_next_activity_3" type="object" class="btn-link" attrs="{'invisible': [('char_accion_siguiente_3', '=', False)]}">
-                            <field name="char_accion_siguiente_3" readonly="1"/>
-                        </button>
-                      </div>
-                    </group>
-                    <group>
-                      <field name="proxima_accion_id" required="1" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
-                      <field name="proxima_accion_fecha" required="1"/>
-                    </group>
-                  </form>
                 </field>
               </page>
             </notebook>
@@ -172,16 +132,23 @@
         "/>
     </record>
 
-    <!-- Vista Form Partner Deudor para Sesion -->
+		<!-- Vista Form Partner Deudor para Sesion -->
 
     <record id="cobranza_mora_cliente_sesion_form"  model="ir.ui.view">
       <field name="name">cobranza.mora.form</field>
       <field name="model">res.partner</field>
       <field name="arch" type="xml">
-        <form  edit="true" editable="true">
+        <form>
           <header>
           </header>
           <sheet>
+						<script>
+							$(document).ready(function(){
+								$('.modal-dialog').css({'width': '86%', 'height': '97%'});
+								$('.modal-content').css({'height': '100%'});
+								$('.modal-body').css({'height': '100%'});
+							});
+					</script>
             <group>
               <field name="company_id" groups="base.group_erp_manager"/>
               <field name="name" readonly="1"/>
@@ -191,99 +158,122 @@
             </group>
             <notebook>
               <page string="CONTACTOS">
-                <field name="child_ids" readonly="1">
-                  <tree>
-                    <field name="name" readonly="1"/>
-                    <field name="title" readonly="1"/>
-                    <field name="phone" readonly="1"/>
-                    <field name="mobile" readonly="1"/>
-                    <field name="email" readonly="1"/>
-                    <field name="function" readonly="1"/>
-                    <field name="comment" readonly="1"/>
+                <field name="contacto_ids" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" readonly="0">
+                  <tree create="true" delete="false" editable="1" limit="5">
+                    <field name="create_date" invisible="1"/>
+										<field name="name" required="1"/><!-- attrs="{'readonly': [('create_date', '&lt;','current_date')]}" -->
+                    <field name="relacion"/>
+                    <field name="movil"/>
+										<field name="telefono"/>
+                    <field name="email"/>
                   </tree>
                 </field>
               </page>
             </notebook>
             <notebook>
               <page string="DEUDA">
-                <field name="cuota_mora_ids" readonly="1">
-                  <tree decoration-success="state == 'cobrada'" decoration-danger="state_mora in ['moraMedia', 'moraTardia', 'incobrable']" decoration-warning="state_mora in ['preventiva', 'moraTemprana']" decoration-info="state == 'borrador'" decoration-muted="state == 'cobrada'" string="Cuotas" limit="5">
-                    <field name="display_numero_cuota"/>
-                    <field name="prestamo_id"/>
-                    <field name="fecha_vencimiento"/>
-                    <!-- <field name="capital" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-                    <field name="interes" widget='monetary' options="{'currency_field': 'currency_id'}" readonly="1"/>
-                    <field name="interes_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                    <field name="punitorio" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                    <field name="punitorio_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                    <field name="seguro" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-                    <field name="seguro_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                    <field name="ajuste" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                    <field name="ajuste_iva" widget="monetary" options="{'currency_field': 'currency_id'}"/> -->
-                    <field name="total" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
-                    <field name="cobrado" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
-                    <field name="saldo" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
-                    <field name="sucursal_id"/>
-                    <field name="state"/>
-                    <field name="state_mora"/>
+                <field name="cuota_mora_ids" readonly="0">
+                  <tree decoration-success="state == 'cobrada'" decoration-danger="state_mora in ['moraMedia', 'moraTardia', 'incobrable']" decoration-warning="state_mora in ['preventiva', 'moraTemprana']" decoration-info="state == 'borrador'" decoration-muted="state == 'cobrada'" string="Cuotas" limit="5"
+										create="false" delete="false">
+                    <field name="display_numero_cuota" readonly="1"/>
+                    <field name="prestamo_id" readonly="1" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
+                    <field name="fecha_vencimiento" readonly="1"/>
+                    <field name="total" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1"/>
+                    <field name="cobrado" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1"/>
+                    <field name="saldo" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1"/>
+                    <field name="sucursal_id" readonly="1" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
+                    <field name="state" readonly="1"/>
+                    <field name="state_mora" readonly="1"/>
                     <field name="fecha_vencimiento_pre_semana" invisible="1"/>
                     <field name="fecha_vencimiento_pos_semana" invisible="1"/>
+										<field name="pagos_360_generar_pago_voluntario" invisible="1"/>
+										<button name="button_renovar_solicitud_cupon" type="object" string="Renovar cupon" class="oe_highlight" attrs="{'invisible': [('pagos_360_generar_pago_voluntario','=', False)]}"/>
+										<button name="action_cupon_sent" type="object" string="Enviar cupon" class="oe_highlight" attrs="{'invisible': [('pagos_360_generar_pago_voluntario','=', False)]}"/>
+										<field name="mobbex_suscripcion_suscriptor_confirm" invisible="1"/>
+										<button name="mobbex_subscriber_execution" type="object" string="Debitar" class="oe_highlight" attrs="{'invisible': [('mobbex_suscripcion_suscriptor_confirm','=', False)]}" confirm="Esta seguro?"/>
                   </tree>
+									<form>
+										<sheet>
+											<group>
+												<field name="display_numero_cuota" readonly="1"/>
+												<field name="prestamo_id" readonly="1" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
+												<field name="fecha_vencimiento" readonly="1"/>
+												<field name="total" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1"/>
+												<field name="cobrado" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1"/>
+												<field name="saldo" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1"/>
+												<field name="sucursal_id" readonly="1" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
+												<field name="state" readonly="1"/>
+												<field name="state_mora" readonly="1"/>
+												<field name="fecha_vencimiento_pre_semana" invisible="1"/>
+												<field name="fecha_vencimiento_pos_semana" invisible="1"/>
+												<field name="pagos_360_generar_pago_voluntario" invisible="1"/>
+												<field name="pagos_360_solicitud_state" readonly="1"/>
+												<field name="pagos_360_first_due_date" readonly="1"/>
+												<field name="pagos_360_first_total" readonly="1"/>
+												<field name="pagos_360_second_due_date" readonly="1"/>
+												<field name="pagos_360_second_total" readonly="1"/>
+												<button name="button_renovar_solicitud_cupon" type="object" string="Renovar cupon" class="oe_highlight" attrs="{'invisible': [('pagos_360_generar_pago_voluntario','=', False)]}"/>
+												<button name="action_cupon_sent" type="object" string="Enviar cupon" class="oe_highlight" attrs="{'invisible': [('pagos_360_generar_pago_voluntario','=', False)]}"/>
+												<field name="mobbex_suscripcion_suscriptor_confirm" invisible="1"/>
+												<button name="mobbex_subscriber_execution" type="object" string="Debitar" class="oe_highlight" attrs="{'invisible': [('mobbex_suscripcion_suscriptor_confirm','=', False)]}" confirm="Esta seguro?"/>
+											</group>
+										</sheet>
+										<footer>
+											<div class="oe_chatter">
+												<!-- <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/> -->
+												<field name="message_ids" widget="mail_thread"/>
+											</div>
+										</footer>
+									</form>
                 </field>
               </page>
             </notebook>
             <group>
               <field name="saldo_mora" readonly="1"/>
             </group>
+						<notebook>
+							<page name="notificaiones" string="Notificaciones de deuda">
+								<field name="notificacion_ids">
+									<tree limit="5" editable="top">
+										<!-- <field name="id"/> -->
+										<field name="fecha" required="1"/>
+										<field name="item_id" required="1" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True,'no_open':True}"/>
+									</tree>
+								</field>
+							</page>
+						</notebook>
             <notebook>
-              <page string="HISTORIAL DE CONVERSACION">
+              <page string="HISTORIAL DE CONTACTABILIDAD">
                 <field name="cobranza_historial_conversacion_ids" context="{'active_id':id}">
-                  <tree limit="5" delete="false">
-                    <field name="create_date" readonly="1"/>
-                    <field name="create_uid" readonly="1"/>
+                  <tree limit="5" delete="true" editable="top">
+                    <field name="create_date" string="Fecha" readonly="1"/>
+                    <field name="create_uid" string="Creado por" readonly="1"/>
                     <field name="saldo_mora" readonly="1"/>
-                    <field name="conversacion"/>
-                    <field name="estado_id" invisible="0"/>
-                    <field name="proxima_accion_id"/>
-                    <field name="proxima_accion_fecha"/>
+                    <field name="numero" attrs="{'readonly': [('registro_editable','=', False)]}" required="1"/>
+										<field name="respondio" attrs="{'readonly': [('registro_editable','=', False)]}" required="1"/>
+										<field name="conversacion" attrs="{'readonly': [('registro_editable','=', False)]}"/>
+                    <field name="estado_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" 
+											attrs="{'readonly': [('registro_editable','=', False)]}" required="1"/>
+										<field name="es_promesa_de_pago" attrs="{'readonly': [('registro_editable','=', False)]}"/>
+										<field name="fecha_promesa_de_pago" 
+											attrs="{'required': [('es_promesa_de_pago','=',True)],'invisible': [('es_promesa_de_pago','=',False)],'readonly': [('registro_editable','=', False)]}"/>
+                    <field name="proxima_accion_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" 
+											attrs="{'readonly': [('registro_editable','=', False)]}" required="1"/>
+                    <field name="proxima_accion_fecha" attrs="{'readonly': [('registro_editable','=', False)]}" required="1"/>
+										<field name="registro_editable"/>
                   </tree>
-                  <form>
-                    <group>
-                      <field name="saldo_mora" readonly="1"/>
-                      <field name="conversacion"/>
-                      <field name="estado_id" invisible="0" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
-                    </group>
-                    <group>
-                      <field name="acciones_sugeridas" widget="radio" options="{'horizontal': true}" style="width:80%%"/>
-
-                      <label for="log_next_activity_1"/>
-                      <div align="left">
-                        <field name="accion_siguiente_1" invisible="1"/>
-                        <button name="log_next_activity_1" type="object" class="btn-link" attrs="{'invisible': [('char_accion_siguiente_1', '=', False)]}">
-                          <field name="char_accion_siguiente_1" readonly="1"/>
-                        </button>
-                        <span attrs="{'invisible': [('accion_siguiente_2','=',False)]}">|</span>
-                        
-                        <field name="accion_siguiente_2" invisible="1"/>
-                        <button name="log_next_activity_2" type="object" class="btn-link" attrs="{'invisible': [('char_accion_siguiente_2', '=', False)]}">
-                            <field name="char_accion_siguiente_2" readonly="1"/>
-                        </button>
-                        
-                        <field name="accion_siguiente_3" invisible="1"/>
-                        <span attrs="{'invisible': [('accion_siguiente_3','=',False)]}">|</span>
-                        <button name="log_next_activity_3" type="object" class="btn-link" attrs="{'invisible': [('char_accion_siguiente_3', '=', False)]}">
-                            <field name="char_accion_siguiente_3" readonly="1"/>
-                        </button>
-                      </div>
-                    </group>
-                    <group>
-                      <field name="proxima_accion_id" required="1" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
-                      <field name="proxima_accion_fecha" required="1"/>
-                    </group>
-                  </form>
                 </field>
               </page>
             </notebook>
+						
+						<!-- <notebook>
+							<page name="chatter" string="Emails">
+								<div class="oe_chatter">
+									<field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+									<field name="message_ids" widget="mail_thread"/>
+								</div>
+							</page>
+						</notebook> -->
           </sheet>
           <footer>
             <button name="write" type="object" string="Guardar" class="oe_highlight"/>

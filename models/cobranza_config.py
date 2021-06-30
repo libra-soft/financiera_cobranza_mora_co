@@ -12,6 +12,7 @@ class FinancieraCobranzaConfig(models.Model):
 
 	name = fields.Char("Nombre")
 	fecha = fields.Datetime("Fecha ultima actualizacion")
+	# promesa_pago_id = fields.Many2one('cobranza.historial.conversacion.estado', 'Estado de promesa de pago')
 	mora_ids = fields.One2many('res.partner.mora', "config_id", "Segmentos")
 	company_id = fields.Many2one('res.company', 'Empresa', required=False, default=lambda self: self.env['res.company']._company_default_get('financiera.cobranza.config'))
 	

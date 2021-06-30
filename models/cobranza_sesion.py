@@ -15,9 +15,11 @@ class CobranzaSesion(models.Model):
 	fecha = fields.Date('Fecha', required=True, default=lambda *a: time.strftime('%Y-%m-%d'))
 	current_user = fields.Many2one('res.users','Current User', default=lambda self: self.env.user)
 	state = fields.Selection([('borrador', 'Borrador'), ('proceso', 'En proceso'), ('finalizado', 'Finalizado')], string='Estado', readonly=True, default='borrador')
-	item_ids = fields.One2many('cobranza.sesion.item', 'cobranza_sesion_id', "Deudores")
+	partner_ids = fields.Many2many('res.partner', 'financiera_sesion_partner_rel', 'sesion_id', 'partner_id', 'Deudores')
+	item_ids = fields.One2many('cobranza.sesion.item', 'cobranza_sesion_id', "Deudores procesados")
 	current_item_id = fields.Many2one('cobranza.sesion.item', 'Item actual')
 	count_item_historial = fields.Integer('Cantidad de registros de historial')
+	selection_type = fields.Selection([('auto', 'Automatico'), ('manual', 'Manual')], string='Seleccion de deudores', default='auto')
 	# Control time
 	process_time = fields.Datetime('Hora de proceso')
 	process_minutes = fields.Float('Minutos en proceso', compute='_compute_process_minutes')
@@ -89,12 +91,19 @@ class CobranzaSesion(models.Model):
 			# La sesion va a comenzar
 			self.state = 'proceso'
 			self.process_time = datetime.now()
-			# search(cr, uid, [('company_id', '=', current_user.company_id.id)])
-			deudor_id = self.pool.get('res.partner').cobranza_siguiente_deudor(cr, uid)
+			if self.selection_type == 'auto':
+				deudor_id = self.pool.get('res.partner').cobranza_siguiente_deudor(cr, uid)
+			elif self.selection_type == 'manual':
+				if len(self.item_ids) < len(self.partner_ids):
+					deudor_id = self.partner_ids[len(self.item_ids)]
 		elif self.state == 'proceso':
 			if self.check_finish_current_item():
 				self.set_finish_current_item()
-				deudor_id = self.pool.get('res.partner').cobranza_siguiente_deudor(cr, uid)
+				if self.selection_type == 'auto':
+					deudor_id = self.pool.get('res.partner').cobranza_siguiente_deudor(cr, uid)
+				elif self.selection_type == 'manual':
+					if len(self.item_ids) < len(self.partner_ids):
+						deudor_id = self.partner_ids[len(self.item_ids)]
 			else:
 				deudor_id = self.current_item_id.partner_id
 		

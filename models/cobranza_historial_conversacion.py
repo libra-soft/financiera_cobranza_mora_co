@@ -7,27 +7,25 @@ from openerp.exceptions import UserError, ValidationError
 import time
 import numpy as np
 
-
-GLOBAL_VALUE_ACCIONES_SUGERIDAS = [('accion1', '		'), ('accion2', '		'), ('accion3', '		')]
-
 class CobranzaHistorialConversacion(models.Model):
 	_name = 'cobranza.historial.conversacion'
 
 	_order = 'id desc'
 	partner_id = fields.Many2one('res.partner')
+	numero = fields.Char('Numero')
+	respondio = fields.Selection([
+		('titular', 'Titular'), ('familiar', 'Familiar'), 
+		('contacto', 'Contacto'), ('amigo', 'Amigo/a'), 
+		('empleador', 'Empleador'), ('vecino', 'Vecino'),
+		('otro', 'Otro')], "Respondio")
 	conversacion = fields.Char('Conversacion')
 	estado_id = fields.Many2one('cobranza.historial.conversacion.estado', 'Resultado')
+	es_promesa_de_pago = fields.Boolean("Es promesa de pago?")
+	fecha_promesa_de_pago = fields.Date('Fecha promesa de pago')
 	proxima_accion_id = fields.Many2one('cobranza.historial.conversacion.accion', 'Proxima accion')
-	proxima_accion_fecha = fields.Datetime('Fecha')
+	proxima_accion_fecha = fields.Datetime('Fecha proxima accion')
 	saldo_mora = fields.Float('Saldo en mora', digits=(16, 2), readonly=True)
-	# Posibles acciones siguientes
-	acciones_sugeridas = fields.Selection(GLOBAL_VALUE_ACCIONES_SUGERIDAS, string='Acciones sugeridas')
-	accion_siguiente_1 = fields.Many2one('cobranza.historial.conversacion.accion')
-	char_accion_siguiente_1 = fields.Char()
-	accion_siguiente_2 = fields.Many2one('cobranza.historial.conversacion.accion')
-	char_accion_siguiente_2 = fields.Char()
-	accion_siguiente_3 = fields.Many2one('cobranza.historial.conversacion.accion')
-	char_accion_siguiente_3 = fields.Char()
+	registro_editable = fields.Boolean("Registro editable", compute='_compte_registro_editable')
 	company_id = fields.Many2one('res.company', 'Empresa', required=False, default=lambda self: self.env['res.company']._company_default_get('cobranza.historial.conversacion'))
 
 	@api.model
@@ -44,31 +42,9 @@ class CobranzaHistorialConversacion(models.Model):
 		])
 		if len(deudor_ids) > 0:
 			deudor_id = self.env['res.partner'].browse(active_id)
-			accion_siguiente_1 = None
-			char_accion_siguiente_1 = None
-			accion_siguiente_2 = None
-			char_accion_siguiente_2 = None
-			accion_siguiente_3 = None
-			char_accion_siguiente_3 = None
-			if len(deudor_id) > 0 and len(deudor_id.cobranza_historial_conversacion_ids) > 0:
-				chca_id = deudor_id.cobranza_historial_conversacion_ids[0].proxima_accion_id
-				if len(chca_id) > 0 and len(chca_id.accion_siguiente_1) > 0:
-					accion_siguiente_1 = chca_id.accion_siguiente_1.id
-					char_accion_siguiente_1 = chca_id.accion_siguiente_1.name
-				if len(chca_id) > 0 and len(chca_id.accion_siguiente_2) > 0:
-					accion_siguiente_2 = chca_id.accion_siguiente_2.id
-					char_accion_siguiente_2 = chca_id.accion_siguiente_2.name
-				if len(chca_id) > 0 and len(chca_id.accion_siguiente_3) > 0:
-					accion_siguiente_3 = chca_id.accion_siguiente_3.id
-					char_accion_siguiente_3 = chca_id.accion_siguiente_3.name
 			rec.update({
 				'partner_id': deudor_id.id,
-				'accion_siguiente_1': accion_siguiente_1,
-				'char_accion_siguiente_1': char_accion_siguiente_1,
-				'accion_siguiente_2': accion_siguiente_2,
-				'char_accion_siguiente_2': char_accion_siguiente_2,
-				'accion_siguiente_3': accion_siguiente_3,
-				'char_accion_siguiente_3': char_accion_siguiente_3,
+				'registro_editable': True,
 			})
 		return rec
 
@@ -84,19 +60,6 @@ class CobranzaHistorialConversacion(models.Model):
 		rec.partner_id.cobranza_disponible = True
 		return rec
 
-
-	@api.one
-	@api.onchange('acciones_sugeridas')
-	def _onchange_acciones_sugeridas(self):
-		if self.acciones_sugeridas == 'accion1':
-			self.proxima_accion_id = self.accion_siguiente_1
-		elif self.acciones_sugeridas == 'accion2':
-			self.proxima_accion_id = self.accion_siguiente_2
-		elif self.acciones_sugeridas == 'accion3':
-			self.proxima_accion_id = self.accion_siguiente_3
-
-
-
 	@api.one
 	@api.onchange('proxima_accion_id')
 	def _onchange_proxima_accion_id(self):
@@ -108,11 +71,20 @@ class CobranzaHistorialConversacion(models.Model):
 			elif self.proxima_accion_id.invervalo_unidad == 'dias':
 				self.proxima_accion_fecha = datetime.now() + timedelta(days=self.proxima_accion_id.intervalo_cantidad)
 
-
+	@api.one
+	def _compte_registro_editable(self):
+		registro_editable = True
+		if self.create_date:
+			now = datetime.now()
+			create_date = datetime.strptime(self.create_date, "%Y-%m-%d %H:%M:%S") + timedelta(minutes=1)
+			if now > create_date:
+				registro_editable = False
+		self.registro_editable = registro_editable
 
 class CobranzaHistorialConversacionEstado(models.Model):
 	_name = 'cobranza.historial.conversacion.estado'
 
+	_oreder = 'id desc'
 	name = fields.Char('Estado')
 	company_id = fields.Many2one('res.company', 'Empresa', required=False, default=lambda self: self.env['res.company']._company_default_get('cobranza.historial.conversacion.estado'))
 

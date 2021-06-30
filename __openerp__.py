@@ -19,7 +19,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'financiera_prestamos'],
+    'depends': ['base', 'financiera_prestamos', 'financiera_pagos_360', 'financiera_mobbex'],
 
     # always loaded
     'data': [
@@ -29,6 +29,7 @@
 				'views/cobranza_config.xml',
         'views/cobranza_historial_conversacion.xml',
         'views/cobranza_sesion.xml',
+				'views/cobranza_notificacion.xml',
         'views/extends_res_partner.xml',
 				'views/extends_res_company.xml',
         'views/views.xml',

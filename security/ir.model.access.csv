@@ -19,3 +19,9 @@ user_financiera_cobranza_sesion_item,cobranza.sesion.item,model_cobranza_sesion_
 
 manager_res_partner_mora,res.partner.mora,model_res_partner_mora,financiera_cobranza_mora.manager,1,1,1,0
 user_res_partner_mora,res.partner.mora,model_res_partner_mora,financiera_cobranza_mora.user,1,1,1,0
+
+manager_financiera_cobranza_notificacion,financiera.cobranza.notificacion,model_financiera_cobranza_notificacion,financiera_cobranza_mora.manager,1,1,1,0
+user_financiera_cobranza_notificacion,financiera.cobranza.notificacion,model_financiera_cobranza_notificacion,financiera_cobranza_mora.user,1,1,1,0
+
+manager_financiera_cobranza_notificacion_itme,financiera.cobranza.notificacion.item,model_financiera_cobranza_notificacion_item,financiera_cobranza_mora.manager,1,1,1,0
+user_financiera_cobranza_notificacion_item,financiera.cobranza.notificacion.item,model_financiera_cobranza_notificacion_item,financiera_cobranza_mora.user,1,0,0,0

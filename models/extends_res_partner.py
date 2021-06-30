@@ -24,6 +24,8 @@ class ExtendsResPartner(models.Model):
 	cobranza_proxima_accion_fecha = fields.Datetime('Fecha proxima accion')
 	# Estado de mora
 	mora_id = fields.Many2one('res.partner.mora', 'Segmento')
+	# Notificaiones
+	notificacion_ids = fields.One2many('financiera.cobranza.notificacion', 'partner_id', 'Notificaciones')
 
 	@api.one
 	def compute_cuotas_mora(self):

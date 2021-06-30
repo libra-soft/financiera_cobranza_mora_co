@@ -46,17 +46,33 @@
           </header>
           <sheet>
             <group>
-              <field name="fecha" readonly="1"/>
-              <field name="create_uid" readonly="1"/>
               <field name="company_id" groups="base.group_erp_manager"/>
+							<field name="fecha" readonly="1"/>
+							<field name="selection_type"/>
+              <field name="create_uid" readonly="1"/>
               <field name="process_time" readonly="1"/>
               <field name="process_minutes" readonly="1"/>
               <field name="process_time_finish" readonly="1"/>
             </group>
             <notebook>
-              <page string="Deudores" readonly="1">
+              <page string="Procesados" readonly="1" attrs="{'invisible': [('state', '=', 'borrador')]}">
                 <field name="item_ids">
                   <tree create="false" delete="false" edit="false">
+                    <field name="partner_id" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
+                    <field name="estado_id" invisible="1"/>
+                    <field name="proxima_accion_id" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
+                    <field name="proxima_accion_fecha"/>
+                    <field name="saldo_mora"/>
+                    <field name="process_time"/>
+                    <field name="process_minutes"/>
+                    <field name="process_time_finish"/>
+                  </tree>
+                </field>
+              </page>
+							<page string="Deudores" readonly="1">
+                <field name="partner_ids" attrs="{'readonly': ['|', ('selection_type', '!=', 'manual'), ('state', '!=', 'borrador')]}"
+									context="{'search_default_proxima_accion_vencida':1}"/>
+                  <!-- <tree>
                     <field name="partner_id"/>
                     <field name="estado_id" invisible="1"/>
                     <field name="proxima_accion_id"/>
@@ -66,7 +82,7 @@
                     <field name="process_minutes"/>
                     <field name="process_time_finish"/>
                   </tree>
-                </field>
+                </field> -->
               </page>
             </notebook>
           </sheet>

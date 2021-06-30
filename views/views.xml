@@ -3,27 +3,33 @@
 
     <!-- Top menu item -->
     
-    <menuitem name="Cobranza y Seguimiento" id="menu_cobranza" web_icon="financiera_cobranza_mora,static/description/image.png"/>
-    <!-- groups="financiera_cobranza_mora.manager" -->
+    <menuitem name="Cobranza y Seguimiento" id="menu_cobranza" web_icon="financiera_cobranza_mora,static/description/image.png"
+    groups="financiera_cobranza_mora.user"/>
 
     <!-- Submenu -->
-    <menuitem name="Sesion de cobranza" id="menu_sesion" sequence="10" parent="menu_cobranza"/>
-     <menuitem name="Deudores" id="menu_morosos" sequence="20" parent="menu_cobranza" groups="financiera_cobranza_mora.manager,financiera_cobranza_mora.user"/>
-     <menuitem name="Configuracion" id="menu_config" sequence="30" parent="menu_cobranza"/>
+    <menuitem name="Sesion de cobranza" id="menu_sesion" sequence="10" parent="menu_cobranza" groups="financiera_cobranza_mora.user"/>
+		<menuitem name="Deudores" id="menu_morosos" sequence="20" parent="menu_cobranza" groups="financiera_cobranza_mora.manager"/>
+		<menuitem name="Promesas de pago" id="menu_promesas_pago" sequence="25" parent="menu_cobranza" groups="financiera_cobranza_mora.user"/>
+		<menuitem name="Configuracion" id="menu_config" sequence="30" parent="menu_cobranza" groups="financiera_cobranza_mora.manager"/>
 
-     <!-- Action -->
-     <menuitem name="Sesiones" id="menu_sesion_action" parent="menu_sesion" 
-      action="cobranza_sesion_action"/>
+		<!-- Action -->
+		<menuitem name="Sesiones" id="menu_sesion_action" parent="menu_sesion" 
+		action="cobranza_sesion_action"/>
 
-     <menuitem name="Deudores" id="menu_morosos_action" parent="menu_morosos" 
-      action="cobranza_mora_action" groups="financiera_cobranza_mora.manager,financiera_cobranza_mora.user"/>
+		<menuitem name="Deudores" id="menu_morosos_action" parent="menu_morosos" action="cobranza_mora_action" 
+		groups="financiera_cobranza_mora.manager"/>
+
+		<menuitem name="Calendario" id="menu_promesas_pagos_action" parent="menu_promesas_pago" action="calendar_promesa_pago_action" 
+		groups="financiera_cobranza_mora.user"/>
 
 		<menuitem name="Configuracion" id="menu_config_action" parent="menu_config" 
       action="cobranza_config_action" sequence="1"/>
-     <menuitem name="Estados de conversacion" id="menu_estados_action" parent="menu_config" 
-      action="cobranza_historial_estado_action" sequence="10"/>
-     <menuitem name="Acciones de conversacion" id="menu_acciones_action" parent="menu_config" 
-      action="cobranza_historial_accion_action" sequence="20"/>
+		<menuitem name="Estados de conversacion" id="menu_estados_action" parent="menu_config" 
+		action="cobranza_historial_estado_action" sequence="10"/>
+		<menuitem name="Acciones de conversacion" id="menu_acciones_action" parent="menu_config" 
+		action="cobranza_historial_accion_action" sequence="20"/>
+		<menuitem name="Notificaciones de deuda" id="menu_notificaciones_action" parent="menu_config" 
+		action="cobranza_notificacion_action" sequence="30"/>
 
   </data>
 </openerp>
