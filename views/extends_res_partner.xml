@@ -144,17 +144,21 @@
           <sheet>
 						<script>
 							$(document).ready(function(){
-								$('.modal-dialog').css({'width': '86%', 'height': '97%'});
+								$('.modal-dialog').css({'width': '76%', 'height': '97%'});
 								$('.modal-content').css({'height': '100%'});
 								$('.modal-body').css({'height': '100%'});
 							});
 					</script>
-            <group>
-              <field name="company_id" groups="base.group_erp_manager"/>
-              <field name="name" readonly="1"/>
-              <field name="phone" readonly="1"/>
-              <field name="mobile" readonly="1"/>
-              <field name="email" readonly="1"/>
+            <group name="generales">
+							<group name="generales_columna_1">
+								<field name="company_id" groups="base.group_erp_manager"/>
+								<field name="name" readonly="1"/>
+								<field name="phone" readonly="1"/>
+								<field name="mobile" readonly="1"/>
+								<field name="email" readonly="1"/>
+							</group>
+							<group name="generales_columna_2">
+							</group>
             </group>
             <notebook>
               <page string="CONTACTOS">
