@@ -1,6 +1,36 @@
 <openerp>
   <data>
 
+    <!-- Vista Contactabilidad -->
+
+    <record model="ir.ui.view" id="contactabilidad_tree">
+      <field name="name">cobranza.historial.conversacion.tree</field>
+      <field name="model">cobranza.historial.conversacion</field>
+      <field name="arch" type="xml">
+        <tree string="Clientes" create="false" delete="false" edit="false">
+          <field name="create_date" string="Fecha"/>
+          <field name="partner_id"/>
+          <field name="numero"/>
+          <field name="respondio"/>
+          <field name="conversacion"/>
+          <field name="estado_id"/>
+          <field name="es_promesa_de_pago"/>
+          <field name="fecha_promesa_de_pago"/>
+          <field name="proxima_accion_id"/>
+          <field name="proxima_accion_fecha"/>
+          <field name="saldo_mora"/>
+          <field name="company_id" groups="base.group_erp_manager"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="contactabilidad_action">
+      <field name="name">Contactabilidad</field>
+      <field name="res_model">cobranza.historial.conversacion</field>
+      <field name="view_mode">tree</field>
+      <field name="view_id" ref="contactabilidad_tree"/>
+    </record>
+
 		<!-- Calendario promesa de pagos -->
 
 	<record id="view_promesas_pago_calendar" model="ir.ui.view">

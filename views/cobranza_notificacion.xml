@@ -1,7 +1,27 @@
 <openerp>
   <data>
 
-    <!-- Vista Form Entidad -->
+    <!-- Vista Notificaciones -->
+
+    <record model="ir.ui.view" id="cobranza_notificaciones_tree">
+      <field name="name">cobranza.mora.tree</field>
+      <field name="model">financiera.cobranza.notificacion</field>
+      <field name="arch" type="xml">
+        <tree string="Clientes" create="false" delete="false">
+          <field name="fecha"/>
+          <field name="partner_id"/>
+          <field name="item_id"/>
+          <field name="company_id" groups="base.group_erp_manager"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="cobranza_notificaciones_action">
+      <field name="name">Notificaciones de deuda</field>
+      <field name="res_model">financiera.cobranza.notificacion</field>
+      <field name="view_mode">tree</field>
+      <field name="view_id" ref="cobranza_notificaciones_tree"/>
+    </record>
 
     <record model="ir.ui.view" id="cobranza_notificacion_tree">
       <field name="name">financiera.cobranza.notificacion.item.tree</field>

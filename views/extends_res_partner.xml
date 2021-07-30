@@ -10,7 +10,8 @@
         <tree string="Clientes" create="false" delete="false" decoration-danger="cobranza_proxima_accion_fecha &lt;= current_date" default_order='cobranza_proxima_accion_fecha asc'>
           <field name="id" invisible="1"/>
           <field name="name"/>
-					<field name="mora_id" widget="many2many_tags"/>
+          <field name="main_id_number"/>
+					<field name="mora_id"/>
           <field name="cobranza_estado_id"/>
           <field name="cobranza_proxima_accion_id"/>
           <field name="cobranza_proxima_accion_fecha"/>
@@ -44,7 +45,7 @@
 
     <!-- Vista Form Partner -->
 
-    <record id="cobranza_mora_cliente_form"  model="ir.ui.view">
+    <!-- <record id="cobranza_mora_cliente_form"  model="ir.ui.view">
       <field name="name">cobranza.mora.form</field>
       <field name="model">res.partner</field>
       <field name="arch" type="xml">
@@ -117,18 +118,16 @@
           </sheet>
         </form>
       </field>
-    </record>
+    </record> -->
 
     <record model="ir.actions.act_window" id="cobranza_mora_action">
       <field name="name">Deudores</field>
       <field name="res_model">res.partner</field>
       <field name="view_mode">tree,form</field>
-      <!-- <field name="context">{'search_default_saldo_mora':1}</field> -->
       <field name="domain">[('saldo_mora','>', 0)]</field>
-      <!--<field name="view_id" ref="financiera_cliente_tree"/>-->
       <field name="view_ids" eval="[(5, 0, 0), 
         (0, 0, {'view_mode': 'tree', 'view_id': ref('cobranza_mora_cliente_tree')}),
-        (0, 0, {'view_mode': 'form', 'view_id': ref('cobranza_mora_cliente_form')})]
+        (0, 0, {'view_mode': 'form', 'view_id': ref('cobranza_mora_cliente_sesion_form')})]
         "/>
     </record>
 
@@ -140,6 +139,7 @@
       <field name="arch" type="xml">
         <form>
           <header>
+						<button type="object" string="Enviar sms" name= "wizard_enviar_sms" class="oe_highlight"/>
           </header>
           <sheet>
 						<script>
@@ -156,6 +156,7 @@
 								<field name="phone" readonly="1"/>
 								<field name="mobile" readonly="1"/>
 								<field name="email" readonly="1"/>
+                <field name="cobranza_disponible" invisible="0"/>
 							</group>
 							<group name="generales_columna_2">
 							</group>
@@ -165,7 +166,7 @@
                 <field name="contacto_ids" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" readonly="0">
                   <tree create="true" delete="false" editable="1" limit="5">
                     <field name="create_date" invisible="1"/>
-										<field name="name" required="1"/><!-- attrs="{'readonly': [('create_date', '&lt;','current_date')]}" -->
+										<field name="name" required="1"/>
                     <field name="relacion"/>
                     <field name="movil"/>
 										<field name="telefono"/>

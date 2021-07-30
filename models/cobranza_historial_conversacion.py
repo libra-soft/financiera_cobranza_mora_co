@@ -11,7 +11,7 @@ class CobranzaHistorialConversacion(models.Model):
 	_name = 'cobranza.historial.conversacion'
 
 	_order = 'id desc'
-	partner_id = fields.Many2one('res.partner')
+	partner_id = fields.Many2one('res.partner', 'Deudor')
 	numero = fields.Char('Numero')
 	respondio = fields.Selection([
 		('titular', 'Titular'), ('familiar', 'Familiar'), 
