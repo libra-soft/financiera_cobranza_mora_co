@@ -39,25 +39,44 @@
       <field name="arch" type="xml">
         <form string="Sesion de cobranza">
           <header>
-            <button name="siguiente_item" class="oe_highlight" states="borrador,proceso" string="Siguiente Deudor" type="object" />
-            <button name="finalizar_sesion" class="oe_highlight" states="borrador,proceso" string="Finalizar Cobranza" type="object" />
-            <button name="editar_item" string="Editar Deudor Actual" states="proceso" type="object" />
+            <button name="siguiente_item" string="Siguiente Deudor" type="object" 
+							attrs="{'invisible': ['|', ('add_contactability','=', True), ('state', 'not in', ['proceso'])]}"
+							confirm="No agrego ninguna contactabilidad en el deudor actual. Seguro que desea pasar al siguiente deudor?"/>
+						<button name="siguiente_item" class="oe_highlight" string="Siguiente Deudor" type="object"
+							attrs="{'invisible': [('state', '!=', 'borrador'), '|', ('add_contactability','=', False), ('state', '=', 'finalizado')]}"/>
+            <button name="finalizar_sesion" string="Finalizar Cobranza" type="object"
+							attrs="{'invisible': ['|', ('add_contactability','=', True), ('state', 'not in', ['borrador','proceso'])]}"
+							confirm="No agrego ninguna contactabilidad en el deudor actual. Seguro que desea pasar al siguiente deudor?"/>
+						<button name="finalizar_sesion" class="oe_highlight" string="Finalizar Cobranza" type="object"
+							attrs="{'invisible': ['|', ('add_contactability','=', False), ('state', 'not in', ['borrador','proceso'])]}"/>
+            <button name="editar_item" class="oe_highlight" string="Editar Deudor Actual" type="object" 
+							attrs="{'invisible': ['|', ('add_contactability','=', True), ('state', '!=', 'proceso')]}"/>
+						<button name="editar_item" string="Editar Deudor Actual" type="object" 
+							attrs="{'invisible': ['|', ('add_contactability','=', False), ('state', '!=', 'proceso')]}"/>
             <field name="state" widget="statusbar"/>
           </header>
           <sheet>
-            <group>
-              <field name="company_id" groups="base.group_erp_manager"/>
-							<field name="fecha" readonly="1"/>
-							<field name="selection_type"/>
-              <field name="create_uid" readonly="1"/>
-              <field name="process_time" readonly="1"/>
-              <field name="process_minutes" readonly="1"/>
-              <field name="process_time_finish" readonly="1"/>
-            </group>
+						<group>
+							<group>
+								<field name="company_id" groups="base.group_erp_manager"/>
+								<field name="fecha" readonly="1"/>
+								<field name="selection_type"/>
+								<field name="create_uid" readonly="1"/>
+								<field name="process_time" readonly="1"/>
+								<field name="process_minutes" readonly="1"/>
+								<field name="process_time_finish" readonly="1"/>
+							</group>
+							<group>
+								<field name="count_item_historial"/>
+								<field name="count_item_historial_now"/>
+								<field name="add_contactability"/>
+							</group>
+						</group>
             <notebook>
               <page string="Procesados" readonly="1" attrs="{'invisible': [('state', '=', 'borrador')]}">
                 <field name="item_ids">
                   <tree create="false" delete="false" edit="false">
+										<button name="editar_item" string="Editar Deudor" type="object" />
                     <field name="partner_id" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
                     <field name="estado_id" invisible="1"/>
                     <field name="proxima_accion_id" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
@@ -71,18 +90,7 @@
               </page>
 							<page string="Deudores" readonly="1">
                 <field name="partner_ids" attrs="{'readonly': ['|', ('selection_type', '!=', 'manual'), ('state', '!=', 'borrador')]}"
-									context="{'search_default_proxima_accion_vencida':1}"/>
-                  <!-- <tree>
-                    <field name="partner_id"/>
-                    <field name="estado_id" invisible="1"/>
-                    <field name="proxima_accion_id"/>
-                    <field name="proxima_accion_fecha"/>
-                    <field name="saldo_mora"/>
-                    <field name="process_time"/>
-                    <field name="process_minutes"/>
-                    <field name="process_time_finish"/>
-                  </tree>
-                </field> -->
+									context="{'search_default_proxima_accion_vencida':1, 'search_default_gestion_interna':1}"/>
               </page>
             </notebook>
           </sheet>

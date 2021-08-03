@@ -1,0 +1,46 @@
+<openerp>
+  <data>
+
+    <!-- Vista Cobranza Externa -->
+
+    <record model="ir.ui.view" id="cobranza_externa_tree">
+      <field name="name">financiera.cobranza.externa.tree</field>
+      <field name="model">financiera.cobranza.externa</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+					<field name="partner_ids"/>
+          <field name="company_id" groups="base.group_erp_manager"/>
+        </tree>
+      </field>
+    </record>
+
+		<record model="ir.ui.view" id="cobranza_externa_form">
+      <field name="name">financiera.cobranza.externa.form</field>
+      <field name="model">financiera.cobranza.externa</field>
+      <field name="arch" type="xml">
+        <form>
+					<header></header>
+          <sheet>
+            <group>
+              <field name="name"/>
+            </group>
+						<notebook>
+							<page name="deudores" string="Deudores">
+								<field name="partner_ids"/>
+							</page>
+						</notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="cobranza_externa_action">
+      <field name="name">Estudios de cobranza externos</field>
+      <field name="res_model">financiera.cobranza.externa</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_id" ref="cobranza_externa_tree"/>
+    </record>
+
+  </data>
+</openerp>

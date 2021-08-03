@@ -27,6 +27,7 @@
         'security/ir.model.access.csv',
         'security/security.xml',
 				'views/cobranza_config.xml',
+				'views/cobranza_externa.xml',
         'views/cobranza_historial_conversacion.xml',
         'views/cobranza_sesion.xml',
 				'views/cobranza_notificacion.xml',

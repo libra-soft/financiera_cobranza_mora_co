@@ -18,6 +18,7 @@
           <field name="saldo_mora" sum="Deuda en Mora"/>
 					<field name="saldo_total" sum="Deuda Total"/>
           <field name="cobranza_disponible" invisible="0"/>
+					<field name="cobranza_externa_id"/>
           <field name="company_id" groups="base.group_erp_manager"/>
         </tree>
       </field>
@@ -33,6 +34,9 @@
           <filter string="Deudor" invisible="1" name="saldo_mora" domain="[('saldo_mora','>', 0)]"/>
 					<filter string="Proxima accion vencida" name="proxima_accion_vencida"  domain="[('saldo_mora','>', 0), '|', ('cobranza_proxima_accion_fecha','&lt;=', (context_today()).strftime('%%Y-%%m-%%d')),('cobranza_proxima_accion_fecha','=', False)]"/>
           <separator/>
+					<filter string="Gestion interna" name="gestion_interna" domain="[('cobranza_externa_id', '=', False)]"/>
+					<filter string="Gestion externa" name="gestion_externa" domain="[('cobranza_externa_id', '!=', False)]"/>
+					<separator/>
           <field name="name" string="Nombre"/>
           <field name="main_id_number" string="Identificacion principal"/>
 					<separator/>
@@ -43,86 +47,10 @@
       </field>
     </record>
 
-    <!-- Vista Form Partner -->
-
-    <!-- <record id="cobranza_mora_cliente_form"  model="ir.ui.view">
-      <field name="name">cobranza.mora.form</field>
-      <field name="model">res.partner</field>
-      <field name="arch" type="xml">
-        <form create="false">
-          <header>
-          </header>
-          <sheet>
-            <group>
-              <field name="company_id" groups="base.group_erp_manager"/>
-              <field name="name" readonly="1"/>
-              <field name="phone" readonly="1"/>
-              <field name="mobile" readonly="1"/>
-              <field name="email" readonly="1"/>
-              <field name="cobranza_disponible" invisible="0"/>
-            </group>
-            <notebook>
-              <page string="CONTACTOS">
-                <field name="contacto_ids" readonly="1">
-                  <tree>
-                    <field name="name" readonly="1"/>
-                    <field name="relacion" readonly="1"/>
-                    <field name="telefono" readonly="1"/>
-                    <field name="movil" readonly="1"/>
-                    <field name="email" readonly="1"/>
-                  </tree>
-                </field>
-              </page>
-            </notebook>
-            <notebook>
-              <page string="DEUDA">
-                <field name="cuota_mora_ids" readonly="1">
-                  <tree decoration-success="state == 'cobrada'" decoration-danger="state_mora in ['moraMedia', 'moraTardia', 'incobrable']" decoration-warning="state_mora in ['preventiva', 'moraTemprana']" decoration-info="state == 'borrador'" decoration-muted="state == 'cobrada'" string="Cuotas" limit="5">
-                    <field name="display_numero_cuota"/>
-                    <field name="prestamo_id"/>
-                    <field name="fecha_vencimiento"/>
-                    <field name="total" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
-                    <field name="cobrado" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
-                    <field name="saldo" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
-                    <field name="sucursal_id"/>
-                    <field name="state"/>
-                    <field name="state_mora"/>
-                    <field name="fecha_vencimiento_pre_semana" invisible="1"/>
-                    <field name="fecha_vencimiento_pos_semana" invisible="1"/>
-										<button name="button_actualizar_estado" type="object" string="Actualizar estado cupon" class="oe_highlight"/>
-										<button name="pagos_360_renovas_solicitud" type="object" string="Renovar cupon" class="oe_highlight"/>
-										<button name="action_cupon_sent" type="object" string="Enviar cupon por email" class="oe_highlight"/>
-										<button name="mobbex_subscriber_execution" type="object" string="Ejecutar suscripcion" class="oe_highlight" confirm="Esta seguro?"/>
-                  </tree>
-                </field>
-              </page>
-            </notebook>
-            <group>
-              <field name="saldo_mora" readonly="1"/>
-            </group>
-            <notebook>
-              <page string="HISTORIAL DE CONTACTABILIDAD">
-                <field name="cobranza_historial_conversacion_ids" context="{'active_id':id}">
-                  <tree limit="5" delete="false" editable="1">
-                    <field name="create_date" readonly="1"/>
-                    <field name="create_uid" readonly="1"/>
-                    <field name="saldo_mora" readonly="1"/>
-                    <field name="conversacion"/>
-                    <field name="estado_id" invisible="0"/>
-                    <field name="proxima_accion_id"/>
-                    <field name="proxima_accion_fecha"/>
-                  </tree>
-                </field>
-              </page>
-            </notebook>
-          </sheet>
-        </form>
-      </field>
-    </record> -->
-
     <record model="ir.actions.act_window" id="cobranza_mora_action">
       <field name="name">Deudores</field>
       <field name="res_model">res.partner</field>
+			<field name="context">{'search_default_gestion_interna':1}</field>
       <field name="view_mode">tree,form</field>
       <field name="domain">[('saldo_mora','>', 0)]</field>
       <field name="view_ids" eval="[(5, 0, 0), 
@@ -160,19 +88,30 @@
                 <field name="cobranza_disponible" invisible="0"/>
 							</group>
 							<group name="generales_columna_2">
+								<field name="cobranza_externa_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
 							</group>
             </group>
             <notebook>
               <page string="CONTACTOS">
                 <field name="contacto_ids" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" readonly="0">
-                  <tree create="true" delete="false" editable="1" limit="5">
+                  <tree create="true" delete="false" limit="5">
                     <field name="create_date" invisible="1"/>
-										<field name="name" required="0"/>
+										<field name="name"/>
                     <field name="relacion"/>
                     <field name="movil"/>
 										<field name="telefono"/>
                     <field name="email"/>
                   </tree>
+									<form>
+										<group>
+											<field name="create_date" invisible="1"/>
+											<field name="name" required="1"/>
+											<field name="relacion"/>
+											<field name="movil"/>
+											<field name="telefono"/>
+											<field name="email"/>
+										</group>
+									</form>
                 </field>
               </page>
             </notebook>
@@ -241,7 +180,6 @@
 							<page name="notificaiones" string="Notificaciones de deuda">
 								<field name="notificacion_ids">
 									<tree limit="5" editable="top">
-										<!-- <field name="id"/> -->
 										<field name="fecha" required="1"/>
 										<field name="item_id" required="1" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True,'no_open':True}"/>
 									</tree>
@@ -251,23 +189,32 @@
             <notebook>
               <page string="HISTORIAL DE CONTACTABILIDAD">
                 <field name="cobranza_historial_conversacion_ids" context="{'active_id':id}">
-                  <tree limit="5" delete="true" editable="top">
+                  <tree limit="5" delete="false">
                     <field name="create_date" string="Fecha" readonly="1"/>
                     <field name="create_uid" string="Creado por" readonly="1"/>
                     <field name="saldo_mora" readonly="1"/>
-                    <field name="numero" attrs="{'readonly': [('registro_editable','=', False)]}" required="0"/>
-										<field name="respondio" attrs="{'readonly': [('registro_editable','=', False)]}" required="0"/>
-										<field name="conversacion" attrs="{'readonly': [('registro_editable','=', False)]}"/>
-                    <field name="estado_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" 
-											attrs="{'readonly': [('registro_editable','=', False)]}" required="0"/>
-										<field name="es_promesa_de_pago" attrs="{'readonly': [('registro_editable','=', False)]}"/>
-										<field name="fecha_promesa_de_pago" 
-											attrs="{'required': [('es_promesa_de_pago','=',True)],'invisible': [('es_promesa_de_pago','=',False)],'readonly': [('registro_editable','=', False)]}"/>
-                    <field name="proxima_accion_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" 
-											attrs="{'readonly': [('registro_editable','=', False)]}" required="0"/>
-                    <field name="proxima_accion_fecha" attrs="{'readonly': [('registro_editable','=', False)]}" required="0"/>
-										<field name="registro_editable"/>
+                    <field name="numero" string="Numero discado" readonly="1"/>
+										<field name="respondio" readonly="1"/>
+										<field name="conversacion"/>
+                    <field name="estado_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" readonly="1"/>
+										<field name="es_promesa_de_pago" readonly="1"/>
+										<field name="fecha_promesa_de_pago" attrs="{'required': [('es_promesa_de_pago','=',True)],'invisible': [('es_promesa_de_pago','=',False)]}"/>
+                    <field name="proxima_accion_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" readonly="1"/>
+                    <field name="proxima_accion_fecha" readonly="1"/>
                   </tree>
+									<form>
+										<group>
+											<field name="numero" string="Numero discado" required="1"/>
+											<field name="respondio" required="0"/>
+											<field name="conversacion"/>
+											<field name="estado_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
+											<field name="es_promesa_de_pago"/>
+											<field name="fecha_promesa_de_pago" 
+												attrs="{'required': [('es_promesa_de_pago','=',True)],'invisible': [('es_promesa_de_pago','=',False)]}"/>
+											<field name="proxima_accion_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" required="1"/>
+											<field name="proxima_accion_fecha" required="1"/>
+										</group>
+									</form>
                 </field>
               </page>
             </notebook>

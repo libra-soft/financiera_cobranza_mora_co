@@ -26,6 +26,8 @@ class ExtendsResPartner(models.Model):
 	mora_id = fields.Many2one('res.partner.mora', 'Segmento')
 	# Notificaiones
 	notificacion_ids = fields.One2many('financiera.cobranza.notificacion', 'partner_id', 'Notificaciones')
+	# Estudio de cobranza externa
+	cobranza_externa_id = fields.Many2one('financiera.cobranza.externa', 'Cobranza externa')
 
 	@api.one
 	def compute_cuotas_mora(self):
@@ -57,6 +59,7 @@ class ExtendsResPartner(models.Model):
 			('saldo_mora', '>', 0),
 			('cobranza_disponible', '=', True),
 			('cobranza_proxima_accion_fecha', '=', False),
+			('cobranza_externa_id', '=', False),
 			('company_id', '=', current_user.company_id.id),
 		])
 		if len(deudor_primera_accion_ids) > 0:
@@ -67,6 +70,7 @@ class ExtendsResPartner(models.Model):
 			deudor_ids = deudor_obj.search(cr, uid, [
 				('saldo_mora', '>', 0),
 				('cobranza_disponible', '=', True),
+				('cobranza_externa_id', '=', False),
 				('company_id', '=', current_user.company_id.id),
 				('cobranza_proxima_accion_fecha', '<=', str(date_now))
 			], order='cobranza_proxima_accion_fecha asc', limit=1)

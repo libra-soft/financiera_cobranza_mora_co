@@ -19,6 +19,8 @@ class CobranzaSesion(models.Model):
 	item_ids = fields.One2many('cobranza.sesion.item', 'cobranza_sesion_id', "Deudores procesados")
 	current_item_id = fields.Many2one('cobranza.sesion.item', 'Item actual')
 	count_item_historial = fields.Integer('Cantidad de registros de historial')
+	count_item_historial_now = fields.Integer("Cantidad de registro de historial actual", compute='_compute_count_item_historial_now')
+	add_contactability = fields.Boolean("Se agrego contactabilidad nueva?", compute='_compute_add_contactability')
 	selection_type = fields.Selection([('auto', 'Automatico'), ('manual', 'Manual')], string='Seleccion de deudores', default='auto')
 	# Control time
 	process_time = fields.Datetime('Hora de proceso')
@@ -68,18 +70,21 @@ class CobranzaSesion(models.Model):
 		else:
 			self.process_minutes = 0
 
-	def check_finish_current_item(self):
-		ret = False
-		if len(self.current_item_id.partner_id.cobranza_historial_conversacion_ids) > self.count_item_historial:
-			ret = True
-		return ret
+	@api.one
+	def _compute_count_item_historial_now(self):
+		if self.current_item_id and self.current_item_id.partner_id:
+			self.count_item_historial_now = len(self.current_item_id.partner_id.cobranza_historial_conversacion_ids)
 
+	@api.one
+	def _compute_add_contactability(self):
+		self.add_contactability = self.count_item_historial_now > self.count_item_historial
 
 	def set_finish_current_item(self):
 		self.current_item_id.process_time_finish = datetime.now()
-		self.current_item_id.estado_id = self.current_item_id.partner_id.cobranza_historial_conversacion_ids[0].estado_id.id
-		self.current_item_id.proxima_accion_id = self.current_item_id.partner_id.cobranza_historial_conversacion_ids[0].proxima_accion_id.id
-		self.current_item_id.proxima_accion_fecha = self.current_item_id.partner_id.cobranza_historial_conversacion_ids[0].proxima_accion_fecha
+		if self.add_contactability:
+			self.current_item_id.estado_id = self.current_item_id.partner_id.cobranza_historial_conversacion_ids[0].estado_id.id
+			self.current_item_id.proxima_accion_id = self.current_item_id.partner_id.cobranza_historial_conversacion_ids[0].proxima_accion_id.id
+			self.current_item_id.proxima_accion_fecha = self.current_item_id.partner_id.cobranza_historial_conversacion_ids[0].proxima_accion_fecha
 		 
 	@api.multi
 	def siguiente_item(self):
@@ -97,30 +102,25 @@ class CobranzaSesion(models.Model):
 				if len(self.item_ids) < len(self.partner_ids):
 					deudor_id = self.partner_ids[len(self.item_ids)]
 		elif self.state == 'proceso':
-			if self.check_finish_current_item():
-				self.set_finish_current_item()
-				if self.selection_type == 'auto':
-					deudor_id = self.pool.get('res.partner').cobranza_siguiente_deudor(cr, uid)
-				elif self.selection_type == 'manual':
-					if len(self.item_ids) < len(self.partner_ids):
-						deudor_id = self.partner_ids[len(self.item_ids)]
-			else:
-				deudor_id = self.current_item_id.partner_id
-		
+			self.set_finish_current_item()
+			if self.selection_type == 'auto':
+				deudor_id = self.pool.get('res.partner').cobranza_siguiente_deudor(cr, uid)
+			elif self.selection_type == 'manual':
+				if len(self.item_ids) < len(self.partner_ids):
+					deudor_id = self.partner_ids[len(self.item_ids)]
 		if deudor_id != None:
 			# Creamos item de cobranza
-			if len(self.current_item_id) == 0 or self.check_finish_current_item():
-				csi_values = {
-					'cobranza_sesion_id': self.id,
-					'partner_id': deudor_id.id,
-					'saldo_mora': deudor_id.saldo_mora,
-					'process_time': datetime.now(),
-					'company_id': current_user.company_id.id,
-				}
-				new_item_id = self.env['cobranza.sesion.item'].create(csi_values)
-				self.item_ids = [new_item_id.id]
-				self.current_item_id = new_item_id.id
-				self.count_item_historial = len(deudor_id.cobranza_historial_conversacion_ids)
+			csi_values = {
+				'cobranza_sesion_id': self.id,
+				'partner_id': deudor_id.id,
+				'saldo_mora': deudor_id.saldo_mora,
+				'process_time': datetime.now(),
+				'company_id': current_user.company_id.id,
+			}
+			new_item_id = self.env['cobranza.sesion.item'].create(csi_values)
+			self.item_ids = [new_item_id.id]
+			self.current_item_id = new_item_id.id
+			self.count_item_historial = len(deudor_id.cobranza_historial_conversacion_ids)
 
 			action = self.env.ref('financiera_cobranza_mora.cobranza_mora_sesion_action')
 			result = action.read()[0]
@@ -130,7 +130,6 @@ class CobranzaSesion(models.Model):
 			result['target'] = 'new'
 		else:
 			raise ValidationError("No quedan deudores disponibles. Revise la lista de deudores para ver la fecha de la proxima accion.")
-			
 		return result
 
 	@api.multi
@@ -143,17 +142,12 @@ class CobranzaSesion(models.Model):
 		result['target'] = 'new'
 		return result
 
-
 	@api.one
 	def finalizar_sesion(self):
-		if len(self.item_ids) == 0 or self.check_finish_current_item():
-			if len(self.item_ids) > 0:
-				self.set_finish_current_item()
-			self.process_time_finish = datetime.now()
-			self.state = 'finalizado'
-		else:
-			raise ValidationError("Al Deudor actual no le creo Historial de Conversacion.")
-
+		if len(self.item_ids) > 0:
+			self.set_finish_current_item()
+		self.process_time_finish = datetime.now()
+		self.state = 'finalizado'
 class CobranzaSesionItem(models.Model):
 	_name = 'cobranza.sesion.item'
 
@@ -186,3 +180,13 @@ class CobranzaSesionItem(models.Model):
 			self.process_minutes = minutos
 		else:
 			self.process_minutes = 0
+
+	@api.multi
+	def editar_item(self):
+		action = self.env.ref('financiera_cobranza_mora.cobranza_mora_sesion_action')
+		result = action.read()[0]
+		form_view = self.env.ref('financiera_cobranza_mora.cobranza_mora_cliente_sesion_form')
+		result['views'] = [(form_view.id, 'form')]
+		result['res_id'] = self.partner_id.id
+		result['target'] = 'new'
+		return result
