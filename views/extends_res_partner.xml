@@ -140,6 +140,7 @@
         <form>
           <header>
 						<button type="object" string="Enviar sms" name= "wizard_enviar_sms" class="oe_highlight"/>
+						<button type="object" string="Enviar email" name= "wizard_enviar_email" class="oe_highlight"/>
           </header>
           <sheet>
 						<script>
@@ -166,7 +167,7 @@
                 <field name="contacto_ids" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" readonly="0">
                   <tree create="true" delete="false" editable="1" limit="5">
                     <field name="create_date" invisible="1"/>
-										<field name="name" required="1"/>
+										<field name="name" required="0"/>
                     <field name="relacion"/>
                     <field name="movil"/>
 										<field name="telefono"/>
@@ -254,17 +255,17 @@
                     <field name="create_date" string="Fecha" readonly="1"/>
                     <field name="create_uid" string="Creado por" readonly="1"/>
                     <field name="saldo_mora" readonly="1"/>
-                    <field name="numero" attrs="{'readonly': [('registro_editable','=', False)]}" required="1"/>
-										<field name="respondio" attrs="{'readonly': [('registro_editable','=', False)]}" required="1"/>
+                    <field name="numero" attrs="{'readonly': [('registro_editable','=', False)]}" required="0"/>
+										<field name="respondio" attrs="{'readonly': [('registro_editable','=', False)]}" required="0"/>
 										<field name="conversacion" attrs="{'readonly': [('registro_editable','=', False)]}"/>
                     <field name="estado_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" 
-											attrs="{'readonly': [('registro_editable','=', False)]}" required="1"/>
+											attrs="{'readonly': [('registro_editable','=', False)]}" required="0"/>
 										<field name="es_promesa_de_pago" attrs="{'readonly': [('registro_editable','=', False)]}"/>
 										<field name="fecha_promesa_de_pago" 
 											attrs="{'required': [('es_promesa_de_pago','=',True)],'invisible': [('es_promesa_de_pago','=',False)],'readonly': [('registro_editable','=', False)]}"/>
                     <field name="proxima_accion_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" 
-											attrs="{'readonly': [('registro_editable','=', False)]}" required="1"/>
-                    <field name="proxima_accion_fecha" attrs="{'readonly': [('registro_editable','=', False)]}" required="1"/>
+											attrs="{'readonly': [('registro_editable','=', False)]}" required="0"/>
+                    <field name="proxima_accion_fecha" attrs="{'readonly': [('registro_editable','=', False)]}" required="0"/>
 										<field name="registro_editable"/>
                   </tree>
                 </field>
