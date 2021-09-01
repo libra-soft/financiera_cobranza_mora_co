@@ -15,7 +15,7 @@ class FinancieraCobranzaConfig(models.Model):
 	# promesa_pago_id = fields.Many2one('cobranza.historial.conversacion.estado', 'Estado de promesa de pago')
 	mora_ids = fields.One2many('res.partner.mora', "config_id", "Segmentos")
 	company_id = fields.Many2one('res.company', 'Empresa', required=False, default=lambda self: self.env['res.company']._company_default_get('financiera.cobranza.config'))
-	
+	 
 	@api.model
 	def _cron_actualizar_deudores(self):
 		company_obj = self.pool.get('res.company')
@@ -31,40 +31,41 @@ class FinancieraCobranzaConfig(models.Model):
 		partner_obj = self.pool.get('res.partner')
 		partner_ids = partner_obj.search(self.env.cr, self.env.uid, [
 			('company_id', '=', self.company_id.id),
-			# ('cuota_ids.state','=','activa'),
+			# ('prestamo_ids.state','in', ['acreditado']),
+			# ('cuota_ids.state','in',['activa']),
+			# ('cuota_ids.state_mora','in',['preventiva','moraTemprana','moraMedia','moraTardia','incobrable']),
 		])
 		# inicializacion
 		for mora_id in self.mora_ids:
 			mora_id.monto = 0
 			mora_id.partner_cantidad = 0
+			mora_id.partner_ids = [(6, 0, [])]
 		fecha_actual = datetime.now()
 		deuda_total = 0.0
 		for _id in partner_ids:
 			partner_id = partner_obj.browse(self.env.cr, self.env.uid, _id)
-			partner_id.saldo_mora = 0
 			partner_id.saldo_total = partner_id.saldo
-			partner_id.cuota_mora_ids = []
 			partner_id.mora_id = False
-			primer_cuota_analizada = False
-			for cuota_id in partner_id.cuota_ids:
-				if cuota_id.state == 'activa':
-					fecha_vencimiento = datetime.strptime(cuota_id.fecha_vencimiento, "%Y-%m-%d")
-					diferencia = fecha_actual - fecha_vencimiento
-					dias = diferencia.days
-					if not primer_cuota_analizada:
-						primer_cuota_analizada = True
-						for mora_id in self.mora_ids:
-							if mora_id.activo and dias >= mora_id.dia_inicial_impago and dias <= mora_id.dia_final_impago:
-								deuda_total += partner_id.saldo_total
-								mora_id.monto += partner_id.saldo_total
-								mora_id.partner_cantidad += 1
-								partner_id.mora_id = mora_id.id
-								break
-					if dias > 0:
-						partner_id.saldo_mora += cuota_id.saldo
-						partner_id.cuota_mora_ids = [cuota_id.id]
-					else:
+			# Buscamos la cuota activa mas antigua del cliente
+			cuota_obj = self.pool.get('financiera.prestamo.cuota')
+			cuota_ids = cuota_obj.search(self.env.cr, self.env.uid, [
+				('partner_id', '=', partner_id.id),
+				('state','=','activa')
+			], order='fecha_vencimiento asc')
+			cuota_id = None
+			if len(cuota_ids) > 0:
+				cuota_id = cuota_obj.browse(self.env.cr, self.env.uid, cuota_ids[0])
+				fecha_vencimiento = datetime.strptime(cuota_id.fecha_vencimiento, "%Y-%m-%d")
+				diferencia = fecha_actual - fecha_vencimiento
+				dias = diferencia.days
+				for mora_id in self.mora_ids:
+					if mora_id.activo and dias >= mora_id.dia_inicial_impago and dias <= mora_id.dia_final_impago:
+						deuda_total += partner_id.saldo_total
+						mora_id.monto += partner_id.saldo_total
+						mora_id.partner_cantidad += 1
+						partner_id.mora_id = mora_id.id
 						break
+				partner_id.compute_cuotas_mora()
 		for mora_id in self.mora_ids:
 			if deuda_total > 0:
 				mora_id.porcentaje = (mora_id.monto / deuda_total) * 100
