@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
-from datetime import datetime, timedelta, date
-from dateutil import relativedelta
-from openerp.exceptions import UserError, ValidationError
-import time
-import requests
+from datetime import datetime
 
 class FinancieraCobranzaConfig(models.Model):
 	_name = 'financiera.cobranza.config'
@@ -15,7 +11,7 @@ class FinancieraCobranzaConfig(models.Model):
 	# promesa_pago_id = fields.Many2one('cobranza.historial.conversacion.estado', 'Estado de promesa de pago')
 	mora_ids = fields.One2many('res.partner.mora', "config_id", "Segmentos")
 	company_id = fields.Many2one('res.company', 'Empresa', required=False, default=lambda self: self.env['res.company']._company_default_get('financiera.cobranza.config'))
-	 
+	
 	@api.model
 	def _cron_actualizar_deudores(self):
 		company_obj = self.pool.get('res.company')
@@ -65,7 +61,10 @@ class FinancieraCobranzaConfig(models.Model):
 						mora_id.partner_cantidad += 1
 						partner_id.mora_id = mora_id.id
 						break
-			partner_id.compute_cuotas_mora()
+				partner_id.compute_cuotas_mora()
+			else:
+				partner_id.cuota_mora_ids = [(6, 0, [])]
+				partner_id.saldo_mora = 0
 		for mora_id in self.mora_ids:
 			if deuda_total > 0:
 				mora_id.porcentaje = (mora_id.monto / deuda_total) * 100
