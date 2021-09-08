@@ -65,7 +65,7 @@ class FinancieraCobranzaConfig(models.Model):
 						mora_id.partner_cantidad += 1
 						partner_id.mora_id = mora_id.id
 						break
-				partner_id.compute_cuotas_mora()
+			partner_id.compute_cuotas_mora()
 		for mora_id in self.mora_ids:
 			if deuda_total > 0:
 				mora_id.porcentaje = (mora_id.monto / deuda_total) * 100
