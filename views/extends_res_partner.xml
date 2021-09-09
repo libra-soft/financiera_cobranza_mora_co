@@ -58,7 +58,7 @@
       <field name="res_model">res.partner</field>
 			<field name="context">{'search_default_gestion_interna':1,'search_default_group_mora_id':1}</field>
       <field name="view_mode">tree,form</field>
-      <!-- <field name="domain">[('saldo_mora','>', 0)]</field> -->
+      <field name="domain">[('mora_id','!=', False)]</field>
       <field name="view_ids" eval="[(5, 0, 0), 
         (0, 0, {'view_mode': 'tree', 'view_id': ref('cobranza_mora_cliente_tree')}),
         (0, 0, {'view_mode': 'form', 'view_id': ref('cobranza_mora_cliente_sesion_form')})]
