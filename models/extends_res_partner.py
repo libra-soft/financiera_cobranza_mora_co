@@ -14,6 +14,12 @@ class ExtendsResPartner(models.Model):
 	_inherit = 'res.partner'
 
 	cuota_mora_ids = fields.One2many('financiera.prestamo.cuota', 'partner_cuota_mora_id', 'Cuotas en mora')
+	cuota_mora_numero = fields.Char('Cuota a cobrar numero')
+	cuota_mora_monto = fields.Float('Cuota a cobrar monto', digits=(16, 2))
+	referido_1_nombre = fields.Char('Referido 1')
+	referido_1_celular = fields.Char('Referido 1 celular')
+	referido_2_nombre = fields.Char('Referido 2')
+	referido_2_celular = fields.Char('Referido 2 celular')
 	saldo_mora = fields.Float('Deuda en mora', digits=(16, 2))
 	saldo_total = fields.Float('Deuda total', digits=(16, 2))
 	cobranza_historial_conversacion_ids = fields.One2many('cobranza.historial.conversacion', 'partner_id', 'Historial de conversacion')
@@ -40,6 +46,8 @@ class ExtendsResPartner(models.Model):
 		])
 		self.cuota_mora_ids = cuota_ids
 		self._saldo_mora()
+		self.compute_cuota_mora()
+		self.compute_referidos()
 
 	@api.one
 	def _saldo_mora(self):
@@ -47,6 +55,22 @@ class ExtendsResPartner(models.Model):
 		for cuota_id in self.cuota_mora_ids:
 			saldo += cuota_id.saldo
 		self.saldo_mora = saldo
+
+	@api.one
+	def compute_cuota_mora(self):
+		if len(self.cuota_mora_ids) > 0:
+			self.cuota_mora_numero = self.cuota_mora_ids[0].numero_cuota
+			self.cuota_mora_monto = self.cuota_mora_ids[0].saldo
+	
+	@api.one
+	def compute_referidos(self):
+		len_contactos = len(self.contacto_ids)
+		if len_contactos > 0:
+			self.referido_1_nombre = self.contacto_ids[0].name
+			self.referido_1_celular = self.contacto_ids[0].movil
+		if len_contactos >= 2:
+			self.referido_2_nombre = self.contacto_ids[1].name
+			self.referido_2_celular = self.contacto_ids[1].movil
 
 	@api.model
 	def cobranza_siguiente_deudor(self):

@@ -15,9 +15,15 @@
           <field name="cobranza_estado_id"/>
           <field name="cobranza_proxima_accion_id"/>
           <field name="cobranza_proxima_accion_fecha"/>
+					<field name="cuota_mora_numero"/>
+					<field name="cuota_mora_monto"/>
           <field name="saldo_mora" sum="Deuda en Mora"/>
 					<field name="saldo_total" sum="Deuda Total"/>
           <field name="cobranza_disponible" invisible="0"/>
+					<field name="referido_1_nombre"/>
+					<field name="referido_1_celular"/>
+					<field name="referido_2_nombre"/>
+					<field name="referido_2_celular"/>
 					<field name="cobranza_externa_id"/>
           <field name="company_id" groups="base.group_erp_manager"/>
         </tree>
@@ -50,9 +56,9 @@
     <record model="ir.actions.act_window" id="cobranza_mora_action">
       <field name="name">Deudores</field>
       <field name="res_model">res.partner</field>
-			<field name="context">{'search_default_gestion_interna':1}</field>
+			<field name="context">{'search_default_gestion_interna':1,'search_default_group_mora_id':1}</field>
       <field name="view_mode">tree,form</field>
-      <field name="domain">[('saldo_mora','>', 0)]</field>
+      <!-- <field name="domain">[('saldo_mora','>', 0)]</field> -->
       <field name="view_ids" eval="[(5, 0, 0), 
         (0, 0, {'view_mode': 'tree', 'view_id': ref('cobranza_mora_cliente_tree')}),
         (0, 0, {'view_mode': 'form', 'view_id': ref('cobranza_mora_cliente_sesion_form')})]
