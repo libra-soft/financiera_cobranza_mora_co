@@ -27,7 +27,7 @@ class FinancieraCobranzaConfig(models.Model):
 		partner_obj = self.pool.get('res.partner')
 		partner_ids = partner_obj.search(self.env.cr, self.env.uid, [
 			('company_id', '=', self.company_id.id),
-			# ('prestamo_ids.state','in', ['acreditado']),
+			('prestamo_ids.state','!=', 'cancelado'),
 			# ('cuota_ids.state','in',['activa']),
 			# ('cuota_ids.state_mora','in',['preventiva','moraTemprana','moraMedia','moraTardia','incobrable']),
 		])
