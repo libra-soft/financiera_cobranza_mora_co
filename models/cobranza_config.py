@@ -32,11 +32,22 @@ class FinancieraCobranzaConfig(models.Model):
 			# ('cuota_ids.state_mora','in',['preventiva','moraTemprana','moraMedia','moraTardia','incobrable']),
 		])
 		# inicializacion
+		print("CLIENTES POR ANALIZAR:: ", len(partner_ids))
+		mora_en_memoria_ids = []
 		for mora_id in self.mora_ids:
+			mora_en_memoria_ids.append({
+				'activo': mora_id.activo,
+				'dia_inicial_impago': mora_id.dia_inicial_impago,
+				'dia_final_impago':mora_id.dia_final_impago,
+				'monto': 0,
+				'partner_cantidad': 0,
+				'ids': [],
+			})
 			mora_id.write({
 				'monto': 0,
 				'partner_cantidad': 0,
-				'partner_ids': [(6,0,[])]})
+				'partner_ids': [(6,0,[])]
+			})
 		fecha_actual = datetime.now()
 		deuda_total = 0.0
 		for _id in partner_ids:
@@ -58,14 +69,12 @@ class FinancieraCobranzaConfig(models.Model):
 				fecha_vencimiento = datetime.strptime(cuota_id.fecha_vencimiento, "%Y-%m-%d")
 				diferencia = fecha_actual - fecha_vencimiento
 				dias = diferencia.days
-				for mora_id in self.mora_ids:
-					if mora_id.activo and dias >= mora_id.dia_inicial_impago and dias <= mora_id.dia_final_impago:
+				for mora_id in mora_en_memoria_ids:
+					if mora_id['activo'] and dias >= mora_id['dia_inicial_impago'] and dias <= mora_id['dia_final_impago']:
 						deuda_total += partner_saldo
-						mora_id.write({
-							'monto': mora_id.monto + partner_saldo,
-							'partner_cantidad': mora_id.partner_cantidad + 1,
-							'partner_ids': [(4, partner_id.id)],
-						})
+						mora_id['monto'] = mora_id['monto'] + partner_saldo
+						mora_id['partner_cantidad'] = mora_id['partner_cantidad'] + 1
+						mora_id['ids'].append(partner_id.id)
 						break
 				partner_id.compute_cuotas_mora()
 			else:
@@ -73,7 +82,14 @@ class FinancieraCobranzaConfig(models.Model):
 					'cuota_mora_ids': [(6, 0, [])],
 					'saldo_mora': 0,
 				})
+		i = 0
 		for mora_id in self.mora_ids:
+			mora_id.write({
+				'monto': mora_en_memoria_ids[i]['monto'],
+				'partner_cantidad': mora_en_memoria_ids[i]['partner_cantidad'],
+				'partner_ids': [(6,0,mora_en_memoria_ids[i]['ids'])]
+			})
+			i = i + 1
 			if deuda_total > 0:
 				mora_id.porcentaje = (mora_id.monto / deuda_total) * 100
 
