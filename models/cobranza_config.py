@@ -33,15 +33,19 @@ class FinancieraCobranzaConfig(models.Model):
 		])
 		# inicializacion
 		for mora_id in self.mora_ids:
-			mora_id.monto = 0
-			mora_id.partner_cantidad = 0
-			mora_id.partner_ids = [(6, 0, [])]
+			mora_id.write({
+				'monto': 0,
+				'partner_cantidad': 0,
+				'partner_ids': [(6,0,[])]})
 		fecha_actual = datetime.now()
 		deuda_total = 0.0
 		for _id in partner_ids:
 			partner_id = partner_obj.browse(self.env.cr, self.env.uid, _id)
-			partner_id.saldo_total = partner_id.saldo
-			partner_id.mora_id = False
+			partner_saldo = partner_id.saldo
+			partner_id.write({
+				'saldo_total': partner_saldo,
+				'mora_id': False,
+			})
 			# Buscamos la cuota activa mas antigua del cliente
 			cuota_obj = self.pool.get('financiera.prestamo.cuota')
 			cuota_ids = cuota_obj.search(self.env.cr, self.env.uid, [
@@ -56,15 +60,19 @@ class FinancieraCobranzaConfig(models.Model):
 				dias = diferencia.days
 				for mora_id in self.mora_ids:
 					if mora_id.activo and dias >= mora_id.dia_inicial_impago and dias <= mora_id.dia_final_impago:
-						deuda_total += partner_id.saldo_total
-						mora_id.monto += partner_id.saldo_total
-						mora_id.partner_cantidad += 1
-						partner_id.mora_id = mora_id.id
+						deuda_total += partner_saldo
+						mora_id.write({
+							'monto': mora_id.monto + partner_saldo,
+							'partner_cantidad': mora_id.partner_cantidad + 1,
+							'partner_ids': [(4, partner_id.id)],
+						})
 						break
 				partner_id.compute_cuotas_mora()
 			else:
-				partner_id.cuota_mora_ids = [(6, 0, [])]
-				partner_id.saldo_mora = 0
+				partner_id.write({
+					'cuota_mora_ids': [(6, 0, [])],
+					'saldo_mora': 0,
+				})
 		for mora_id in self.mora_ids:
 			if deuda_total > 0:
 				mora_id.porcentaje = (mora_id.monto / deuda_total) * 100

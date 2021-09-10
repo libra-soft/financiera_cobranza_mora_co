@@ -59,18 +59,22 @@ class ExtendsResPartner(models.Model):
 	@api.one
 	def compute_cuota_mora(self):
 		if len(self.cuota_mora_ids) > 0:
-			self.cuota_mora_numero = self.cuota_mora_ids[0].numero_cuota
-			self.cuota_mora_monto = self.cuota_mora_ids[0].saldo
+			self.write({
+				'cuota_mora_numero': self.cuota_mora_ids[0].numero_cuota,
+				'cuota_mora_monto': self.cuota_mora_ids[0].saldo
+			})
 	
 	@api.one
 	def compute_referidos(self):
 		len_contactos = len(self.contacto_ids)
+		values = {}
+		if len_contactos > 1:
+			values['referido_2_nombre'] = self.contacto_ids[1].name
+			values['referido_2_celular'] = self.contacto_ids[1].movil
 		if len_contactos > 0:
-			self.referido_1_nombre = self.contacto_ids[0].name
-			self.referido_1_celular = self.contacto_ids[0].movil
-		if len_contactos >= 2:
-			self.referido_2_nombre = self.contacto_ids[1].name
-			self.referido_2_celular = self.contacto_ids[1].movil
+			values['referido_1_nombre'] = self.contacto_ids[0].name
+			values['referido_1_celular'] = self.contacto_ids[0].movil
+			self.write(values)
 
 	@api.model
 	def cobranza_siguiente_deudor(self):
