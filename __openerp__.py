@@ -34,6 +34,7 @@
         'views/extends_res_partner.xml',
 				'views/extends_res_company.xml',
         'views/views.xml',
+				'reports/generic_reports.xml',
         'data/ir_cron.xml',
     ],
     # only loaded in demonstration mode

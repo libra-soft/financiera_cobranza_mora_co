@@ -10,6 +10,13 @@ class FinancieraCobranzaConfig(models.Model):
 	fecha = fields.Datetime("Fecha ultima actualizacion")
 	# promesa_pago_id = fields.Many2one('cobranza.historial.conversacion.estado', 'Estado de promesa de pago')
 	mora_ids = fields.One2many('res.partner.mora', "config_id", "Segmentos")
+	# Carta Documento
+	cd_logo_1 = fields.Binary('CD Logo 1 - carta documento')
+	cd_logo_2 = fields.Binary('CD Logo 2 - carta documento')
+	cd_logo_3 = fields.Binary('CD Logo 3 - carta documento')
+	cd_titulo = fields.Char('CD titulo')
+	cd_texto = fields.Text('CD texto')
+	cd_saludo = fields.Char('CD saludo')
 	company_id = fields.Many2one('res.company', 'Empresa', required=False, default=lambda self: self.env['res.company']._company_default_get('financiera.cobranza.config'))
 	
 	@api.model

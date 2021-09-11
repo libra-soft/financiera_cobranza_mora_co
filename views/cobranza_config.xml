@@ -30,8 +30,7 @@
 								<field name="name" readonly="1"/>
 								<field name="fecha" readonly="1"/>
 							</group>
-							<group>
-							</group>
+							<group></group>
 						</group>
             <notebook>
               <page string="Segmentos" readonly="1">
@@ -73,6 +72,16 @@
 									</form>
 								</field>
               </page>
+							<page name="carta_documento" string="Carta documento">
+								<group>
+									<field name="cd_logo_1" widget="image" class="oe_avatar" options="{&quot;preview_image&quot;: &quot;image_medium&quot;, &quot;size&quot;: [90, 90]}"/>
+									<field name="cd_logo_2" widget="image" class="oe_avatar" options="{&quot;preview_image&quot;: &quot;image_medium&quot;, &quot;size&quot;: [90, 90]}"/>
+									<field name="cd_logo_3" widget="image" class="oe_avatar" options="{&quot;preview_image&quot;: &quot;image_medium&quot;, &quot;size&quot;: [90, 90]}"/>
+									<field name="cd_titulo" widget="html"/>
+									<field name="cd_texto" widget="html"/>
+									<field name="cd_saludo" widget="html"/>
+								</group>								
+							</page>
             </notebook>
           </sheet>
         </form>

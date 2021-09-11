@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<!-- Carta documento -->
+		<report 
+		id="carta_documento_report"
+		model="res.partner"
+		string="Carta documento"
+		report_type="qweb-pdf"
+		name="financiera_cobranza_mora.carta_documento_report_view"
+		file="financiera_cobranza_mora.carta_documento_report_view"
+		/>
+		<record id="financiera_cobranza_mora.carta_documento_report" model="ir.actions.report.xml">
+			<field name="attachment_use" eval="False"/>
+		</record>
+
+		<template id="carta_documento_report_view">
+			<t t-foreach="docs" t-as="o">
+				<t t-if="not o and doc">
+					<t t-set="o" t-value="doc"/>
+				</t>
+				<t t-if="o and 'company_id' in o">
+						<t t-set="company" t-value="o.company_id"/>
+				</t>
+				<t t-if="not o or not 'company_id' in o">
+						<t t-set="company" t-value="res_company"/>
+				</t>
+				<div class="header">
+					<table class="row" style="width:100%;">
+						<tr>
+							<td valign="middle">
+								<img t-if="company.cobranza_config_id.cd_logo_1" t-att-src="'data:image/png;base64,%s' % company.cobranza_config_id.cd_logo_1" style="max-height: 145px;max-width: 145px;"/>
+							</td>
+							<td valign="middle" align="center">
+								<img t-if="company.cobranza_config_id.cd_logo_2" t-att-src="'data:image/png;base64,%s' % company.cobranza_config_id.cd_logo_2" style="max-height: 145px;max-width: 145px;"/>
+							</td>
+							<td valign="middle" align="right">
+								<img t-if="company.cobranza_config_id.cd_logo_3" t-att-src="'data:image/png;base64,%s' % company.cobranza_config_id.cd_logo_3" style="max-height: 145px;max-width: 145px;"/>
+							</td>
+						</tr>
+					</table>
+					<div class="col-xs-9 text-right" style="margin-top:20px;" t-field="company.rml_header1"/>
+					<div class="row zero_min_height">
+							<div class="col-xs-12">
+									<div style="border-bottom: 1px solid black;"/>
+							</div>
+					</div>
+				</div>
+				<div class="page" style="font-size:18px;text-align: justify;">
+						<div align="center" style="font-size:16px;">
+							<b style="color: red;font-size: 26px;"><span t-raw="company.cobranza_config_id.cd_titulo"/></b>
+						</div>
+						<div>Fecha: <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d de %B del %Y')"/></div><br/>
+						<div>SR/A: <span t-field="o.name"/></div><br/>
+						<div>DNI: <span t-field="o.dni"/></div><br/>
+						<div>Direccion: <span t-field="o.street"/>, <span t-field="o.city"/> <span t-field="o.zip"/>, <span t-field="o.state_id.name"/></div><br/>
+						<br/><br/><br/>
+						<div style="margin-left: 20px;">
+							<span t-raw="company.cobranza_config_id.cd_texto"/>
+						</div><br/>
+						<div style='text-align: rigth;'>
+							<span t-raw="company.cobranza_config_id.cd_saludo"/>
+						</div>
+				</div>
+			</t>
+		</template>
+	</data>
+</openerp>

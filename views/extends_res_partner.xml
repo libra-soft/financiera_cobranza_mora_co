@@ -25,6 +25,9 @@
 					<field name="referido_2_nombre"/>
 					<field name="referido_2_celular"/>
 					<field name="cobranza_externa_id"/>
+					<button string="CD" name="carta_documento_report" type="object" class="oe_highlight"/>
+					<field name="pagos_360_checkout_url"/>
+					<field name="pagos_360_pdf_url"/>
           <field name="company_id" groups="base.group_erp_manager"/>
         </tree>
       </field>

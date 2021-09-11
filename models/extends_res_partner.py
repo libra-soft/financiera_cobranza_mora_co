@@ -16,6 +16,8 @@ class ExtendsResPartner(models.Model):
 	cuota_mora_ids = fields.One2many('financiera.prestamo.cuota', 'partner_cuota_mora_id', 'Cuotas en mora')
 	cuota_mora_numero = fields.Char('Cuota a cobrar numero')
 	cuota_mora_monto = fields.Float('Cuota a cobrar monto', digits=(16, 2))
+	pagos_360_checkout_url = fields.Char('Pagos360 - Url de pago online', compute='_compute_link_pagos_360')
+	pagos_360_pdf_url = fields.Char('Pagos360 - Url de cupon de pago en pdf', compute='_compute_link_pagos_360')
 	referido_1_nombre = fields.Char('Referido 1')
 	referido_1_celular = fields.Char('Referido 1 celular')
 	referido_2_nombre = fields.Char('Referido 2')
@@ -61,9 +63,15 @@ class ExtendsResPartner(models.Model):
 		if len(self.cuota_mora_ids) > 0:
 			self.write({
 				'cuota_mora_numero': self.cuota_mora_ids[0].numero_cuota,
-				'cuota_mora_monto': self.cuota_mora_ids[0].saldo
+				'cuota_mora_monto': self.cuota_mora_ids[0].saldo,
 			})
 	
+	@api.one
+	def _compute_link_pagos_360(self):
+		if len(self.cuota_mora_ids) > 0:
+			self.pagos_360_checkout_url = self.cuota_mora_ids[0].pagos_360_checkout_url
+			self.pagos_360_pdf_url = self.cuota_mora_ids[0].pagos_360_pdf_url
+
 	@api.one
 	def compute_referidos(self):
 		len_contactos = len(self.contacto_ids)
@@ -107,6 +115,14 @@ class ExtendsResPartner(models.Model):
 				ret_deudor_id = partner_id
 				ret_deudor_id.cobranza_disponible = False
 		return ret_deudor_id
+
+	@api.multi
+	def carta_documento_report(self):
+		self.ensure_one()
+		if len(self.company_id.cobranza_config_id) > 0:
+			return self.env['report'].get_action(self, "financiera_cobranza_mora.carta_documento_report_view")
+		else:
+			raise UserError("Modulo cobranza no esta contartado.")
 
 class ExtendsFinancieraPrestamoCuota(models.Model):
 	_name = 'financiera.prestamo.cuota'
