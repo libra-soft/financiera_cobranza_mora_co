@@ -39,7 +39,6 @@ class FinancieraCobranzaConfig(models.Model):
 			# ('cuota_ids.state_mora','in',['preventiva','moraTemprana','moraMedia','moraTardia','incobrable']),
 		])
 		# inicializacion
-		print("CLIENTES POR ANALIZAR:: ", len(partner_ids))
 		mora_en_memoria_ids = []
 		for mora_id in self.mora_ids:
 			mora_en_memoria_ids.append({
@@ -73,6 +72,7 @@ class FinancieraCobranzaConfig(models.Model):
 			cuota_id = None
 			if len(cuota_ids) > 0:
 				cuota_id = cuota_obj.browse(self.env.cr, self.env.uid, cuota_ids[0])
+				partner_id.proxima_cuota_id = cuota_ids[0]
 				fecha_vencimiento = datetime.strptime(cuota_id.fecha_vencimiento, "%Y-%m-%d")
 				diferencia = fecha_actual - fecha_vencimiento
 				dias = diferencia.days
