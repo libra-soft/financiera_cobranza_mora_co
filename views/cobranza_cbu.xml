@@ -1,0 +1,109 @@
+<openerp>
+  <data>
+
+    <record model="ir.ui.view" id="cobranza_cbu_tree">
+      <field name="name">financiera.cobranza.cbu.tree</field>
+      <field name="model">financiera.cobranza.cbu</field>
+      <field name="arch" type="xml">
+        <tree string="Cobranza por CBU" delete="false">
+					<!-- <field name="create_date" string="Fecha"/> -->
+					<field name="name"/>
+					<field name="banco"/>
+					<field name="state"/>
+					<field name="company_id" groups="base.group_erp_manager"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="cobranza_cbu_form">
+      <field name="name">financiera.cobranza.cbu.form</field>
+      <field name="model">financiera.cobranza.cbu</field>
+      <field name="arch" type="xml">
+        <form string="Cobranza por CBU" delete="false">
+          <header>
+						<button name="asignar_registros" class="oe_highlight" states='borrador' string="Asignar registros" type="object" />
+						<button string="Marcar como enviado" class="oe_highlight" name="enviar_a_enviado" states='generado' type="object"/>
+						<button string="Enviar a borrador" name="enviar_a_borrador" states='generado,enviado' type="object"/>
+						<button string="Generar archivo" name="bna_file" type="object" class="oe_highlight"
+							attrs="{'invisible': ['|', ('banco', '!=', '011'), ('state', '!=', 'borrador')]}"/>
+						<button string="Generar archivo" name="bapro_file" type="object" class="oe_highlight"
+							attrs="{'invisible': ['|', ('banco', '!=', '014'), ('state', '!=', 'borrador')]}"/>
+
+						<field name="state" widget="statusbar"/>
+          </header>
+          <sheet>
+						<group string="Generales">
+							<group>
+								<field name="company_id" groups="base.group_erp_manager"/>
+								<field name="name" readonly="1"/>
+								<field name="banco"/>
+								<field name="cuota_hasta"/>
+								<field name="debito_partes" string="Debitar en partes maxima de"/>
+								<field name="partner_suscripto_debito_cbu"/>
+							</group>
+							<group></group>
+						</group>
+						<group string="Banco Nacion" attrs="{'invisible': [('banco', '!=', '011')]}">
+							<group string="Configuracion">
+								<field name="bna_fecha_inicio_debitos"/>
+								<field name="bna_fecha_fin_debitos"/>
+								<field name="bna_mes_tope_rendicion"/>
+								<field name="bna_nro_archivo_enviado_mes"/>
+							</group>
+							<group string="Resultado">
+								<field name="bna_file_debt_name" invisible="1"/>
+								<field name="bna_file_debt" filename="bna_file_debt_name" readonly="1"/>
+								
+								<field name="bna_file_detalle_name" invisible="1"/>
+								<field name="bna_file_detalle" filename="bna_file_detalle_name" readonly="1"/>
+							</group>
+						</group>
+						<group string="Banco Bapro" attrs="{'invisible': [('banco', '!=', '014')]}">
+							<group string="Configuracion">
+								<label string=" "/>
+								<label string="* Envío de archivo 72 hs antes de la fecha deseada." style="color:red;"/>
+								<label string=" "/>
+								<label string="* Impacto valor máximo $7.000 ('Debitar en partes maximas de' debera ser igual o inferior)." style="color:red;"/>
+								<label string=" "/>
+								<label string="* No se puede repetir valor impacto en el mismo cliente." style="color:red;"/>
+								<field name="bapro_fecha_impacto" string="Fecha previa al dia del impacto"/>
+							</group>
+							<group string="Resultado">
+								<field name="bapro_file_debt_name" invisible="1"/>
+								<field name="bapro_file_debt" filename="bapro_file_debt_name" readonly="1"/>
+								
+								<field name="bapro_file_detalle_name" invisible="1"/>
+								<field name="bapro_file_detalle" filename="bapro_file_detalle_name" readonly="1"/>
+							</group>
+						</group>
+            <notebook>
+              <page string="Registros" readonly="1">
+                <field name="registro_ids">
+									<tree>
+										<field name="partner_id"/>
+										<field name="cbu"/>
+										<field name="sucursal"/>
+										<field name="cuenta"/>
+										<field name="deuda_en_mora" sum="Total"/>
+										<field name="proximo_a_vencer" sum="Total"/>
+										<field name="total" sum="Total"/>
+										<field name="monto_a_cobrar" sum="Total"/>
+										<field name="debito_partes"/>
+									</tree>
+								</field>
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="cobranza_cbu_action">
+      <field name="name">Cobranza por CBU</field>
+      <field name="res_model">financiera.cobranza.cbu</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_id" ref="cobranza_cbu_tree"/>
+    </record>
+
+  </data>
+</openerp>

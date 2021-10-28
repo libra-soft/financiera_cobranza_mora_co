@@ -4,9 +4,11 @@ from openerp import models, fields, api, _
 from datetime import datetime, timedelta, date
 from openerp.exceptions import UserError, ValidationError
 
-class ExtendsFinancieraPrestamoCuota(models.Model):
-	_inherit = 'financiera.prestamo.cuota' 
-	_name = 'financiera.prestamo.cuota'
+class ExtendsFinancieraPrestamo(models.Model):
+	_inherit = 'financiera.prestamo' 
+	_name = 'financiera.prestamo'
+
+	suscripto_debito_cbu = fields.Boolean('Debito por CBU', related='partner_id.suscripto_debito_cbu')
 
 	# @api.multi
 	# def cobranza_actualizar_estado_cupon(self):

@@ -1,0 +1,21 @@
+<openerp>
+  <data>
+
+		<!-- Prestamo inherit -->
+
+		<record id="prestamo_form_inherited"  model="ir.ui.view">
+			<field name="name">Extension Prestamo Form</field>
+			<field name="model">financiera.prestamo</field>
+			<field name="inherit_id" ref="financiera_prestamos.financiera_prestamo_form"/>
+			<field name="arch" type="xml">        
+				<xpath expr="//field[@name='pago_voluntario_entidad']" position='after'>
+					<div>
+						<label string="Debito por CBU" style="font-weight: bold;"/>
+						<field name="suscripto_debito_cbu"/>
+					</div>
+				</xpath>
+			</field>
+		</record>
+
+  </data>
+</openerp>

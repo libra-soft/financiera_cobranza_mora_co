@@ -27,6 +27,7 @@ class ExtendsResPartner(models.Model):
 	saldo_total = fields.Float('Deuda total', digits=(16, 2))
 	cobranza_historial_conversacion_ids = fields.One2many('cobranza.historial.conversacion', 'partner_id', 'Historial de conversacion')
 	cobranza_disponible = fields.Boolean('Disponible', default=True)
+	suscripto_debito_cbu = fields.Boolean('Debito por CBU')
 	# Estado actual
 	cobranza_estado_id = fields.Many2one('cobranza.historial.conversacion.estado', 'Estado')
 	cobranza_proxima_accion_id = fields.Many2one('cobranza.historial.conversacion.accion', 'Proxima accion')

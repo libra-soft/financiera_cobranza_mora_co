@@ -28,6 +28,7 @@
 							<group>
 								<field name="company_id" groups="base.group_erp_manager"/>
 								<field name="name" readonly="1"/>
+								<field name="id_cobranza_cbu"/>
 								<field name="fecha" readonly="1"/>
 							</group>
 							<group></group>
@@ -81,6 +82,26 @@
 									<field name="cd_texto" widget="html"/>
 									<field name="cd_saludo" widget="html"/>
 								</group>								
+							</page>
+							<page name="adsus" string="Adsus">
+								<group>
+									<notebook>
+										<page name="bna" string="Banco Nacion">
+											<group>
+												<field name="bna_sucursal"/>
+												<field name="bna_cuenta"/>
+												<field name="bna_tipo_moneda"/>
+												<field name="bna_moneda_movimientos"/>
+												<field name="bna_indicador_empleados_bna"/>
+											</group>
+										</page>
+										<page name="bbva" string="Banco BBVA">
+											<group>
+												
+											</group>
+										</page>
+									</notebook>
+								</group>
 							</page>
             </notebook>
           </sheet>

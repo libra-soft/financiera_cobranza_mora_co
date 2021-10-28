@@ -8,8 +8,9 @@ class FinancieraCobranzaConfig(models.Model):
 
 	name = fields.Char("Nombre")
 	fecha = fields.Datetime("Fecha ultima actualizacion")
-	# promesa_pago_id = fields.Many2one('cobranza.historial.conversacion.estado', 'Estado de promesa de pago')
+	id_cobranza_cbu = fields.Integer('Id cobranza CBU')
 	mora_ids = fields.One2many('res.partner.mora', "config_id", "Segmentos")
+	company_id = fields.Many2one('res.company', 'Empresa', required=False, default=lambda self: self.env['res.company']._company_default_get('financiera.cobranza.config'))
 	# Carta Documento
 	cd_logo_1 = fields.Binary('CD Logo 1 - carta documento')
 	cd_logo_2 = fields.Binary('CD Logo 2 - carta documento')
@@ -17,7 +18,17 @@ class FinancieraCobranzaConfig(models.Model):
 	cd_titulo = fields.Char('CD titulo')
 	cd_texto = fields.Text('CD texto')
 	cd_saludo = fields.Char('CD saludo')
-	company_id = fields.Many2one('res.company', 'Empresa', required=False, default=lambda self: self.env['res.company']._company_default_get('financiera.cobranza.config'))
+	# Configuracion Adsus
+	# Archivo BNA
+	bna_sucursal = fields.Char('BNA cuenta recaudadora sucursal')
+	bna_cuenta = fields.Char('BNA cuenta recaudadora numero')
+	bna_tipo_moneda = fields.Char('BNA cuenta recaudadora tipo y moneda')
+	bna_moneda_movimientos = fields.Char('BNA moneda de movimientos')
+	bna_indicador_empleados_bna = fields.Char('BNA indicador empleados BNA')
+	# Archivo BAPRO
+	bapro_file_name_pre = fields.Char('BAPRO - Pre nombre de archivo')
+	bapro_file_name_pos = fields.Char('BAPRO - Pos nombre de archivo')
+	bapro_denominacion_pre = fields.Char('BAPRO - Pre deniminacion')
 	
 	@api.model
 	def _cron_actualizar_deudores(self):
@@ -27,6 +38,10 @@ class FinancieraCobranzaConfig(models.Model):
 			company_id = company_obj.browse(self.env.cr, self.env.uid, _id)
 			if len(company_id.cobranza_config_id) > 0:
 				company_id.cobranza_config_id.actualizar_deudores()
+
+	def get_id_cobranza_cbu(self):
+		self.id_cobranza_cbu += 1
+		return self.id_cobranza_cbu
 
 	@api.one
 	def actualizar_deudores(self):
@@ -105,4 +120,4 @@ class ExtendsResCompany(models.Model):
 	_inherit = 'res.company'
 
 	cobranza_config_id = fields.Many2one('financiera.cobranza.config', 'Configuracion Cobranza y seguimiento')
-
+	

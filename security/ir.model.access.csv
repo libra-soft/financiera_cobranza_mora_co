@@ -28,3 +28,12 @@ user_financiera_cobranza_notificacion_item,financiera.cobranza.notificacion.item
 
 manager_financiera_cobranza_externa,financiera.cobranza.externa,model_financiera_cobranza_externa,financiera_cobranza_mora.manager,1,1,1,0
 user_financiera_cobranza_externa,financiera.cobranza.externa,model_financiera_cobranza_externa,financiera_cobranza_mora.user,1,1,1,0
+
+manager_res_bank_bna_code,res.bank.bna.code,model_res_bank_bna_code,financiera_cobranza_mora.manager,1,1,1,1
+user_res_bank_bna_code,res.bank.bna.code,model_res_bank_bna_code,financiera_cobranza_mora.user,1,1,1,0
+
+manager_financiera_cobranza_cbu,financiera.cobranza.cbu,model_financiera_cobranza_cbu,financiera_cobranza_mora.manager,1,1,1,1
+user_financiera_cobranza_cbu,financiera.cobranza.cbu,model_financiera_cobranza_cbu,financiera_cobranza_mora.user,1,1,1,0
+
+manager_financiera_cobranza_cbu_registro,financiera.cobranza.cbu.registro,model_financiera_cobranza_cbu_registro,financiera_cobranza_mora.manager,1,1,1,1
+user_financiera_cobranza_cbu_registro,financiera.cobranza.cbu.registro,model_financiera_cobranza_cbu_registro,financiera_cobranza_mora.user,1,1,1,1

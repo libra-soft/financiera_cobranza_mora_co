@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <!-- Ejecutar debitos -->
+
+    <record id="debt_to_file_wizard" model="ir.ui.view">
+        <field name="name">Generar Archivos Adsus</field>
+        <field name="model">res.partner.debt.to.bank.file.wizard</field>
+        <field name="arch" type="xml">
+					<form string="Generar Archivos Adsus">
+						<sheet>
+							<script>
+								$(document).ready(function(){
+									$('.modal-dialog').css({'width': '97%', 'height': '97%'});
+									$('.modal-content').css({'height': '100%'});
+									$('.modal-body').css({'height': '100%'});
+								});
+							</script>
+							<group>
+								<field name="company_id" groups="base.group_erp_manager"/>
+							</group>
+							<group col="4">
+								<group string="Banco Nacion">
+									<field name="bna_fecha_inicio_debitos"/>
+									<field name="bna_fecha_fin_debitos"/>
+									<field name="bna_mes_tope_rendicion"/>
+									<field name="bna_nro_archivo_enviado_mes"/>
+									<field name="bna_debito_partes" string="Debitar en partes maxima de"/>
+									
+									<field name="bna_file_debt_name" invisible="1"/>
+									<field name="bna_file_debt" filename="bna_file_debt_name" readonly="1"/>
+									
+									<field name="bna_file_detalle_name" invisible="1"/>
+									<field name="bna_file_detalle" filename="bna_file_detalle_name" readonly="1"/>
+									<!-- <button name="generate_excel" type="object" string="Generate excel"/> -->
+								</group>
+								<group string="Banco Galicia"></group>
+								<group string="Banco BAPRO"></group>
+								<group string="Banco ITAU"></group>
+							</group>
+						</sheet>
+						<footer>
+							<button name="generar_archivos" string="Generar Archivos" class="oe_right oe_highlight" type="object"/>
+							<button string="Cancel" class="oe_right" special="cancel"/>
+						</footer>
+					</form>
+        </field>
+    </record>
+
+		<act_window id="action_cuota_to_excel"
+			name="Generar Archivos Adsus"
+			src_model="res.partner"
+			res_model="res.partner.debt.to.bank.file.wizard"
+			view_id="debt_to_file_wizard"
+			view_type="form" view_mode="form"
+			key2="client_action_multi" target="new"
+			groups="financiera_app.user"
+		/>
+
+</odoo>
