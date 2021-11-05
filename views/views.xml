@@ -36,9 +36,6 @@
 		action="cobranza_notificacion_action" sequence="30"/>
 		<menuitem name="Estudios de cobranza externa" id="menu_cobranza_externa_action" parent="menu_config" 
 		action="cobranza_externa_action" sequence="40"/>
-		<menuitem name="Codigos BNA" id="menu_bna_code_action" parent="menu_config" 
-		action="res_bank_bna_code_action" sequence="140" groups="base.group_erp_manager"/>
-
 
 		<!-- Top menu item -->
     
@@ -46,13 +43,15 @@
     groups="financiera_cobranza_mora.user"/>
 
 		<!-- Submenu -->
+		<menuitem name="Cobranza" id="menu_cobranza_cbu_action" sequence="10" parent="menu_cobranza_cbu" groups="financiera_cobranza_mora.user"
+		action="cobranza_cbu_action"/>
 		<menuitem name="Configuracion" id="menu_cobranza_cbu_configuracion" sequence="100" parent="menu_cobranza_cbu" groups="financiera_cobranza_mora.user"/>
 
 		<!-- Action -->
-		<menuitem name="Cobranza" id="menu_cobranza_cbu_action" sequence="10" parent="menu_cobranza_cbu" groups="financiera_cobranza_mora.user"
-		action="cobranza_cbu_action"/>
 		<menuitem name="Configuracion" id="menu_cobranza_cbu_configuracion_action" parent="menu_cobranza_cbu_configuracion"
 			action="cobranza_cbu_config_action" sequence="10"/>
+		<menuitem name="Codigos BNA" id="menu_bna_code_action" parent="menu_cobranza_cbu_configuracion" 
+			action="res_bank_bna_code_action" sequence="140" groups="base.group_erp_manager"/>
 
   </data>
 </openerp>
