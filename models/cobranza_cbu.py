@@ -18,6 +18,9 @@ class FinancieraCobranzaCbu(models.Model):
 		('011', 'BANCO DE LA NACION ARGENTINA'),
 		('014', 'BANCO DE LA PROVINCIA DE BUENOS AIRES'),
 		('285', 'BANCO MACRO S.A.'),
+		# ('259', 'BANCO ITAU ARGENTINA S.A.'),
+		# ('017', 'BANCO BBVA ARGENTINA S.A.'),
+		# ('029', 'BANCO DE LA CIUDAD DE BUENOS AIRES'),
 	], 'Banco')
 	cuota_hasta = fields.Date('Incluir cuotas con fecha hasta')
 	partner_suscripto_debito_cbu = fields.Boolean('Cliente suscripto al debito por CBU', default=True)
@@ -213,8 +216,7 @@ class FinancieraCobranzaCbu(models.Model):
 					# Empresa campo N(10) de uso interno
 					nuevo_registro += str(registro_id.partner_id.id).zfill(10)
 					nuevo_registro += "".ljust(46, ' ')
-					# nuevo_registro += "\r\n"
-					nuevo_registro += "\n"
+					nuevo_registro += "\r\n"
 					registros_tipo_2 += nuevo_registro
 					cantidad_registros_tipo_2 += 1
 					sheet_detalle.write(row_detalle, 0, registro_id.partner_id.name)
@@ -237,8 +239,7 @@ class FinancieraCobranzaCbu(models.Model):
 		finalizar += "0".zfill(6)
 		# Agregamos blancos para cumplicar con los 128 bit a enviar
 		finalizar += "".ljust(85, ' ')
-		# finalizar += "\r\n"
-		finalizar += "\n"
+		finalizar += "\r\n"
 		
 		file_read = base64.b64encode((encabezado+registros_tipo_2+finalizar).encode('utf-8'))
 		self.bna_file_debt = file_read
