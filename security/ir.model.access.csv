@@ -37,3 +37,6 @@ user_financiera_cobranza_cbu,financiera.cobranza.cbu,model_financiera_cobranza_c
 
 manager_financiera_cobranza_cbu_registro,financiera.cobranza.cbu.registro,model_financiera_cobranza_cbu_registro,financiera_cobranza_mora.manager,1,1,1,1
 user_financiera_cobranza_cbu_registro,financiera.cobranza.cbu.registro,model_financiera_cobranza_cbu_registro,financiera_cobranza_mora.user,1,1,1,1
+
+manager_financiera_cobranza_cbu_fecha,financiera.cobranza.cbu.fecha,model_financiera_cobranza_cbu_fecha,financiera_cobranza_mora.manager,1,1,1,1
+user_financiera_cobranza_cbu_fecha,financiera.cobranza.cbu.fecha,model_financiera_cobranza_cbu_fecha,financiera_cobranza_mora.user,1,1,1,1
