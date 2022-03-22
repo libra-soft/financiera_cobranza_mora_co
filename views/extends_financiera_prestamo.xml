@@ -10,8 +10,10 @@
 			<field name="arch" type="xml">        
 				<xpath expr="//field[@name='pago_voluntario_entidad']" position='after'>
 					<div>
-						<label string="Debito por CBU" style="font-weight: bold;"/>
-						<field name="suscripto_debito_cbu"/>
+						<!-- <label string="Debito por CBU" style="font-weight: bold;"/>
+						<field name="partner_suscripto_debito_cbu"/> -->
+						<label string="No debitar por CBU" style="font-weight: bold;"/>
+						<field name="no_debitar_cbu"/>
 					</div>
 				</xpath>
 			</field>

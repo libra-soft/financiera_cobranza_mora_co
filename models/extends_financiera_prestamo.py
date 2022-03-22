@@ -9,6 +9,7 @@ class ExtendsFinancieraPrestamo(models.Model):
 	_name = 'financiera.prestamo'
 
 	suscripto_debito_cbu = fields.Boolean('Debito por CBU', related='partner_id.suscripto_debito_cbu')
+	no_debitar_cbu = fields.Boolean('No debitar por CBU')
 
 	# @api.multi
 	# def cobranza_actualizar_estado_cupon(self):

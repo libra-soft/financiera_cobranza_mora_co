@@ -44,6 +44,11 @@
 									<field name="bapro_denominacion_pre"/>
 								</group>
 							</page>
+							<page name="epico" string="Configuracion Epico">
+								<group>
+									<field name="codigo_servicio_epico"/>
+								</group>
+							</page>
 						</notebook>
           </sheet>
         </form>

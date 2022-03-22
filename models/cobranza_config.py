@@ -29,6 +29,8 @@ class FinancieraCobranzaConfig(models.Model):
 	bapro_file_name_pre = fields.Char('BAPRO - Pre nombre de archivo')
 	bapro_file_name_pos = fields.Char('BAPRO - Pos nombre de archivo')
 	bapro_denominacion_pre = fields.Char('BAPRO - Pre deniminacion')
+	# Generales
+	codigo_servicio_epico = fields.Char('Codigo de servicio Epico')
 	
 	@api.model
 	def _cron_actualizar_deudores(self):
