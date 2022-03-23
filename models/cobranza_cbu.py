@@ -234,10 +234,11 @@ class FinancieraCobranzaCbu(models.Model):
 									if i > 10:
 										break
 					if monto_a_cobrar > 0:
-						partner_cbu_sucursal = partner_cbu[3:7]
-						if self.banco == '011':
-							partner_cbu_sucursal = self.env['res.bank.bna.code'].code_bcra_to_bna(partner_cbu_sucursal)
-						partner_cbu_cuenta = partner_cbu[11:21]
+						if partner_cbu and len(partner_cbu) == 22:
+							partner_cbu_sucursal = partner_cbu[3:7]
+							if self.banco == '011':
+								partner_cbu_sucursal = self.env['res.bank.bna.code'].code_bcra_to_bna(partner_cbu_sucursal)
+							partner_cbu_cuenta = partner_cbu[11:21]
 						fccr_values = {
 							'cobranza_cbu_id': self.id,
 							'partner_id': partner_id.id,
