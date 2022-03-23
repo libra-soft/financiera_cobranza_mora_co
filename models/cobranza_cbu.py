@@ -196,7 +196,7 @@ class FinancieraCobranzaCbu(models.Model):
 		partner_obj = self.pool.get('res.partner')
 		domain = [
 			('prestamo_ids.state', 'in', ['acreditado','incobrable']),
-			('prestamo_ids.app_cbu', 'like', self.banco+'%')
+			('prestamo_ids.app_cbu', 'like', self.banco+'%'),
 		]
 		partner_ids = partner_obj.search(self.env.cr, self.env.uid, domain)
 		partner_ids = partner_obj.browse(self.env.cr, self.env.uid, partner_ids)
@@ -206,7 +206,10 @@ class FinancieraCobranzaCbu(models.Model):
 			monto_a_cobrar_disponible = self.maximo_a_cobrar
 			payment_last = False
 			for prestamo_id in partner_id.prestamo_ids:
-				if prestamo_id.state in ('acreditado','incobrable') and (self.partner_incluir_no_debitar or not prestamo_id.no_debitar_cbu):
+				state_condicion = prestamo_id.state in ('acreditado','incobrable')
+				no_debitar_condicion = self.partner_incluir_no_debitar or not prestamo_id.no_debitar_cbu
+				cbu_condicion = prestamo_id.app_cbu and len(prestamo_id.app_cbu) == 22 and prestamo_id.app_cbu[0:3] == self.banco
+				if state_condicion and no_debitar_condicion and cbu_condicion:
 					partner_cbu = prestamo_id.app_cbu
 					partner_cbu_sucursal = False
 					partner_cbu_cuenta = False
