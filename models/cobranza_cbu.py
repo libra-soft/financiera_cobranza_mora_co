@@ -17,18 +17,19 @@ class FinancieraCobranzaCbu(models.Model):
 	_order = 'id desc'
 	name = fields.Char("Nombre")
 	banco = fields.Selection([
-		('011', 'BANCO DE LA NACION ARGENTINA'),
-		('014', 'BANCO DE LA PROVINCIA DE BUENOS AIRES'),
-		('285', 'BANCO MACRO S.A.'),
-		('259', 'BANCO ITAU'),
-		('017', 'BANCO BBVA'),
-		('029', 'BANCO DE LA CIUDAD DE BUENOS AIRES'),
+		('011', 'ADSUS BANCO DE LA NACION ARGENTINA'),
+		('014', 'ADSUS BANCO DE LA PROVINCIA DE BUENOS AIRES'),
+		('285', 'ADSUS BANCO MACRO S.A.'),
+		('259', 'ADSUS BANCO ITAU'),
+		('017', 'ADSUS BANCO BBVA'),
+		('029', 'ADSUS BANCO DE LA CIUDAD DE BUENOS AIRES'),
 		# ('083', 'BANCO CHUBUT'),
 		# ('097', 'BANCO NEUQUEN'),
 	], 'Banco')
 	cuota_hasta = fields.Date('Incluir cuotas con fecha hasta')
 	partner_suscripto_debito_cbu = fields.Boolean('Cliente suscripto al debito por CBU', default=False)
 	partner_incluir_no_debitar = fields.Boolean('Incluir clientes que rechazan debito por CBU', default=False)
+	maximo_a_cobrar = fields.Float('Maximo a cobrar de', digits=(16,2))
 	debito_partes = fields.Float('Debitar en partes maxima de', digits=(16,2))
 	registro_ids = fields.One2many('financiera.cobranza.cbu.registro', 'cobranza_cbu_id', 'Registros')
 	state = fields.Selection([
@@ -66,7 +67,7 @@ class FinancieraCobranzaCbu(models.Model):
 	ciudad_file_debt = fields.Binary('CIUDAD archivo')
 	ciudad_file_debt_name = fields.Char('CIUDAD archivo nombre', default='ciudad_a_cobrar.xls')
 	ciudad_file_detalle = fields.Binary('CIUDAD archivo de detalle')
-	ciudad_file_detalle_name = fields.Char('CIUDAD archivo de detalle nombre', default='itau_detalle.xls')
+	ciudad_file_detalle_name = fields.Char('CIUDAD archivo de detalle nombre', default='ciudad_detalle.xls')
 	# ITAU
 	itau_fecha_inicio = fields.Date('ITAU primer fecha de Debitos')
 	itau_fecha_fin = fields.Date('ITAU ultima fecha de Debitos')
@@ -115,6 +116,69 @@ class FinancieraCobranzaCbu(models.Model):
 			fecha_tope_rendicion = datetime.strptime(self.bna_fecha_fin_debitos, "%Y-%m-%d")
 			self.bna_mes_tope_rendicion = str(fecha_tope_rendicion.month).zfill(2)
 
+	# @api.one
+	# def asignar_registros(self):
+	# 	self.bna_file_debt = False
+	# 	self.bna_file_detalle = False
+	# 	self.bapro_file_debt = False
+	# 	self.bapro_file_detalle = False
+	# 	self.macro_file_debt = False
+	# 	self.macro_file_detalle = False
+	# 	self.ciudad_file_debt = False
+	# 	self.ciudad_file_detalle = False
+	# 	self.itau_file_debt = False
+	# 	self.itau_file_detalle = False
+	# 	self.bbva_file_debt = False
+	# 	self.bbva_file_detalle = False
+	# 	partner_obj = self.pool.get('res.partner')
+	# 	domain = [
+	# 		('prestamo_ids.state', 'in', ['acreditado','incobrable']),
+	# 		('prestamo_ids.app_cbu', 'like', self.banco+'%')
+	# 	]
+	# 	partner_ids = partner_obj.search(self.env.cr, self.env.uid, domain)
+	# 	partner_ids = partner_obj.browse(self.env.cr, self.env.uid, partner_ids)
+	# 	for registro_id in self.registro_ids:
+	# 		registro_id.unlink()
+	# 	for partner_id in partner_ids:
+	# 		partner_cbu = False
+	# 		partner_cbu_entidad = False
+	# 		partner_cbu_sucursal = False
+	# 		partner_cbu_cuenta = False
+	# 		monto_a_cobrar = 0
+	# 		if self.cuota_hasta:
+	# 			cuota_obj = self.pool.get('financiera.prestamo.cuota')
+	# 			cuota_ids = cuota_obj.search(self.env.cr, self.env.uid, [
+	# 				('partner_id', '=', partner_id.id),
+	# 				('state', '=', 'activa'),
+	# 				('fecha_vencimiento', '<=', self.cuota_hasta),
+	# 				'|', ('prestamo_id.no_debitar_cbu', '=', False), ('prestamo_id.no_debitar_cbu', '=', self.partner_incluir_no_debitar)
+	# 			])
+	# 			cuota_ids = cuota_obj.browse(self.env.cr, self.env.uid, cuota_ids)
+	# 			for cuota_id in cuota_ids:
+	# 				monto_a_cobrar += cuota_id.saldo
+	# 				partner_cbu = cuota_id.prestamo_id.app_cbu
+	# 			if cuota_ids:
+	# 				if not partner_cbu and len(cuota_ids) > 0:
+	# 					partner_cbu = cuota_ids[0].prestamo_id.app_cbu
+	# 				if partner_cbu and len(partner_cbu) == 22 and partner_cbu[0:3] == self.banco:
+	# 					partner_cbu_sucursal = partner_cbu[3:7]
+	# 					if self.banco == '011':
+	# 						partner_cbu_sucursal = self.env['res.bank.bna.code'].code_bcra_to_bna(partner_cbu_sucursal)
+	# 					partner_cbu_cuenta = partner_cbu[11:21]
+	# 					fccr_values = {
+	# 						'cobranza_cbu_id': self.id,
+	# 						'partner_id': partner_id.id,
+	# 						'cbu': partner_cbu,
+	# 						'sucursal': partner_cbu_sucursal,
+	# 						'cuenta': partner_cbu_cuenta,
+	# 						'deuda_en_mora': partner_id.saldo_mora,
+	# 						# 'proximo_a_vencer': proximo_a_vencer,
+	# 						'total': partner_id.saldo,
+	# 						'monto_a_cobrar': monto_a_cobrar,
+	# 						'debito_partes': self.debito_partes,
+	# 					}
+	# 					self.env['financiera.cobranza.cbu.registro'].create(fccr_values)
+
 	@api.one
 	def asignar_registros(self):
 		self.bna_file_debt = False
@@ -125,6 +189,10 @@ class FinancieraCobranzaCbu(models.Model):
 		self.macro_file_detalle = False
 		self.ciudad_file_debt = False
 		self.ciudad_file_detalle = False
+		self.itau_file_debt = False
+		self.itau_file_detalle = False
+		self.bbva_file_debt = False
+		self.bbva_file_detalle = False
 		partner_obj = self.pool.get('res.partner')
 		domain = [
 			('prestamo_ids.state', 'in', ['acreditado','incobrable']),
@@ -135,27 +203,37 @@ class FinancieraCobranzaCbu(models.Model):
 		for registro_id in self.registro_ids:
 			registro_id.unlink()
 		for partner_id in partner_ids:
-			partner_cbu = False
-			partner_cbu_entidad = False
-			partner_cbu_sucursal = False
-			partner_cbu_cuenta = False
-			monto_a_cobrar = 0
-			if self.cuota_hasta:
-				cuota_obj = self.pool.get('financiera.prestamo.cuota')
-				cuota_ids = cuota_obj.search(self.env.cr, self.env.uid, [
-					('partner_id', '=', partner_id.id),
-					('state', '=', 'activa'),
-					('fecha_vencimiento', '<=', self.cuota_hasta),
-					'|', ('prestamo_id.no_debitar_cbu', '=', False), ('prestamo_id.no_debitar_cbu', '=', self.partner_incluir_no_debitar)
-				])
-				cuota_ids = cuota_obj.browse(self.env.cr, self.env.uid, cuota_ids)
-				for cuota_id in cuota_ids:
-					monto_a_cobrar += cuota_id.saldo
-					partner_cbu = cuota_id.prestamo_id.app_cbu
-				if cuota_ids:
-					if not partner_cbu and len(cuota_ids) > 0:
-						partner_cbu = cuota_ids[0].prestamo_id.app_cbu
-					if partner_cbu and len(partner_cbu) == 22 and partner_cbu[0:3] == self.banco:
+			monto_a_cobrar_disponible = self.maximo_a_cobrar
+			payment_last = False
+			for prestamo_id in partner_id.prestamo_ids:
+				if prestamo_id.state in ('acreditado','incobrable') and (self.partner_incluir_no_debitar or not prestamo_id.no_debitar_cbu):
+					partner_cbu = prestamo_id.app_cbu
+					partner_cbu_sucursal = False
+					partner_cbu_cuenta = False
+					monto_a_cobrar = 0
+					# cuota_obj = self.pool.get('financiera.prestamo.cuota')
+					# cuota_ids = cuota_obj.search(self.env.cr, self.env.uid, [
+					# 	('prestamo_id', '=', prestamo_id.id),
+					# 	('state', '=', 'activa'),
+					# 	('fecha_vencimiento', '<=', self.cuota_hasta),
+					# ])
+					# cuota_ids = cuota_obj.browse(self.env.cr, self.env.uid, cuota_ids)
+					cuota_actual = False
+					for cuota_id in prestamo_id.cuota_ids:
+						if cuota_id.payment_last_id:
+							payment_last = cuota_id.payment_last_id.payment_date
+						if cuota_id.state == 'activa' and cuota_id.fecha_vencimiento <= self.cuota_hasta:
+							monto_a_cobrar += cuota_id.saldo
+							if not cuota_actual:
+								cuota_actual = True
+								ultimos_debitos_mobbex = ""
+								i = 0
+								for ejecucion_id in cuota_id.mobbex_ejecucion_ids:
+									ultimos_debitos_mobbex += ejecucion_id.mobbex_status_code + "|"
+									i += 1
+									if i > 10:
+										break
+					if monto_a_cobrar > 0:
 						partner_cbu_sucursal = partner_cbu[3:7]
 						if self.banco == '011':
 							partner_cbu_sucursal = self.env['res.bank.bna.code'].code_bcra_to_bna(partner_cbu_sucursal)
@@ -163,16 +241,20 @@ class FinancieraCobranzaCbu(models.Model):
 						fccr_values = {
 							'cobranza_cbu_id': self.id,
 							'partner_id': partner_id.id,
+							'prestamo_id': prestamo_id.id,
+							'prestamo_no_debitar_cbu': prestamo_id.no_debitar_cbu,
 							'cbu': partner_cbu,
 							'sucursal': partner_cbu_sucursal,
 							'cuenta': partner_cbu_cuenta,
-							'deuda_en_mora': partner_id.saldo_mora,
-							# 'proximo_a_vencer': proximo_a_vencer,
-							'total': partner_id.saldo,
-							'monto_a_cobrar': monto_a_cobrar,
+							'total': prestamo_id.saldo,
+							'ultimo_cobro': payment_last,
+							'ultimos_debitos_mobbex': ultimos_debitos_mobbex,
+							'total_vencido': monto_a_cobrar,
+							'monto_a_cobrar': min(monto_a_cobrar, monto_a_cobrar_disponible),
 							'debito_partes': self.debito_partes,
 						}
 						self.env['financiera.cobranza.cbu.registro'].create(fccr_values)
+						monto_a_cobrar_disponible -= monto_a_cobrar
 
 	# BNA ******************************
 
@@ -351,8 +433,7 @@ class FinancieraCobranzaCbu(models.Model):
 					id_cuota = cuota_id.numero_cuota
 					break
 			sheet.write(row, 1, id_cuota)
-			# Bapro permite como maximo impacto de 7mil
-			monto_a_cobrar = min(registro_id.monto_a_cobrar, 7000)
+			monto_a_cobrar = registro_id.monto_a_cobrar
 			if registro_id.debito_partes > 0:
 				monto_a_cobrar = min(registro_id.debito_partes, monto_a_cobrar)
 			sheet.write(row, 2, int(monto_a_cobrar))
@@ -450,7 +531,7 @@ class FinancieraCobranzaCbu(models.Model):
 			sheet.write(row, 9, "080")
 			# IMPORTE --> 13 DIGITOS, ULTIMOS DOS SON DECIMALES (FORMATO EXCEL“PERSONALIZADO”)
 			# Macro permite como maximo impacto de 15mil
-			monto_a_cobrar = min(registro_id.monto_a_cobrar, MACRO_DEBITO_MAXIMO)
+			monto_a_cobrar = registro_id.monto_a_cobrar
 			if registro_id.debito_partes > 0:
 				monto_a_cobrar = min(registro_id.debito_partes, monto_a_cobrar)
 			sheet.write(row, 10, str(monto_a_cobrar * 100).split('.')[0].zfill(13))
@@ -632,7 +713,7 @@ class FinancieraCobranzaCbu(models.Model):
 			if not fecha_impacto_ids:
 				raise ValidationError("Falta cargar fechas de impacto!")
 			fecha_impacto_len = len(fecha_impacto_ids)
-			ciudad_debito_maximo_disponible = min(CIUDAD_DEBITO_MAXIMO, registro_id.monto_a_cobrar)
+			ciudad_debito_maximo_disponible = registro_id.monto_a_cobrar
 			if fecha_impacto_len > 0:
 				date = fecha_impacto_ids[0]
 				monto_impacto = min(ciudad_debito_maximo_disponible, date.monto_impacto)
@@ -691,7 +772,7 @@ class FinancieraCobranzaCbu(models.Model):
 			# sheet.write(row, 41, 'Información Medio de Pago')
 			row +=1
 			# detalle
-			ble = min(CIUDAD_DEBITO_MAXIMO, registro_id.monto_a_cobrar)
+			ciudad_debito_maximo_disponible = min(CIUDAD_DEBITO_MAXIMO, registro_id.monto_a_cobrar)
 			for date_id in self.ciudad_fecha_impacto_ids:
 				monto_impacto = min(ciudad_debito_maximo_disponible, date_id.monto_impacto)
 				if monto_impacto > 0:
@@ -745,7 +826,7 @@ class FinancieraCobranzaCbu(models.Model):
 		row_detalle = 1
 		cobranza_config_id = self.company_id.cobranza_config_id
 		for registro_id in self.registro_ids:
-			cantidad_a_debitar_disponible = min(ITAU_DEBITO_MAXIMO, registro_id.monto_a_cobrar)
+			cantidad_a_debitar_disponible = registro_id.monto_a_cobrar
 			monto_impacto = min(cantidad_a_debitar_disponible, registro_id.debito_partes)
 			while (monto_impacto > 0):
 				sheet.write(row, 1, "D")
@@ -824,6 +905,10 @@ class FinancieraCobranzaCbu(models.Model):
 			raise UserError('Sin registro de deudores.')
 		# self.state = 'generado'
 		cobranza_config_id = self.company_id.cobranza_config_id
+		if not cobranza_config_id.codigo_referencia_bbva:
+			raise ValidationError("Falta configurar Codigo referencia BBVA brindado por ADSUS.")
+		if not cobranza_config_id.codigo_servicio_epico:
+			raise ValidationError("Falta configurar Codigo de servicio EPICO brindado por ADSUS.")
 		stream = StringIO.StringIO()
 		book = xlwt.Workbook(encoding='utf-8')
 		sheet = book.add_sheet(u'Sheet1')
@@ -845,13 +930,13 @@ class FinancieraCobranzaCbu(models.Model):
 		row_detalle = 1
 		cobranza_config_id = self.company_id.cobranza_config_id
 		for registro_id in self.registro_ids:
-			cantidad_a_debitar_disponible = min(BBVA_DEBITO_MAXIMO, registro_id.monto_a_cobrar)
+			cantidad_a_debitar_disponible = registro_id.monto_a_cobrar
 			monto_impacto = min(cantidad_a_debitar_disponible, registro_id.debito_partes)
 			while (monto_impacto > 0):
 				sheet.write(row, 1, "D")
 				sheet.write(row, 2, "D")
 				sheet.write(row, 3, registro_id.partner_id.dni)
-				sheet.write(row, 4, row)
+				sheet.write(row, 4, cobranza_config_id.codigo_referencia_bbva+'/'+str(row))
 				# sheet.write(row, 5, registro_id.partner_id.sexo or "")
 				sheet.write(row, 6, "D")
 				sheet.write(row, 7, registro_id.partner_id.dni)
@@ -918,12 +1003,17 @@ class FinancieraCobranzaCbuRegistro(models.Model):
 
 	cobranza_cbu_id = fields.Many2one('financiera.cobranza.cbu', 'Cobranza CBU')
 	partner_id = fields.Many2one('res.partner', 'Cliente')
+	prestamo_id = fields.Many2one('financiera.prestamo', 'Prestamo')
+	prestamo_no_debitar_cbu = fields.Boolean('No debitar por CBU', related='prestamo_id.no_debitar_cbu')
 	cbu = fields.Char('CBU')
 	sucursal = fields.Char('Sucursal')
 	cuenta = fields.Char('Cuenta')
 	deuda_en_mora = fields.Float('Deuda en mora', digits=(16,2))
 	proximo_a_vencer = fields.Float('Proximo a vencer', digits=(16,2))
+	ultimo_cobro = fields.Date('Ultimo cobro')
+	ultimos_debitos_mobbex = fields.Char("Ultimos debitos Mobbex")
 	total = fields.Float('Todas las cuotas', digits=(16,2))
+	total_vencido = fields.Float('Total vencido', digits=(16,2))
 	monto_a_cobrar = fields.Float('Monto a cobrar', digits=(16,2))
 	debito_partes = fields.Float('Debitar en partes maxima de', digits=(16,2))
 

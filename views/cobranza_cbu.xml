@@ -45,9 +45,9 @@
 								<field name="company_id" groups="base.group_erp_manager"/>
 								<field name="name" readonly="1"/>
 								<field name="banco"/>
-								<field name="cuota_hasta"/>
-								<field name="debito_partes" string="Debitar en partes maxima de/Maximo a cobrar de"/>
-								<!-- <field name="partner_suscripto_debito_cbu"/> -->
+								<field name="cuota_hasta" required="1"/>
+								<field name="maximo_a_cobrar"/>
+								<field name="debito_partes"/>
 								<field name="partner_incluir_no_debitar"/>
 							</group>
 							<group></group>
@@ -179,18 +179,21 @@
 							<field name="cantidad_impactos"/>
 						</group>
             <notebook>
-              <page string="Registros" readonly="1">
+              <page string="Registros">
                 <field name="registro_ids">
-									<tree>
-										<field name="partner_id"/>
+									<tree editable="1">
+										<field name="partner_id" readonly="1"/>
+										<field name="prestamo_id" readonly="1"/>
+										<field name="prestamo_no_debitar_cbu"/>
 										<field name="cbu"/>
 										<field name="sucursal"/>
 										<field name="cuenta"/>
-										<!-- <field name="deuda_en_mora" sum="Total"/>
-										<field name="proximo_a_vencer" sum="Total"/> -->
-										<field name="total" sum="Total"/>
+										<field name="total" sum="Total" readonly="1"/>
+										<field name="total_vencido" sum="Total" readonly="1"/>
 										<field name="monto_a_cobrar" sum="Total"/>
 										<field name="debito_partes"/>
+										<field name="ultimos_debitos_mobbex"/>
+										<field name="ultimo_cobro"/>
 									</tree>
 								</field>
               </page>

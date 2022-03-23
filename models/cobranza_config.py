@@ -31,6 +31,8 @@ class FinancieraCobranzaConfig(models.Model):
 	bapro_denominacion_pre = fields.Char('BAPRO - Pre deniminacion')
 	# Generales
 	codigo_servicio_epico = fields.Char('Codigo de servicio Epico')
+	# Archivo BBVA
+	codigo_referencia_bbva = fields.Char('Codigo referencia ADSUS')
 	
 	@api.model
 	def _cron_actualizar_deudores(self):
