@@ -7,10 +7,7 @@ import xlwt
 import base64
 import StringIO
 
-MACRO_DEBITO_MAXIMO = 15000.00
 CIUDAD_DEBITO_MAXIMO = 15000.00
-ITAU_DEBITO_MAXIMO = 15000.00
-BBVA_DEBITO_MAXIMO = 15000.00
 class FinancieraCobranzaCbu(models.Model):
 	_name = 'financiera.cobranza.cbu'
 
@@ -203,9 +200,12 @@ class FinancieraCobranzaCbu(models.Model):
 		for registro_id in self.registro_ids:
 			registro_id.unlink()
 		for partner_id in partner_ids:
+			print("partner_id======:: ", partner_id.name)
 			monto_a_cobrar_disponible = self.maximo_a_cobrar
 			payment_last = False
 			for prestamo_id in partner_id.prestamo_ids:
+				print("prestamo_id======:: ", prestamo_id.name)
+				print("cbu======:: ", prestamo_id.app_cbu)
 				state_condicion = prestamo_id.state in ('acreditado','incobrable')
 				no_debitar_condicion = self.partner_incluir_no_debitar or not prestamo_id.no_debitar_cbu
 				cbu_condicion = prestamo_id.app_cbu and len(prestamo_id.app_cbu) == 22 and prestamo_id.app_cbu[0:3] == self.banco
@@ -776,7 +776,7 @@ class FinancieraCobranzaCbu(models.Model):
 			# sheet.write(row, 41, 'Información Medio de Pago')
 			row +=1
 			# detalle
-			ciudad_debito_maximo_disponible = min(CIUDAD_DEBITO_MAXIMO, registro_id.monto_a_cobrar)
+			ciudad_debito_maximo_disponible = registro_id.monto_a_cobrar
 			for date_id in self.ciudad_fecha_impacto_ids:
 				monto_impacto = min(ciudad_debito_maximo_disponible, date_id.monto_impacto)
 				if monto_impacto > 0:

@@ -175,8 +175,8 @@
 							</group>
 						</group>
 						<group>
-							<field name="suma_a_cobrar"/>
-							<field name="cantidad_impactos"/>
+							<field name="suma_a_cobrar" class="oe_read_only"/>
+							<field name="cantidad_impactos" class="oe_read_only"/>
 						</group>
             <notebook>
               <page string="Registros">
