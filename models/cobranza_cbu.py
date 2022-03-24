@@ -192,6 +192,7 @@ class FinancieraCobranzaCbu(models.Model):
 		self.bbva_file_detalle = False
 		partner_obj = self.pool.get('res.partner')
 		domain = [
+			('company_id', '=', self.company_id.id),
 			('prestamo_ids.state', 'in', ['acreditado','incobrable']),
 			('prestamo_ids.app_cbu', 'like', self.banco+'%'),
 		]
