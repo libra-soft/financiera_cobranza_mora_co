@@ -1028,3 +1028,9 @@ class FinancieraCobranzaCbuFecha(models.Model):
 	cobranza_cbu_id = fields.Many2one('financiera.cobranza.cbu', 'Cobranza ID')
 	fecha_impacto = fields.Date('Fecha de impacto')
 	monto_impacto = fields.Float('Monto a debitar')
+
+class ExtendsAccountPayment(models.Model):
+	_inherit = 'account.payment' 
+	_name = 'account.payment'
+
+	company_related_id = fields.Many2one('res.company', related='cuota_id.company_id')

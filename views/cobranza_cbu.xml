@@ -94,7 +94,7 @@
 								<label string=" "/>
 								<label string="* Para su correcto funcionamiento es necesario que se agrupen los clientes que cobran entre las fechas de barrido según fecha de inicio en un mismo archivo. Así quedarían promedio solo 4 fechas de inicio al mes." style="color:red;"/>
 								<label string=" "/>
-								<label string="* ENVIO: 1 Impacto por cliente por mes VALOR MAXIMO IMPACTO $15000 (Por el sistema de barrido que opera el banco no es necesario prorratear la cuota/deuda, ya que el banco debita lo que el cliente tenga en cuenta y al día posterior intentara debitar el saldo pendiente y así sucesivamente hasta que se debite el valor deseado por la empresa o bien hasta que se cumplan los 6 días de barrido)." style="color:red;"/>
+								<label string="* ENVIO: 1 Impacto por cliente por mes VALOR MAXIMO IMPACTO $23.000 (Por el sistema de barrido que opera el banco no es necesario prorratear la cuota/deuda, ya que el banco debita lo que el cliente tenga en cuenta y al día posterior intentara debitar el saldo pendiente y así sucesivamente hasta que se debite el valor deseado por la empresa o bien hasta que se cumplan los 6 días de barrido)." style="color:red;"/>
 								<label string=" "/>
 								<label string="* La fecha de inicio deberá ser entre lunes y jueves." style="color:red;"/>
 								<label string=" "/>
