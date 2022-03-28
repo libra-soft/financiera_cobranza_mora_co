@@ -44,6 +44,7 @@
 									<field name="bapro_denominacion_pre"/>
 									<field name="codigo_servicio_epico"/>
 									<field name="codigo_referencia_bbva"/>
+									<field name="adsus_template_id"/>
 								</group>
 							</page>
 						</notebook>

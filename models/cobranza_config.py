@@ -31,6 +31,7 @@ class FinancieraCobranzaConfig(models.Model):
 	bapro_denominacion_pre = fields.Char('BAPRO - Pre deniminacion')
 	# Generales
 	codigo_servicio_epico = fields.Char('Codigo de servicio Epico')
+	adsus_template_id = fields.Many2one('mail.template', 'Plantilla de email ADSUS')
 	# Archivo BBVA
 	codigo_referencia_bbva = fields.Char('Codigo referencia ADSUS')
 	

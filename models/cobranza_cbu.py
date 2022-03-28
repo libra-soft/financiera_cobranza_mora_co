@@ -7,7 +7,17 @@ import xlwt
 import base64
 import StringIO
 
-CIUDAD_DEBITO_MAXIMO = 15000.00
+BNA_COBRO_NOMBRE = 'bna_a_cobrar.txt'
+BNA_DETALLE_NOMBRE = 'bna_detalle.xls'
+BAPRO_DETALLE_NOMBRE = 'bapro_detalle.xls'
+MACRO_COBRO_NOMBRE = 'macro_a_cobrar.xls'
+MACRO_DETALLE_NOMBRE = 'macro_detalle.xls'
+CIUDAD_COBRO_NOMBRE = 'ciudad_a_cobrar.xls'
+CIUDAD_DETALLE_NOMBRE = 'ciudad_detalle.xls'
+ITAU_COBRO_NOMBRE = 'itau_a_cobrar.xls'
+ITAU_DETALLE_NOMBRE = 'itau_detalle.xls'
+BBVA_COBRO_NOMBRE = 'bbva_a_cobrar.xls'
+BBVA_DETALLE_NOMBRE = 'bbva_detalle.xls'
 class FinancieraCobranzaCbu(models.Model):
 	_name = 'financiera.cobranza.cbu'
 
@@ -34,6 +44,10 @@ class FinancieraCobranzaCbu(models.Model):
 	], 'Estado', default='borrador')
 	company_id = fields.Many2one('res.company', 'Empresa', required=False, default=lambda self: self.env['res.company']._company_default_get('financiera.cobranza.cbu'))
 	# Generales
+	archivo_cobro = fields.Binary('Archivo de cobro')
+	archivo_cobro_nombre = fields.Char('Nombre del archivo de cobro')
+	archivo_detalle = fields.Binary('Archivo de detalle')
+	archivo_detalle_nombre = fields.Char('Nombre del archivo de detalle')
 	suma_a_cobrar = fields.Float('Suma a cobrar')
 	cantidad_impactos = fields.Integer('Cantidad de impactos')
 	# BNA
@@ -41,44 +55,20 @@ class FinancieraCobranzaCbu(models.Model):
 	bna_fecha_fin_debitos = fields.Date('BNA Fecha de Fin Débitos')
 	bna_mes_tope_rendicion = fields.Char('BNA mes tope rendicion', help='Por ej: 08 para agosto, 12 para diciembre.')
 	bna_nro_archivo_enviado_mes = fields.Char('BNA nro de archivo enviado en el mes', help='Comenzando por 01', default='01')
-	bna_file_debt = fields.Binary('BNA archivo')
-	bna_file_debt_name = fields.Char('BNA archivo nombre', default='bna_a_cobrar.txt')
-	bna_file_detalle = fields.Binary('BNA archivo de detalle')
-	bna_file_detalle_name = fields.Char('BNA archivo de detalle nombre', default='bna_detalle.xls')
 	# BAPRO
 	bapro_fecha_impacto = fields.Date('BAPRO fecha de impacto')
-	bapro_file_debt = fields.Binary('BAPRO archivo')
-	bapro_file_debt_name = fields.Char('BAPRO archivo nombre', compute='_compute_bapro_file_debt_name')
-	bapro_file_detalle = fields.Binary('BAPRO archivo de detalle')
-	bapro_file_detalle_name = fields.Char('BAPRO archivo de detalle nombre', default='bapro_detalle.xls')
 	# MACRO
 	macro_fecha_inicio = fields.Date('MACRO fecha de inicio Debitos')
-	macro_file_debt = fields.Binary('MACRO archivo')
-	macro_file_debt_name = fields.Char('MACRO archivo nombre', default='macro_a_cobrar.xls')
-	macro_file_detalle = fields.Binary('MACRO archivo de detalle')
-	macro_file_detalle_name = fields.Char('MACRO archivo de detalle nombre', default='macro_detalle.xls')
 	# CIUDAD
 	ciudad_fecha_inicio = fields.Date('CIUDAD primer fecha de Debitos')
 	ciudad_fecha_fin = fields.Date('CIUDAD ultima fecha de Debitos')
 	ciudad_fecha_impacto_ids = fields.One2many('financiera.cobranza.cbu.fecha', 'cobranza_cbu_id', 'Fechas de impacto')
-	ciudad_file_debt = fields.Binary('CIUDAD archivo')
-	ciudad_file_debt_name = fields.Char('CIUDAD archivo nombre', default='ciudad_a_cobrar.xls')
-	ciudad_file_detalle = fields.Binary('CIUDAD archivo de detalle')
-	ciudad_file_detalle_name = fields.Char('CIUDAD archivo de detalle nombre', default='ciudad_detalle.xls')
 	# ITAU
 	itau_fecha_inicio = fields.Date('ITAU primer fecha de Debitos')
 	itau_fecha_fin = fields.Date('ITAU ultima fecha de Debitos')
-	itau_file_debt = fields.Binary('ITAU archivo')
-	itau_file_debt_name = fields.Char('ITAU archivo nombre', default='itau_a_cobrar.xls')
-	itau_file_detalle = fields.Binary('ITAU archivo de detalle')
-	itau_file_detalle_name = fields.Char('ITAU archivo de detalle nombre', default='itau_detalle.xls')
 	# BBVA
 	bbva_fecha_inicio = fields.Date('BBVA primer fecha de Debitos')
 	bbva_fecha_fin = fields.Date('BBVA ultima fecha de Debitos')
-	bbva_file_debt = fields.Binary('BBVA archivo')
-	bbva_file_debt_name = fields.Char('BBVA archivo nombre', default='bbva_a_cobrar.xls')
-	bbva_file_detalle = fields.Binary('BBVA archivo de detalle')
-	bbva_file_detalle_name = fields.Char('BBVA archivo de detalle nombre', default='bbva_detalle.xls')
 
 	@api.model
 	def create(self, values):
@@ -92,12 +82,10 @@ class FinancieraCobranzaCbu(models.Model):
 	@api.one
 	def enviar_a_borrador(self):
 		self.state = 'borrador'
-		self.bna_file_debt = None
-		self.bna_file_detalle = None
-		self.bapro_file_debt = None
-		self.bapro_file_detalle = None
-		self.macro_file_debt = None
-		self.macro_file_detalle = None
+		self.archivo_cobro = None
+		self.archivo_cobro_nombre = None
+		self.archivo_detalle = None
+		self.archivo_detalle_nombre = None
 		# Borramos registros creados
 		for registro_id in self.registro_ids:
 			registro_id.unlink()
@@ -113,83 +101,9 @@ class FinancieraCobranzaCbu(models.Model):
 			fecha_tope_rendicion = datetime.strptime(self.bna_fecha_fin_debitos, "%Y-%m-%d")
 			self.bna_mes_tope_rendicion = str(fecha_tope_rendicion.month).zfill(2)
 
-	# @api.one
-	# def asignar_registros(self):
-	# 	self.bna_file_debt = False
-	# 	self.bna_file_detalle = False
-	# 	self.bapro_file_debt = False
-	# 	self.bapro_file_detalle = False
-	# 	self.macro_file_debt = False
-	# 	self.macro_file_detalle = False
-	# 	self.ciudad_file_debt = False
-	# 	self.ciudad_file_detalle = False
-	# 	self.itau_file_debt = False
-	# 	self.itau_file_detalle = False
-	# 	self.bbva_file_debt = False
-	# 	self.bbva_file_detalle = False
-	# 	partner_obj = self.pool.get('res.partner')
-	# 	domain = [
-	# 		('prestamo_ids.state', 'in', ['acreditado','incobrable']),
-	# 		('prestamo_ids.app_cbu', 'like', self.banco+'%')
-	# 	]
-	# 	partner_ids = partner_obj.search(self.env.cr, self.env.uid, domain)
-	# 	partner_ids = partner_obj.browse(self.env.cr, self.env.uid, partner_ids)
-	# 	for registro_id in self.registro_ids:
-	# 		registro_id.unlink()
-	# 	for partner_id in partner_ids:
-	# 		partner_cbu = False
-	# 		partner_cbu_entidad = False
-	# 		partner_cbu_sucursal = False
-	# 		partner_cbu_cuenta = False
-	# 		monto_a_cobrar = 0
-	# 		if self.cuota_hasta:
-	# 			cuota_obj = self.pool.get('financiera.prestamo.cuota')
-	# 			cuota_ids = cuota_obj.search(self.env.cr, self.env.uid, [
-	# 				('partner_id', '=', partner_id.id),
-	# 				('state', '=', 'activa'),
-	# 				('fecha_vencimiento', '<=', self.cuota_hasta),
-	# 				'|', ('prestamo_id.no_debitar_cbu', '=', False), ('prestamo_id.no_debitar_cbu', '=', self.partner_incluir_no_debitar)
-	# 			])
-	# 			cuota_ids = cuota_obj.browse(self.env.cr, self.env.uid, cuota_ids)
-	# 			for cuota_id in cuota_ids:
-	# 				monto_a_cobrar += cuota_id.saldo
-	# 				partner_cbu = cuota_id.prestamo_id.app_cbu
-	# 			if cuota_ids:
-	# 				if not partner_cbu and len(cuota_ids) > 0:
-	# 					partner_cbu = cuota_ids[0].prestamo_id.app_cbu
-	# 				if partner_cbu and len(partner_cbu) == 22 and partner_cbu[0:3] == self.banco:
-	# 					partner_cbu_sucursal = partner_cbu[3:7]
-	# 					if self.banco == '011':
-	# 						partner_cbu_sucursal = self.env['res.bank.bna.code'].code_bcra_to_bna(partner_cbu_sucursal)
-	# 					partner_cbu_cuenta = partner_cbu[11:21]
-	# 					fccr_values = {
-	# 						'cobranza_cbu_id': self.id,
-	# 						'partner_id': partner_id.id,
-	# 						'cbu': partner_cbu,
-	# 						'sucursal': partner_cbu_sucursal,
-	# 						'cuenta': partner_cbu_cuenta,
-	# 						'deuda_en_mora': partner_id.saldo_mora,
-	# 						# 'proximo_a_vencer': proximo_a_vencer,
-	# 						'total': partner_id.saldo,
-	# 						'monto_a_cobrar': monto_a_cobrar,
-	# 						'debito_partes': self.debito_partes,
-	# 					}
-	# 					self.env['financiera.cobranza.cbu.registro'].create(fccr_values)
-
 	@api.one
 	def asignar_registros(self):
-		self.bna_file_debt = False
-		self.bna_file_detalle = False
-		self.bapro_file_debt = False
-		self.bapro_file_detalle = False
-		self.macro_file_debt = False
-		self.macro_file_detalle = False
-		self.ciudad_file_debt = False
-		self.ciudad_file_detalle = False
-		self.itau_file_debt = False
-		self.itau_file_detalle = False
-		self.bbva_file_debt = False
-		self.bbva_file_detalle = False
+		self.enviar_a_borrador()
 		partner_obj = self.pool.get('res.partner')
 		domain = [
 			('company_id', '=', self.company_id.id),
@@ -198,15 +112,10 @@ class FinancieraCobranzaCbu(models.Model):
 		]
 		partner_ids = partner_obj.search(self.env.cr, self.env.uid, domain)
 		partner_ids = partner_obj.browse(self.env.cr, self.env.uid, partner_ids)
-		for registro_id in self.registro_ids:
-			registro_id.unlink()
 		for partner_id in partner_ids:
-			print("partner_id======:: ", partner_id.name)
 			monto_a_cobrar_disponible = self.maximo_a_cobrar
 			payment_last = False
 			for prestamo_id in partner_id.prestamo_ids:
-				print("prestamo_id======:: ", prestamo_id.name)
-				print("cbu======:: ", prestamo_id.app_cbu)
 				state_condicion = prestamo_id.state in ('acreditado','incobrable')
 				no_debitar_condicion = self.partner_incluir_no_debitar or not prestamo_id.no_debitar_cbu
 				cbu_condicion = prestamo_id.app_cbu and len(prestamo_id.app_cbu) == 22 and prestamo_id.app_cbu[0:3] == self.banco
@@ -215,13 +124,6 @@ class FinancieraCobranzaCbu(models.Model):
 					partner_cbu_sucursal = False
 					partner_cbu_cuenta = False
 					monto_a_cobrar = 0
-					# cuota_obj = self.pool.get('financiera.prestamo.cuota')
-					# cuota_ids = cuota_obj.search(self.env.cr, self.env.uid, [
-					# 	('prestamo_id', '=', prestamo_id.id),
-					# 	('state', '=', 'activa'),
-					# 	('fecha_vencimiento', '<=', self.cuota_hasta),
-					# ])
-					# cuota_ids = cuota_obj.browse(self.env.cr, self.env.uid, cuota_ids)
 					cuota_actual = False
 					for cuota_id in prestamo_id.cuota_ids:
 						if cuota_id.payment_last_id:
@@ -260,6 +162,16 @@ class FinancieraCobranzaCbu(models.Model):
 						}
 						self.env['financiera.cobranza.cbu.registro'].create(fccr_values)
 						monto_a_cobrar_disponible -= monto_a_cobrar
+
+	@api.one
+	def all_stop_debito_automatico(self):
+		for registro_id in self.registro_ids:
+			registro_id.stop_debito_automatico()
+	
+	@api.one
+	def all_allow_debito_automatico(self):
+		for registro_id in self.registro_ids:
+			registro_id.allow_debito_automatico()
 
 	# BNA ******************************
 
@@ -370,17 +282,19 @@ class FinancieraCobranzaCbu(models.Model):
 		finalizar += "\r\n"
 		
 		file_read = base64.b64encode((encabezado+registros_tipo_2+finalizar).encode('utf-8'))
-		self.bna_file_debt = file_read
+		self.archivo_cobro = file_read
+		self.archivo_cobro_nombre = BNA_COBRO_NOMBRE
 		stream_detalle = StringIO.StringIO()
 		book.save(stream_detalle)
-		self.bna_file_detalle = base64.encodestring(stream_detalle.getvalue())
+		self.archivo_detalle = base64.encodestring(stream_detalle.getvalue())
+		self.archivo_detalle_nombre = BNA_DETALLE_NOMBRE
 		self.suma_a_cobrar = suma_a_cobrar
 		self.cantidad_impactos = cantidad_impactos
 
 	# BAPRO ******************************
 
 	@api.one
-	def _compute_bapro_file_debt_name(self):
+	def get_bapro_name(self):
 		name = ''
 		cobranza_config_id = self.company_id.cobranza_config_id
 		if cobranza_config_id.bapro_file_name_pre:
@@ -389,7 +303,7 @@ class FinancieraCobranzaCbu(models.Model):
 			name += str(self.bapro_fecha_impacto)
 		if cobranza_config_id.bapro_file_name_pos:
 			name += cobranza_config_id.bapro_file_name_pos + '.xls'
-		self.bapro_file_debt_name = name
+		self.archivo_cobro_nombre = name
 	
 	@api.one
 	def bapro_file(self):
@@ -461,10 +375,12 @@ class FinancieraCobranzaCbu(models.Model):
 			suma_a_cobrar += int(monto_a_cobrar)
 			cantidad_impactos += 1
 		book.save(stream)
-		self.bapro_file_debt = base64.encodestring(stream.getvalue())
+		self.archivo_cobro = base64.encodestring(stream.getvalue())
+		self.get_bapro_name()
 		stream_detalle = StringIO.StringIO()
 		book_detalle.save(stream_detalle)
-		self.bapro_file_detalle = base64.encodestring(stream_detalle.getvalue())
+		self.archivo_detalle = base64.encodestring(stream_detalle.getvalue())
+		self.archivo_detalle_nombre = BAPRO_DETALLE_NOMBRE
 		self.suma_a_cobrar = suma_a_cobrar
 		self.cantidad_impactos = cantidad_impactos
 	
@@ -557,14 +473,14 @@ class FinancieraCobranzaCbu(models.Model):
 			sheet_detalle.write(row_detalle, 6, self.company_id.name)
 			row_detalle +=1
 			suma_a_cobrar += int(monto_a_cobrar)
-			print("monto_a_cobrar: ", monto_a_cobrar)
 			cantidad_impactos += 1
-			print("cantidad_impactos: ", cantidad_impactos)
 		book.save(stream)
-		self.macro_file_debt = base64.encodestring(stream.getvalue())
+		self.archivo_cobro = base64.encodestring(stream.getvalue())
+		self.archivo_cobro_nombre = MACRO_COBRO_NOMBRE
 		stream_detalle = StringIO.StringIO()
 		book_detalle.save(stream_detalle)
-		self.macro_file_detalle = base64.encodestring(stream_detalle.getvalue())
+		self.archivo_detalle = base64.encodestring(stream_detalle.getvalue())
+		self.archivo_detalle_nombre = MACRO_DETALLE_NOMBRE
 		self.suma_a_cobrar = suma_a_cobrar
 		self.cantidad_impactos = cantidad_impactos
 
@@ -794,10 +710,12 @@ class FinancieraCobranzaCbu(models.Model):
 					ciudad_debito_maximo_disponible -= monto_impacto
 
 		book.save(stream)
-		self.ciudad_file_debt = base64.encodestring(stream.getvalue())
+		self.archivo_cobro = base64.encodestring(stream.getvalue())
+		self.archivo_cobro_nombre = CIUDAD_COBRO_NOMBRE
 		stream_detalle = StringIO.StringIO()
 		book_detalle.save(stream_detalle)
-		self.ciudad_file_detalle = base64.encodestring(stream_detalle.getvalue())
+		self.archivo_detalle = base64.encodestring(stream_detalle.getvalue())
+		self.archivo_detalle_nombre = CIUDAD_DETALLE_NOMBRE
 		self.suma_a_cobrar = suma_a_cobrar
 		self.cantidad_impactos = cantidad_impactos
 
@@ -893,10 +811,12 @@ class FinancieraCobranzaCbu(models.Model):
 				monto_impacto = min(cantidad_a_debitar_disponible, registro_id.debito_partes)
 
 		book.save(stream)
-		self.itau_file_debt = base64.encodestring(stream.getvalue())
+		self.archivo_cobro = base64.encodestring(stream.getvalue())
+		self.archivo_cobro_nombre = ITAU_COBRO_NOMBRE
 		stream_detalle = StringIO.StringIO()
 		book_detalle.save(stream_detalle)
-		self.itau_file_detalle = base64.encodestring(stream_detalle.getvalue())
+		self.archivo_detalle = base64.encodestring(stream_detalle.getvalue())
+		self.archivo_detalle_nombre = ITAU_DETALLE_NOMBRE
 		self.suma_a_cobrar = suma_a_cobrar
 		self.cantidad_impactos = cantidad_impactos
 
@@ -997,18 +917,81 @@ class FinancieraCobranzaCbu(models.Model):
 				monto_impacto = min(cantidad_a_debitar_disponible, registro_id.debito_partes)
 
 		book.save(stream)
-		self.bbva_file_debt = base64.encodestring(stream.getvalue())
+		self.archivo_cobro = base64.encodestring(stream.getvalue())
+		self.archivo_cobro_nombre = BBVA_COBRO_NOMBRE
 		stream_detalle = StringIO.StringIO()
 		book_detalle.save(stream_detalle)
-		self.bbva_file_detalle = base64.encodestring(stream_detalle.getvalue())
+		self.archivo_detalle = base64.encodestring(stream_detalle.getvalue())
+		self.archivo_detalle_nombre = BBVA_DETALLE_NOMBRE
 		self.suma_a_cobrar = suma_a_cobrar
 		self.cantidad_impactos = cantidad_impactos
+
+	@api.multi
+	def enviar_email_adsus(self):
+		""" Open a window to compose an email, with the edi cupon template
+			message loaded by default
+		"""
+		self.ensure_one()
+		cobranza_config_id = self.company_id.cobranza_config_id
+		if not cobranza_config_id or not cobranza_config_id.adsus_template_id:
+			raise ValidationError("Falta configurar el templeta del email ADSUS.")
+		template = cobranza_config_id.adsus_template_id
+		if self.archivo_cobro == None or self.archivo_detalle == None:
+			raise ValidationError("Falta generar archivo!")
+		compose_form = self.env.ref('mail.email_compose_message_wizard_form', False)		
+		archivo_cobro_attachment_id = False
+		if self.archivo_cobro != None:
+			archivo_cobro_attachment_id = self.env['ir.attachment'].create({
+				'name': self.archivo_cobro_nombre,
+				'datas_fname': self.archivo_cobro_nombre,
+				'type': 'binary',
+				'datas': base64.encodestring(self.archivo_cobro),
+				'res_model': 'account.payment',
+				'res_id': self.id,
+				'mimetype': 'application/x-pdf',
+			})
+			archivo_detalle_attachment_id = False
+			if self.archivo_detalle != None:
+				archivo_detalle_attachment_id = self.env['ir.attachment'].create({
+				'name': self.archivo_detalle,
+				'datas_fname': self.archivo_detalle_nombre,
+				'type': 'binary',
+				'datas': base64.encodestring(self.archivo_cobro),
+				'res_model': 'account.payment',
+				'res_id': self.id,
+				'mimetype': 'application/x-pdf',
+			})
+		ctx = dict(
+			default_model='financiera.cobranza.cbu',
+			default_res_id=self.id,
+			default_use_template=bool(template),
+			default_template_id=template and template.id or False,
+			default_composition_mode='comment',
+			default_attachment_ids=[(6, 0, [archivo_cobro_attachment_id.id, archivo_detalle_attachment_id.id])],
+			sub_action='tc_sent',
+			# mark_invoice_as_sent=True,
+		)
+		# ctx['default_attachment_ids'] = [(6, 0, [archivo_cobro_attachment_id.id, archivo_detalle_attachment_id.id])]
+		return {
+			'name': 'Envio archivos de cobro a ADSUS',
+			'type': 'ir.actions.act_window',
+			'view_type': 'form',
+			'view_mode': 'form',
+			'res_model': 'mail.compose.message',
+			'views': [(compose_form.id, 'form')],
+			'view_id': compose_form.id,
+			'target': 'new',
+			'context': ctx,
+		}
+
 class FinancieraCobranzaCbuRegistro(models.Model):
 	_name = 'financiera.cobranza.cbu.registro'
 
 	cobranza_cbu_id = fields.Many2one('financiera.cobranza.cbu', 'Cobranza CBU')
 	partner_id = fields.Many2one('res.partner', 'Cliente')
 	prestamo_id = fields.Many2one('financiera.prestamo', 'Prestamo')
+	prestamo_mobbex_debito_automatico = fields.Boolean(related='prestamo_id.mobbex_debito_automatico')
+	prestamo_mobbex_suscripcion_suscriptor_confirm = fields.Boolean('prestamo_id.mobbex_suscripcion_suscriptor_confirm', readonly="1")
 	prestamo_no_debitar_cbu = fields.Boolean('No debitar por CBU', related='prestamo_id.no_debitar_cbu')
 	cbu = fields.Char('CBU')
 	sucursal = fields.Char('Sucursal')
@@ -1022,6 +1005,21 @@ class FinancieraCobranzaCbuRegistro(models.Model):
 	monto_a_cobrar = fields.Float('Monto a cobrar', digits=(16,2))
 	debito_partes = fields.Float('Debitar en partes maxima de', digits=(16,2))
 
+	@api.one
+	def stop_debito_automatico(self):
+		self.prestamo_mobbex_debito_automatico = False
+	
+	@api.one
+	def allow_debito_automatico(self):
+		self.prestamo_mobbex_debito_automatico = True
+	
+	@api.one
+	def stop_debito_cbu(self):
+		self.prestamo_no_debitar_cbu = False
+	
+	@api.one
+	def allow_debito_cbu(self):
+		self.prestamo_no_debitar_cbu = True
 class FinancieraCobranzaCbuFecha(models.Model):
 	_name = 'financiera.cobranza.cbu.fecha'
 

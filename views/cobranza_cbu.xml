@@ -21,7 +21,7 @@
       <field name="arch" type="xml">
         <form string="Cobranza por CBU" delete="false">
           <header>
-						<button name="asignar_registros" class="oe_highlight" states='borrador' string="Asignar registros" type="object" />
+						<button name="asignar_registros" class="oe_highlight" states='borrador' string="Asignar registros" type="object"/>
 						<button string="Marcar como enviado" class="oe_highlight" name="enviar_a_enviado" states='generado' type="object"/>
 						<button string="Enviar a borrador" name="enviar_a_borrador" states='generado,enviado' type="object" confirm="Seguro que debea enviar a borrador?"/>
 						<button string="Generar archivo" name="bna_file" type="object" class="oe_highlight"
@@ -36,7 +36,7 @@
 							attrs="{'invisible': ['|', ('banco', '!=', '259'), ('state', '!=', 'borrador')]}"/>
 						<button string="Generar archivo" name="bbva_file" type="object" class="oe_highlight"
 							attrs="{'invisible': ['|', ('banco', '!=', '017'), ('state', '!=', 'borrador')]}"/>
-
+						<button string="Enviar email a ADSUS" name="enviar_email_adsus" states='generado' type="object" class="oe_highlight"/>
 						<field name="state" widget="statusbar"/>
           </header>
           <sheet>
@@ -46,156 +46,140 @@
 								<field name="name" readonly="1"/>
 								<field name="banco"/>
 								<field name="cuota_hasta" required="1"/>
-								<field name="maximo_a_cobrar"/>
-								<field name="debito_partes"/>
 								<field name="partner_incluir_no_debitar"/>
 							</group>
 							<group></group>
 						</group>
-						<group string="Banco Nacion" attrs="{'invisible': [('banco', '!=', '011')]}">
-							<group string="Configuracion">
-								<field name="bna_fecha_inicio_debitos"/>
-								<field name="bna_fecha_fin_debitos"/>
-								<field name="bna_mes_tope_rendicion"/>
-								<field name="bna_nro_archivo_enviado_mes"/>
+						<group string="Configuracion">
+							<group>
+								<group string="Banco Nacion" attrs="{'invisible': [('banco', '!=', '011')]}">
+									<field name="bna_fecha_inicio_debitos"/>
+									<field name="bna_fecha_fin_debitos"/>
+									<field name="bna_mes_tope_rendicion"/>
+									<field name="bna_nro_archivo_enviado_mes"/>
+								</group>
+								<group string="Banco Bapro" attrs="{'invisible': [('banco', '!=', '014')]}">
+									<label string=" "/>
+									<label string="* Envío de archivo 72 hs antes de la fecha deseada." style="color:red;"/>
+									<label string=" "/>
+									<label string="* Impacto valor máximo $7.000 ('Debitar en partes maximas de' debera ser igual o inferior)." style="color:red;"/>
+									<label string=" "/>
+									<label string="* No se puede repetir valor impacto en el mismo cliente." style="color:red;"/>
+									<field name="bapro_fecha_impacto" string="Fecha previa al dia del impacto"/>
+								</group>
+								<group string="Banco Macro" attrs="{'invisible': [('banco', '!=', '285')]}">
+									<label string=" "/>
+									<label string="* Anticipo de envío de archivo 96 hs antes de la fecha de inicio deseada." style="color:red;"/>
+									<label string=" "/>
+									<label string="* Modalidad: Fecha de inicio + 5 días de barrido." style="color:red;"/>
+									<label string=" "/>
+									<label string="* Para su correcto funcionamiento es necesario que se agrupen los clientes que cobran entre las fechas de barrido según fecha de inicio en un mismo archivo. Así quedarían promedio solo 4 fechas de inicio al mes." style="color:red;"/>
+									<label string=" "/>
+									<label string="* ENVIO: 1 Impacto por cliente por mes VALOR MAXIMO IMPACTO $23.000 (Por el sistema de barrido que opera el banco no es necesario prorratear la cuota/deuda, ya que el banco debita lo que el cliente tenga en cuenta y al día posterior intentara debitar el saldo pendiente y así sucesivamente hasta que se debite el valor deseado por la empresa o bien hasta que se cumplan los 6 días de barrido)." style="color:red;"/>
+									<label string=" "/>
+									<label string="* La fecha de inicio deberá ser entre lunes y jueves." style="color:red;"/>
+									<label string=" "/>
+									<label string="* Las presentaciones con fechas de inicio de los últimos dos días hábiles, los envíos deben realizarse hasta el día 22 de cada mes." style="color:red;"/>
+									<field name="macro_fecha_inicio"/>
+								</group>
+								<group string="Banco Ciudad" attrs="{'invisible': [('banco', '!=', '029')]}">
+									<label string=" "/>
+									<label string="* Anticipo de envío de archivo 96 hs antes de la fecha de inicio deseada." style="color:red;"/>
+									<label string=" "/>
+									<label string="* Modalidad:  Fecha Exacta." style="color:red;"/>
+									<label string=" "/>
+									<label string="* En un mismo archivo pueden ir todas las fechas de impacto deseada y al momento del envío indicar PRIMER FECHA DE IMPACTO Y ULTIMA FECHA DE IMPACTO." style="color:red;"/>
+									<label string=" "/>
+									<label string="* Máximo envío por cliente por mes $15.000." style="color:red;"/>
+									<field name="ciudad_fecha_inicio"/>
+									<field name="ciudad_fecha_fin"/>
+									<field name="ciudad_fecha_impacto_ids">
+										<tree editable="1">
+											<field name="fecha_impacto"/>
+											<field name="monto_impacto"/>
+										</tree>
+									</field>
+								</group>
+								<group string="Banco Itau" attrs="{'invisible': [('banco', '!=', '259')]}">
+									<label string=" "/>
+									<label string="* Anticipo de envío de archivo 96 hs antes de la fecha de inicio deseada." style="color:red;"/>
+									<label string=" "/>
+									<label string="* Modalidad: Fecha inicio + barrido 10 días hábiles." style="color:red;"/>
+									<label string=" "/>
+									<label string="* Máximo envío por cliente por mes $15.000." style="color:red;"/>
+									<field name="itau_fecha_inicio"/>
+									<field name="itau_fecha_fin"/>
+								</group>
+								<group string="Banco BBVA" attrs="{'invisible': [('banco', '!=', '017')]}">
+									<label string=" "/>
+									<label string="* Anticipo de envío de archivo 96 hs antes de la fecha de inicio deseada." style="color:red;"/>
+									<label string=" "/>
+									<label string="* Modalidad: Fecha inicio + barrido 10 días hábiles." style="color:red;"/>
+									<label string=" "/>
+									<label string="* Máximo envío por cliente por mes $15.000." style="color:red;"/>
+									<field name="bbva_fecha_inicio"/>
+									<field name="bbva_fecha_fin"/>
+								</group>
 							</group>
-							<group string="Resultado">
-								<field name="bna_file_debt_name" invisible="1"/>
-								<field name="bna_file_debt" filename="bna_file_debt_name" readonly="1"/>
-								
-								<field name="bna_file_detalle_name" invisible="1"/>
-								<field name="bna_file_detalle" filename="bna_file_detalle_name" readonly="1"/>
-							</group>
-						</group>
-						<group string="Banco Bapro" attrs="{'invisible': [('banco', '!=', '014')]}">
-							<group string="Configuracion">
-								<label string=" "/>
-								<label string="* Envío de archivo 72 hs antes de la fecha deseada." style="color:red;"/>
-								<label string=" "/>
-								<label string="* Impacto valor máximo $7.000 ('Debitar en partes maximas de' debera ser igual o inferior)." style="color:red;"/>
-								<label string=" "/>
-								<label string="* No se puede repetir valor impacto en el mismo cliente." style="color:red;"/>
-								<field name="bapro_fecha_impacto" string="Fecha previa al dia del impacto"/>
-							</group>
-							<group string="Resultado">
-								<field name="bapro_file_debt_name" invisible="1"/>
-								<field name="bapro_file_debt" filename="bapro_file_debt_name" readonly="1"/>
-								
-								<field name="bapro_file_detalle_name" invisible="1"/>
-								<field name="bapro_file_detalle" filename="bapro_file_detalle_name" readonly="1"/>
-							</group>
-						</group>
-						<group string="Banco Macro" attrs="{'invisible': [('banco', '!=', '285')]}">
-							<group string="Configuracion">
-								<label string=" "/>
-								<label string="* Anticipo de envío de archivo 96 hs antes de la fecha de inicio deseada." style="color:red;"/>
-								<label string=" "/>
-								<label string="* Modalidad: Fecha de inicio + 5 días de barrido." style="color:red;"/>
-								<label string=" "/>
-								<label string="* Para su correcto funcionamiento es necesario que se agrupen los clientes que cobran entre las fechas de barrido según fecha de inicio en un mismo archivo. Así quedarían promedio solo 4 fechas de inicio al mes." style="color:red;"/>
-								<label string=" "/>
-								<label string="* ENVIO: 1 Impacto por cliente por mes VALOR MAXIMO IMPACTO $23.000 (Por el sistema de barrido que opera el banco no es necesario prorratear la cuota/deuda, ya que el banco debita lo que el cliente tenga en cuenta y al día posterior intentara debitar el saldo pendiente y así sucesivamente hasta que se debite el valor deseado por la empresa o bien hasta que se cumplan los 6 días de barrido)." style="color:red;"/>
-								<label string=" "/>
-								<label string="* La fecha de inicio deberá ser entre lunes y jueves." style="color:red;"/>
-								<label string=" "/>
-								<label string="* Las presentaciones con fechas de inicio de los últimos dos días hábiles, los envíos deben realizarse hasta el día 22 de cada mes." style="color:red;"/>
-								<field name="macro_fecha_inicio"/>
-							</group>
-							<group string="Resultado">
-								<field name="macro_file_debt_name" invisible="1"/>
-								<field name="macro_file_debt" filename="macro_file_debt_name" readonly="1"/>
-								
-								<field name="macro_file_detalle_name" invisible="1"/>
-								<field name="macro_file_detalle" filename="macro_file_detalle_name" readonly="1"/>
-							</group>
-						</group>
-						<group string="Banco Ciudad" attrs="{'invisible': [('banco', '!=', '029')]}">
-							<group string="Configuracion">
-								<label string=" "/>
-								<label string="* Anticipo de envío de archivo 96 hs antes de la fecha de inicio deseada." style="color:red;"/>
-								<label string=" "/>
-								<label string="* Modalidad:  Fecha Exacta." style="color:red;"/>
-								<label string=" "/>
-								<label string="* En un mismo archivo pueden ir todas las fechas de impacto deseada y al momento del envío indicar PRIMER FECHA DE IMPACTO Y ULTIMA FECHA DE IMPACTO." style="color:red;"/>
-								<label string=" "/>
-								<label string="* Máximo envío por cliente por mes $15.000." style="color:red;"/>
-								<field name="ciudad_fecha_inicio"/>
-								<field name="ciudad_fecha_fin"/>
-								<field name="ciudad_fecha_impacto_ids">
-									<tree editable="1">
-										<field name="fecha_impacto"/>
-										<field name="monto_impacto"/>
-									</tree>
-								</field>
-							</group>
-							<group string="Resultado">
-								<field name="ciudad_file_debt_name" invisible="1"/>
-								<field name="ciudad_file_debt" filename="ciudad_file_debt_name" readonly="1"/>
-								
-								<field name="ciudad_file_detalle_name" invisible="1"/>
-								<field name="ciudad_file_detalle" filename="ciudad_file_detalle_name" readonly="1"/>
-							</group>
-						</group>
-						<group string="Banco Itau" attrs="{'invisible': [('banco', '!=', '259')]}">
-							<group string="Configuracion">
-								<label string=" "/>
-								<label string="* Anticipo de envío de archivo 96 hs antes de la fecha de inicio deseada." style="color:red;"/>
-								<label string=" "/>
-								<label string="* Modalidad: Fecha inicio + barrido 10 días hábiles." style="color:red;"/>
-								<label string=" "/>
-								<label string="* Máximo envío por cliente por mes $15.000." style="color:red;"/>
-								<field name="itau_fecha_inicio"/>
-								<field name="itau_fecha_fin"/>
-							</group>
-							<group string="Resultado">
-								<field name="itau_file_debt_name" invisible="1"/>
-								<field name="itau_file_debt" filename="itau_file_debt_name" readonly="1"/>
-								
-								<field name="itau_file_detalle_name" invisible="1"/>
-								<field name="itau_file_detalle" filename="itau_file_detalle_name" readonly="1"/>
-							</group>
-						</group>
-						<group string="Banco BBVA" attrs="{'invisible': [('banco', '!=', '017')]}">
-							<group string="Configuracion">
-								<label string=" "/>
-								<label string="* Anticipo de envío de archivo 96 hs antes de la fecha de inicio deseada." style="color:red;"/>
-								<label string=" "/>
-								<label string="* Modalidad: Fecha inicio + barrido 10 días hábiles." style="color:red;"/>
-								<label string=" "/>
-								<label string="* Máximo envío por cliente por mes $15.000." style="color:red;"/>
-								<field name="bbva_fecha_inicio"/>
-								<field name="bbva_fecha_fin"/>
-							</group>
-							<group string="Resultado">
-								<field name="bbva_file_debt_name" invisible="1"/>
-								<field name="bbva_file_debt" filename="bbva_file_debt_name" readonly="1"/>
-								
-								<field name="bbva_file_detalle_name" invisible="1"/>
-								<field name="bbva_file_detalle" filename="bbva_file_detalle_name" readonly="1"/>
+							<group>
+								<group string="Resultado">
+									<field name="archivo_cobro_nombre" invisible="1"/>
+									<field name="archivo_cobro" filename="archivo_cobro_nombre" readonly="1"/>
+									
+									<field name="archivo_detalle_nombre" invisible="1"/>
+									<field name="archivo_detalle" filename="archivo_detalle_nombre" readonly="1"/>
+								</group>
 							</group>
 						</group>
 						<group>
+							<field name="maximo_a_cobrar"/>
+							<field name="debito_partes"/>
 							<field name="suma_a_cobrar" class="oe_read_only"/>
 							<field name="cantidad_impactos" class="oe_read_only"/>
 						</group>
             <notebook>
               <page string="Registros">
-                <field name="registro_ids">
-									<tree editable="1">
-										<field name="partner_id" readonly="1"/>
-										<field name="prestamo_id" readonly="1"/>
-										<field name="prestamo_no_debitar_cbu"/>
-										<field name="cbu"/>
-										<field name="sucursal"/>
-										<field name="cuenta"/>
-										<field name="total" sum="Total" readonly="1"/>
-										<field name="total_vencido" sum="Total" readonly="1"/>
-										<field name="monto_a_cobrar" sum="Total"/>
-										<field name="debito_partes"/>
-										<field name="ultimos_debitos_mobbex"/>
-										<field name="ultimo_cobro"/>
-									</tree>
-								</field>
+								<group>
+									<group>
+										<label string=" "/>
+										<button string="Detener Todos los debitos por tarjeta" name="all_stop_debito_automatico"
+											style="font-size: 13px;border-radius: 20px;background: skyblue;border: 0px;color: blanchedalmond;" type="object"/>
+										<label string=" "/>
+										<button string="Permitir Todos los debitos por tarjeta" name="all_allow_debito_automatico"
+											style="font-size: 13px;border-radius: 20px;background: skyblue;border: 0px;color: blanchedalmond;" type="object"/>
+										<field name="registro_ids">
+											<tree editable="1">
+												<field name="partner_id" readonly="1"/>
+												<field name="prestamo_id" readonly="1"/>
+												<field name="prestamo_mobbex_debito_automatico" string="Permite debito automatico" readonly="1"/>
+												<field name="prestamo_mobbex_suscripcion_suscriptor_confirm" string="T. Debito suscripta" readonly="1"/>
+												<field name="prestamo_no_debitar_cbu" readonly="1"/>
+												<field name="cbu"/>
+												<field name="sucursal"/>
+												<field name="cuenta"/>
+												<field name="total" sum="Total" readonly="1"/>
+												<field name="total_vencido" sum="Total" readonly="1"/>
+												<field name="monto_a_cobrar" sum="Total"/>
+												<field name="debito_partes"/>
+												<field name="ultimos_debitos_mobbex"/>
+												<field name="ultimo_cobro"/>
+												<button string="Detener debito tarjeta" name="stop_debito_automatico" 
+													attrs="{'invisible': [('prestamo_mobbex_debito_automatico','=', False)]}" type="object"
+													style="font-size: 13px;border-radius: 20px;background: skyblue;border: 0px;color: blanchedalmond;"/>
+												<button string="Permitir debito tarjeta" name="allow_debito_automatico"
+													attrs="{'invisible': [('prestamo_mobbex_debito_automatico','=', True)]}" type="object"
+													style="font-size: 13px;border-radius: 20px;background: skyblue;border: 0px;color: blanchedalmond;"/>
+												<button string="Detener debito CBU" name="stop_debito_cbu" 
+													attrs="{'invisible': [('prestamo_no_debitar_cbu','=', False)]}" type="object"
+													style="font-size: 13px;border-radius: 20px;background: skyblue;border: 0px;color: blanchedalmond;"/>
+												<button string="Permitir debito CBU" name="allow_debito_cbu" 
+													attrs="{'invisible': [('prestamo_no_debitar_cbu','=', True)]}" type="object"
+													style="font-size: 13px;border-radius: 20px;background: skyblue;border: 0px;color: blanchedalmond;"/>
+											</tree>
+										</field>
+									</group>
+									<group></group>
+								</group>
               </page>
             </notebook>
           </sheet>
