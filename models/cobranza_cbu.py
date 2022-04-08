@@ -830,7 +830,7 @@ class FinancieraCobranzaCbu(models.Model):
 		cantidad_impactos = 0
 		if len(self.registro_ids) == 0:
 			raise UserError('Sin registro de deudores.')
-		# self.state = 'generado'
+		self.state = 'generado'
 		cobranza_config_id = self.company_id.cobranza_config_id
 		stream = StringIO.StringIO()
 		book = xlwt.Workbook(encoding='utf-8')
@@ -883,14 +883,14 @@ class FinancieraCobranzaCbu(models.Model):
 				sheet.write(row, 22, "032")
 				sheet.write(row, 23, "B")
 				sheet.write(row, 24, monto_impacto*100)
-				date = datetime.strptime(self.itau_fecha_inicio, "%Y-%m-%d")
-				sheet.write(row, 25, str(date.year)+str(date.month).zfill(2)+str(date.day).zfill(2))
-				date = datetime.strptime(self.itau_fecha_fin, "%Y-%m-%d")
-				sheet.write(row, 26, str(date.year)+str(date.month).zfill(2)+str(date.day).zfill(2))
+				date_init = datetime.strptime(self.itau_fecha_inicio, "%Y-%m-%d")
+				sheet.write(row, 25, str(date_init.year)+str(date_init.month).zfill(2)+str(date_init.day).zfill(2))
+				date_fin = datetime.strptime(self.itau_fecha_fin, "%Y-%m-%d")
+				sheet.write(row, 26, str(date_fin.year)+str(date_fin.month).zfill(2)+str(date_fin.day).zfill(2))
 				sheet.write(row, 27, 0) #Reintentos dejamos en cero para fecha fijo!
 
-				# sheet.write(row, 28, "Fecha corbo")
-				# sheet.write(row, 29, "Monto a debitar")
+				sheet.write(row, 28, str(date_init.year)+str(date_init.month).zfill(2)+str(date_init.day).zfill(2))
+				sheet.write(row, 29, monto_impacto*100)
 				# sheet.write(row, 30, "Fecha cobro 2")
 				# sheet.write(row, 31, "Monto a debitar 2")
 				# sheet.write(row, 32, "Fecha cobro 3")
@@ -937,7 +937,7 @@ class FinancieraCobranzaCbu(models.Model):
 		cantidad_impactos = 0
 		if len(self.registro_ids) == 0:
 			raise UserError('Sin registro de deudores.')
-		# self.state = 'generado'
+		self.state = 'generado'
 		cobranza_config_id = self.company_id.cobranza_config_id
 		if not cobranza_config_id.codigo_referencia_bbva:
 			raise ValidationError("Falta configurar Codigo referencia BBVA brindado por ADSUS.")
@@ -994,14 +994,14 @@ class FinancieraCobranzaCbu(models.Model):
 				sheet.write(row, 22, "032")
 				sheet.write(row, 23, "B")
 				sheet.write(row, 24, monto_impacto*100)
-				date = datetime.strptime(self.bbva_fecha_inicio, "%Y-%m-%d")
-				sheet.write(row, 25, str(date.year)+str(date.month).zfill(2)+str(date.day).zfill(2))
-				date = datetime.strptime(self.bbva_fecha_fin, "%Y-%m-%d")
-				sheet.write(row, 26, str(date.year)+str(date.month).zfill(2)+str(date.day).zfill(2))
+				date_init = datetime.strptime(self.bbva_fecha_inicio, "%Y-%m-%d")
+				sheet.write(row, 25, str(date_init.year)+str(date_init.month).zfill(2)+str(date_init.day).zfill(2))
+				date_fin = datetime.strptime(self.bbva_fecha_fin, "%Y-%m-%d")
+				sheet.write(row, 26, str(date_fin.year)+str(date_fin.month).zfill(2)+str(date_fin.day).zfill(2))
 				sheet.write(row, 27, 0) #Reintentos dejamos en cero para fecha fijo!
 
-				# sheet.write(row, 28, "Fecha corbo")
-				# sheet.write(row, 29, "Monto a debitar")
+				sheet.write(row, 28, str(date_init.year)+str(date_init.month).zfill(2)+str(date_init.day).zfill(2))
+				sheet.write(row, 29, monto_impacto*100)
 				# sheet.write(row, 30, "Fecha cobro 2")
 				# sheet.write(row, 31, "Monto a debitar 2")
 				# sheet.write(row, 32, "Fecha cobro 3")
