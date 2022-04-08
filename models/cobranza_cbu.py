@@ -20,6 +20,7 @@ BBVA_COBRO_NOMBRE = 'bbva_a_cobrar.xls'
 BBVA_DETALLE_NOMBRE = 'bbva_detalle.xls'
 class FinancieraCobranzaCbu(models.Model):
 	_name = 'financiera.cobranza.cbu'
+	_inherit = ['mail.thread', 'ir.needaction_mixin']
 
 	_order = 'id desc'
 	name = fields.Char("Nombre")
