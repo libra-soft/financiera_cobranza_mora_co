@@ -1060,7 +1060,7 @@ class FinancieraCobranzaCbu(models.Model):
 				'datas_fname': self.archivo_cobro_nombre,
 				'type': 'binary',
 				'datas': base64.encodestring(self.archivo_cobro),
-				'res_model': 'account.payment',
+				'res_model': 'financiera.cobranza.cbu',
 				'res_id': self.id,
 				'mimetype': 'application/x-pdf',
 			})
@@ -1071,7 +1071,7 @@ class FinancieraCobranzaCbu(models.Model):
 				'datas_fname': self.archivo_detalle_nombre,
 				'type': 'binary',
 				'datas': base64.encodestring(self.archivo_detalle),
-				'res_model': 'account.payment',
+				'res_model': 'financiera.cobranza.cbu',
 				'res_id': self.id,
 				'mimetype': 'application/x-pdf',
 			})
