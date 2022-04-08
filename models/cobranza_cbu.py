@@ -836,7 +836,7 @@ class FinancieraCobranzaCbu(models.Model):
 		book = xlwt.Workbook(encoding='utf-8')
 		sheet = book.add_sheet(u'Sheet1')
 		self.sheet_epico_prepare(sheet)
-		row = 1
+		row = 4
 		# Escribimos el encabezado de detalle
 		book_detalle = xlwt.Workbook(encoding='utf-8')
 		# currency_style = xlwt.XFStyle()
@@ -947,7 +947,7 @@ class FinancieraCobranzaCbu(models.Model):
 		book = xlwt.Workbook(encoding='utf-8')
 		sheet = book.add_sheet(u'Sheet1')
 		self.sheet_epico_prepare(sheet)
-		row = 1
+		row = 4
 		# Escribimos el encabezado de detalle
 		book_detalle = xlwt.Workbook(encoding='utf-8')
 		# currency_style = xlwt.XFStyle()
