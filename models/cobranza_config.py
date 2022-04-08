@@ -18,19 +18,19 @@ class FinancieraCobranzaConfig(models.Model):
 	cd_titulo = fields.Char('CD titulo')
 	cd_texto = fields.Text('CD texto')
 	cd_saludo = fields.Char('CD saludo')
-	# Configuracion Adsus
 	# Archivo BNA
 	bna_sucursal = fields.Char('BNA cuenta recaudadora sucursal')
 	bna_cuenta = fields.Char('BNA cuenta recaudadora numero')
 	bna_tipo_moneda = fields.Char('BNA cuenta recaudadora tipo y moneda')
 	bna_moneda_movimientos = fields.Char('BNA moneda de movimientos')
 	bna_indicador_empleados_bna = fields.Char('BNA indicador empleados BNA')
+	# Configuracion Adsus
 	# Archivo BAPRO
 	bapro_file_name_pre = fields.Char('BAPRO - Pre nombre de archivo')
 	bapro_file_name_pos = fields.Char('BAPRO - Pos nombre de archivo')
 	bapro_denominacion_pre = fields.Char('BAPRO - Pre deniminacion')
 	# Generales
-	codigo_servicio_epico = fields.Char('Codigo de servicio Epico')
+	codigo_servicio_epico = fields.Char('Codigo de servicio Itau/BBVA/Ciudad')
 	adsus_template_id = fields.Many2one('mail.template', 'Plantilla de email ADSUS')
 	# Archivo BBVA
 	codigo_referencia_bbva = fields.Char('Codigo referencia ADSUS')
