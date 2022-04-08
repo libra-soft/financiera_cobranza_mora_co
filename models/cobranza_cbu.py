@@ -1067,10 +1067,10 @@ class FinancieraCobranzaCbu(models.Model):
 			archivo_detalle_attachment_id = False
 			if self.archivo_detalle != None:
 				archivo_detalle_attachment_id = self.env['ir.attachment'].create({
-				'name': self.archivo_detalle,
+				'name': self.archivo_detalle_nombre,
 				'datas_fname': self.archivo_detalle_nombre,
 				'type': 'binary',
-				'datas': base64.encodestring(self.archivo_cobro),
+				'datas': base64.encodestring(self.archivo_detalle),
 				'res_model': 'account.payment',
 				'res_id': self.id,
 				'mimetype': 'application/x-pdf',
