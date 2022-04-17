@@ -147,39 +147,39 @@
 										<label string=" "/>
 										<button string="Permitir Todos los debitos por tarjeta" name="all_allow_debito_automatico"
 											style="font-size: 13px;border-radius: 20px;background: skyblue;border: 0px;color: blanchedalmond;" type="object"/>
-										<field name="registro_ids">
-											<tree editable="1">
-												<field name="partner_id" readonly="1"/>
-												<field name="prestamo_id" readonly="1"/>
-												<field name="prestamo_mobbex_debito_automatico" string="Permite debito automatico" readonly="1"/>
-												<field name="prestamo_mobbex_suscripcion_suscriptor_confirm" string="T. Debito suscripta" readonly="1"/>
-												<field name="prestamo_no_debitar_cbu" readonly="1"/>
-												<field name="cbu"/>
-												<field name="sucursal"/>
-												<field name="cuenta"/>
-												<field name="total" sum="Total" readonly="1"/>
-												<field name="total_vencido" sum="Total" readonly="1"/>
-												<field name="monto_a_cobrar" sum="Total"/>
-												<field name="debito_partes"/>
-												<field name="ultimos_debitos_mobbex"/>
-												<field name="ultimo_cobro"/>
-												<button string="Detener debito tarjeta" name="stop_debito_automatico" 
-													attrs="{'invisible': [('prestamo_mobbex_debito_automatico','=', False)]}" type="object"
-													style="font-size: 13px;border-radius: 20px;background: skyblue;border: 0px;color: blanchedalmond;"/>
-												<button string="Permitir debito tarjeta" name="allow_debito_automatico"
-													attrs="{'invisible': [('prestamo_mobbex_debito_automatico','=', True)]}" type="object"
-													style="font-size: 13px;border-radius: 20px;background: skyblue;border: 0px;color: blanchedalmond;"/>
-												<button string="Detener debito CBU" name="stop_debito_cbu" 
-													attrs="{'invisible': [('prestamo_no_debitar_cbu','=', False)]}" type="object"
-													style="font-size: 13px;border-radius: 20px;background: skyblue;border: 0px;color: blanchedalmond;"/>
-												<button string="Permitir debito CBU" name="allow_debito_cbu" 
-													attrs="{'invisible': [('prestamo_no_debitar_cbu','=', True)]}" type="object"
-													style="font-size: 13px;border-radius: 20px;background: skyblue;border: 0px;color: blanchedalmond;"/>
-											</tree>
-										</field>
 									</group>
 									<group></group>
 								</group>
+								<field name="registro_ids">
+									<tree editable="1">
+										<field name="partner_id" readonly="1"/>
+										<field name="prestamo_id" readonly="1"/>
+										<field name="prestamo_mobbex_debito_automatico" string="Permite debito automatico" readonly="1"/>
+										<field name="prestamo_mobbex_suscripcion_suscriptor_confirm" string="T. Debito suscripta" readonly="1"/>
+										<field name="prestamo_no_debitar_cbu" readonly="1"/>
+										<field name="cbu"/>
+										<field name="sucursal"/>
+										<field name="cuenta"/>
+										<field name="total" sum="Total" readonly="1"/>
+										<field name="total_vencido" sum="Total" readonly="1"/>
+										<field name="monto_a_cobrar" sum="Total"/>
+										<field name="debito_partes"/>
+										<field name="ultimos_debitos_mobbex"/>
+										<field name="ultimo_cobro"/>
+										<button string="Detener debito tarjeta" name="stop_debito_automatico" 
+											attrs="{'invisible': [('prestamo_mobbex_debito_automatico','=', False)]}" type="object"
+											style="font-size: 13px;border-radius: 20px;background: skyblue;border: 0px;color: blanchedalmond;"/>
+										<button string="Permitir debito tarjeta" name="allow_debito_automatico"
+											attrs="{'invisible': [('prestamo_mobbex_debito_automatico','=', True)]}" type="object"
+											style="font-size: 13px;border-radius: 20px;background: skyblue;border: 0px;color: blanchedalmond;"/>
+										<button string="Detener debito CBU" name="stop_debito_cbu" 
+											attrs="{'invisible': [('prestamo_no_debitar_cbu','=', False)]}" type="object"
+											style="font-size: 13px;border-radius: 20px;background: skyblue;border: 0px;color: blanchedalmond;"/>
+										<button string="Permitir debito CBU" name="allow_debito_cbu" 
+											attrs="{'invisible': [('prestamo_no_debitar_cbu','=', True)]}" type="object"
+											style="font-size: 13px;border-radius: 20px;background: skyblue;border: 0px;color: blanchedalmond;"/>
+									</tree>
+								</field>
               </page>
             </notebook>
           </sheet>
