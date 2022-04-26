@@ -703,8 +703,8 @@ class FinancieraCobranzaCbu(models.Model):
 		cobranza_config_id = self.company_id.cobranza_config_id
 		for registro_id in self.registro_ids:
 			sheet.write(row, 1, "D")
-			sheet.write(row, 2, "D")
-			sheet.write(row, 3, registro_id.partner_id.dni)
+			sheet.write(row, 2, "C")
+			sheet.write(row, 3, registro_id.partner_id.main_id_number)
 			sheet.write(row, 4, row)
 			# sheet.write(row, 5, registro_id.partner_id.sexo or "")
 			sheet.write(row, 6, "D")
@@ -794,7 +794,7 @@ class FinancieraCobranzaCbu(models.Model):
 					sheet.write(row, 39, monto_impacto*100)
 					ciudad_debito_maximo_disponible -= monto_impacto
 			
-			sheet.write(row, 40, "PRESTAMO")
+			sheet.write(row, 40, "P")
 			# sheet.write(row, 41, 'Información Medio de Pago')
 			row +=1
 			# detalle
@@ -858,8 +858,8 @@ class FinancieraCobranzaCbu(models.Model):
 			monto_impacto = min(cantidad_a_debitar_disponible, registro_id.debito_partes)
 			while (monto_impacto > 0):
 				sheet.write(row, 1, "D")
-				sheet.write(row, 2, "D")
-				sheet.write(row, 3, registro_id.partner_id.dni)
+				sheet.write(row, 2, "C")
+				sheet.write(row, 3, registro_id.partner_id.main_id_number)
 				sheet.write(row, 4, row)
 				# sheet.write(row, 5, registro_id.partner_id.sexo or "")
 				sheet.write(row, 6, "D")
@@ -903,7 +903,7 @@ class FinancieraCobranzaCbu(models.Model):
 				# sheet.write(row, 38, "Fecha cobro 6")
 				# sheet.write(row, 39, "Monto a debitar 6")
 				
-				sheet.write(row, 40, "PRESTAMO")
+				sheet.write(row, 40, "P")
 				# sheet.write(row, 41, 'Información Medio de Pago')
 				row +=1
 				# detalle
@@ -969,8 +969,8 @@ class FinancieraCobranzaCbu(models.Model):
 			monto_impacto = min(cantidad_a_debitar_disponible, registro_id.debito_partes)
 			while (monto_impacto > 0):
 				sheet.write(row, 1, "D")
-				sheet.write(row, 2, "D")
-				sheet.write(row, 3, registro_id.partner_id.dni)
+				sheet.write(row, 2, "C")
+				sheet.write(row, 3, registro_id.partner_id.main_id_number)
 				sheet.write(row, 4, cobranza_config_id.codigo_referencia_bbva+'/'+str(row))
 				# sheet.write(row, 5, registro_id.partner_id.sexo or "")
 				sheet.write(row, 6, "D")
@@ -1014,7 +1014,7 @@ class FinancieraCobranzaCbu(models.Model):
 				# sheet.write(row, 38, "Fecha cobro 6")
 				# sheet.write(row, 39, "Monto a debitar 6")
 				
-				sheet.write(row, 40, "PRESTAMO")
+				sheet.write(row, 40, "P")
 				# sheet.write(row, 41, 'Información Medio de Pago')
 				row +=1
 				# detalle
