@@ -96,6 +96,7 @@ class FinancieraCobranzaConfig(models.Model):
 				fecha_vencimiento = datetime.strptime(cuota_id.fecha_vencimiento, "%Y-%m-%d")
 				diferencia = fecha_actual - fecha_vencimiento
 				dias = diferencia.days
+				partner_id.dias_en_mora = dias
 				for mora_id in mora_en_memoria_ids:
 					if mora_id['activo'] and dias >= mora_id['dia_inicial_impago'] and dias <= mora_id['dia_final_impago']:
 						deuda_total += partner_saldo
@@ -108,6 +109,7 @@ class FinancieraCobranzaConfig(models.Model):
 				partner_id.write({
 					'cuota_mora_ids': [(6, 0, [])],
 					'saldo_mora': 0,
+					'dias_en_mora': 0,
 				})
 		i = 0
 		for mora_id in self.mora_ids:
