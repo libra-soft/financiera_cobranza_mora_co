@@ -1,259 +1,261 @@
 <openerp>
-  <data>
+    <data>
 
-    <!-- financiera Clientes -->
-    
-    <record model="ir.ui.view" id="cobranza_mora_cliente_tree">
-      <field name="name">cobranza.mora.tree</field>
-      <field name="model">res.partner</field>
-      <field name="arch" type="xml">
-        <tree string="Clientes" create="false" delete="false" decoration-danger="cobranza_proxima_accion_fecha &lt;= current_date" default_order='cobranza_proxima_accion_fecha asc'>
-          <field name="id" invisible="1"/>
-          <field name="name"/>
-          <field name="main_id_number"/>
-					<field name="mora_id"/>
-          <field name="cobranza_estado_id"/>
-          <field name="cobranza_proxima_accion_id"/>
-          <field name="cobranza_proxima_accion_fecha"/>
-					<field name="cuota_mora_numero"/>
-					<field name="cuota_mora_monto"/>
-          <field name="saldo_mora" sum="Deuda en Mora"/>
-					<field name="saldo_total" sum="Deuda Total"/>
-          <field name="cobranza_disponible" invisible="0"/>
-					<field name="referido_1_nombre"/>
-					<field name="referido_1_celular"/>
-					<field name="referido_2_nombre"/>
-					<field name="referido_2_celular"/>
-					<field name="cobranza_externa_id"/>
-					<button string="CD" name="carta_documento_report" type="object" class="oe_highlight"/>
-					<field name="pagos_360_checkout_url"/>
-					<field name="pagos_360_pdf_url"/>
-          <field name="company_id" groups="base.group_erp_manager"/>
-        </tree>
-      </field>
-    </record>
+        <!-- financiera Clientes -->
 
-    <!-- Filter Tree cobranza -->
+        <record model="ir.ui.view" id="cobranza_mora_cliente_tree">
+            <field name="name">cobranza.mora.tree</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <tree string="Clientes" create="false" delete="false" decoration-danger="cobranza_proxima_accion_fecha &lt;= current_date" default_order='cobranza_proxima_accion_fecha asc'>
+                    <field name="id" invisible="1" />
+                    <field name="name" />
+                    <field name="main_id_number" />
+                    <field name="mora_id" />
+                    <field name="cobranza_estado_id" />
+                    <field name="cobranza_proxima_accion_id" />
+                    <field name="cobranza_proxima_accion_fecha" />
+                    <field name="cuota_mora_numero" />
+                    <field name="cuota_mora_monto" />
+                    <field name="saldo_mora" sum="Deuda en Mora" />
+                    <field name="saldo_total" sum="Deuda Total" />
+                    <field name="cobranza_disponible" invisible="0" />
+                    <field name="street" />
+                    <field name="city" />
+                    <field name="state_id" />
+                    <field name="zip" />
+                    <field name="referido_1_nombre" />
+                    <field name="referido_1_celular" />
+                    <field name="referido_2_nombre" />
+                    <field name="referido_2_celular" />
+                    <field name="cobranza_externa_id" />
+                    <button string="CD" name="carta_documento_report" type="object" class="oe_highlight" />
+                    <field name="pagos_360_checkout_url" />
+                    <field name="pagos_360_pdf_url" />
+                    <field name="company_id" groups="base.group_erp_manager" />
+                </tree>
+            </field>
+        </record>
 
-    <record model="ir.ui.view" id="filter_cobranza_mora_cliente_view">
-      <field name="name">cobranza.mora.cliente.filter</field>
-      <field name="model">res.partner</field>
-      <field name="arch" type="xml">
-        <search>
-          <filter string="Deudor" invisible="1" name="saldo_mora" domain="[('saldo_mora','>', 0)]"/>
-					<filter string="Proxima accion vencida" name="proxima_accion_vencida"  domain="[('saldo_mora','>', 0), '|', ('cobranza_proxima_accion_fecha','&lt;=', (context_today()).strftime('%%Y-%%m-%%d')),('cobranza_proxima_accion_fecha','=', False)]"/>
-          <separator/>
-					<filter string="Gestion interna" name="gestion_interna" domain="[('cobranza_externa_id', '=', False)]"/>
-					<filter string="Gestion externa" name="gestion_externa" domain="[('cobranza_externa_id', '!=', False)]"/>
-					<separator/>
-          <field name="name" string="Nombre"/>
-          <field name="main_id_number" string="Identificacion principal"/>
-					<separator/>
-					<field name="mora_id" string="Segmento"/>
-					<separator/>
-					<filter name="group_mora_id" string="Segmento" context="{'group_by':'mora_id'}"/>
-        </search>
-      </field>
-    </record>
+        <!-- Filter Tree cobranza -->
 
-    <record model="ir.actions.act_window" id="cobranza_mora_action">
-      <field name="name">Deudores</field>
-      <field name="res_model">res.partner</field>
-			<field name="context">{'search_default_gestion_interna':1,'search_default_group_mora_id':1}</field>
-      <field name="view_mode">tree,form</field>
-      <field name="domain">[('mora_id','!=', False)]</field>
-      <field name="view_ids" eval="[(5, 0, 0), 
+        <record model="ir.ui.view" id="filter_cobranza_mora_cliente_view">
+            <field name="name">cobranza.mora.cliente.filter</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter string="Deudor" invisible="1" name="saldo_mora" domain="[('saldo_mora','>', 0)]" />
+                    <filter string="Proxima accion vencida" name="proxima_accion_vencida" domain="[('saldo_mora','>', 0), '|', ('cobranza_proxima_accion_fecha','&lt;=', (context_today()).strftime('%%Y-%%m-%%d')),('cobranza_proxima_accion_fecha','=', False)]" />
+                    <separator />
+                    <filter string="Gestion interna" name="gestion_interna" domain="[('cobranza_externa_id', '=', False)]" />
+                    <filter string="Gestion externa" name="gestion_externa" domain="[('cobranza_externa_id', '!=', False)]" />
+                    <separator />
+                    <field name="name" string="Nombre" />
+                    <field name="main_id_number" string="Identificacion principal" />
+                    <separator />
+                    <field name="mora_id" string="Segmento" />
+                    <separator />
+                    <filter name="group_mora_id" string="Segmento" context="{'group_by':'mora_id'}" />
+                </search>
+            </field>
+        </record>
+
+        <!-- Vista Form Partner Deudor para Sesion -->
+
+        <record id="cobranza_mora_cliente_sesion_form" model="ir.ui.view">
+            <field name="name">cobranza.mora.form</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button type="object" string="Enviar sms" name="wizard_enviar_sms" class="oe_highlight" />
+                        <button type="object" string="Enviar email" name="wizard_enviar_email" class="oe_highlight" />
+                    </header>
+                    <sheet>
+                        <script>
+                            $(document).ready(function(){
+                                $('.modal-dialog').css({'width': '76%', 'height': '97%'});
+                                $('.modal-content').css({'height': '100%'});
+                                $('.modal-body').css({'height': '100%'});
+                            });
+                    </script>
+                        <group name="generales">
+                            <group name="generales_columna_1">
+                                <field name="company_id" groups="base.group_erp_manager" />
+                                <field name="name" readonly="1" />
+                                <field name="phone" readonly="1" />
+                                <field name="mobile" readonly="1" />
+                                <field name="email" readonly="1" />
+                                <field name="cobranza_disponible" invisible="0" />
+                            </group>
+                            <group name="generales_columna_2">
+                                <field name="cobranza_externa_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" />
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="CONTACTOS">
+                                <field name="contacto_ids" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" readonly="0">
+                                    <tree create="true" delete="false" limit="5">
+                                        <field name="create_date" invisible="1" />
+                                        <field name="name" />
+                                        <field name="relacion" />
+                                        <field name="movil" />
+                                        <field name="telefono" />
+                                        <field name="email" />
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <field name="create_date" invisible="1" />
+                                            <field name="name" required="1" />
+                                            <field name="relacion" />
+                                            <field name="movil" />
+                                            <field name="telefono" />
+                                            <field name="email" />
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+                        </notebook>
+                        <notebook>
+                            <page string="DEUDA">
+                                <field name="cuota_mora_ids" readonly="0">
+                                    <tree decoration-success="state == 'cobrada'" decoration-danger="state_mora in ['moraMedia', 'moraTardia', 'incobrable']" decoration-warning="state_mora in ['preventiva', 'moraTemprana']" decoration-info="state == 'borrador'" decoration-muted="state == 'cobrada'" string="Cuotas" limit="5" create="false" delete="false">
+                                        <field name="display_numero_cuota" readonly="1" />
+                                        <field name="prestamo_id" readonly="1" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" />
+                                        <field name="fecha_vencimiento" readonly="1" />
+                                        <field name="total" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1" />
+                                        <field name="cobrado" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1" />
+                                        <field name="saldo" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1" />
+                                        <field name="sucursal_id" readonly="1" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" />
+                                        <field name="state" readonly="1" />
+                                        <field name="state_mora" readonly="1" />
+                                        <field name="fecha_vencimiento_pre_semana" invisible="1" />
+                                        <field name="fecha_vencimiento_pos_semana" invisible="1" />
+                                        <field name="pagos_360_generar_pago_voluntario" invisible="1" />
+                                        <button name="button_renovar_solicitud_cupon" type="object" string="Renovar cupon" class="oe_highlight" attrs="{'invisible': [('pagos_360_generar_pago_voluntario','=', False)]}" />
+                                        <button name="action_cupon_sent" type="object" string="Enviar cupon" class="oe_highlight" attrs="{'invisible': [('pagos_360_generar_pago_voluntario','=', False)]}" />
+                                        <field name="mobbex_suscripcion_suscriptor_confirm" invisible="1" />
+                                        <!-- <button name="mobbex_subscriber_execution" type="object" string="Debitar" class="oe_highlight" attrs="{'invisible': [('mobbex_suscripcion_suscriptor_confirm','=', False)]}" confirm="Esta seguro?"/> -->
+                                    </tree>
+                                    <form>
+                                        <sheet>
+                                            <group>
+                                                <field name="display_numero_cuota" readonly="1" />
+                                                <field name="prestamo_id" readonly="1" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" />
+                                                <field name="fecha_vencimiento" readonly="1" />
+                                                <field name="total" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1" />
+                                                <field name="cobrado" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1" />
+                                                <field name="saldo" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1" />
+                                                <field name="sucursal_id" readonly="1" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" />
+                                                <field name="state" readonly="1" />
+                                                <field name="state_mora" readonly="1" />
+                                                <field name="fecha_vencimiento_pre_semana" invisible="1" />
+                                                <field name="fecha_vencimiento_pos_semana" invisible="1" />
+                                                <field name="pagos_360_generar_pago_voluntario" invisible="1" />
+                                                <field name="pagos_360_solicitud_state" readonly="1" />
+                                                <field name="pagos_360_first_due_date" readonly="1" />
+                                                <field name="pagos_360_first_total" readonly="1" />
+                                                <field name="pagos_360_second_due_date" readonly="1" />
+                                                <field name="pagos_360_second_total" readonly="1" />
+                                                <button name="button_renovar_solicitud_cupon" type="object" string="Renovar cupon" class="oe_highlight" attrs="{'invisible': [('pagos_360_generar_pago_voluntario','=', False)]}" />
+                                                <button name="action_cupon_sent" type="object" string="Enviar cupon" class="oe_highlight" attrs="{'invisible': [('pagos_360_generar_pago_voluntario','=', False)]}" />
+                                                <field name="mobbex_suscripcion_suscriptor_confirm" invisible="1" />
+                                                <!-- <button name="mobbex_subscriber_execution" type="object" string="Debitar" class="oe_highlight" attrs="{'invisible': [('mobbex_suscripcion_suscriptor_confirm','=', False)]}" confirm="Esta seguro?"/> -->
+                                            </group>
+                                        </sheet>
+                                        <footer>
+                                            <div class="oe_chatter">
+                                                <!-- <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/> -->
+                                                <field name="message_ids" widget="mail_thread" />
+                                            </div>
+                                        </footer>
+                                    </form>
+                                </field>
+                            </page>
+                        </notebook>
+                        <group>
+                            <field name="saldo_mora" readonly="1" />
+                        </group>
+                        <notebook>
+                            <page name="notificaiones" string="Notificaciones de deuda">
+                                <field name="notificacion_ids">
+                                    <tree limit="5" editable="top">
+                                        <field name="fecha" required="1" />
+                                        <field name="item_id" required="1" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True,'no_open':True}" />
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        <notebook>
+                            <page string="HISTORIAL DE CONTACTABILIDAD">
+                                <field name="cobranza_historial_conversacion_ids" context="{'active_id':id}">
+                                    <tree limit="5" delete="false">
+                                        <field name="create_date" string="Fecha" readonly="1" />
+                                        <field name="create_uid" string="Creado por" readonly="1" />
+                                        <field name="saldo_mora" readonly="1" />
+                                        <field name="numero" string="Numero discado" readonly="1" />
+                                        <field name="respondio" readonly="1" />
+                                        <field name="conversacion" />
+                                        <field name="estado_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" readonly="1" />
+                                        <field name="es_promesa_de_pago" readonly="1" />
+                                        <field name="fecha_promesa_de_pago" attrs="{'required': [('es_promesa_de_pago','=',True)],'invisible': [('es_promesa_de_pago','=',False)]}" />
+                                        <field name="proxima_accion_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" readonly="1" />
+                                        <field name="proxima_accion_fecha" readonly="1" />
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <field name="numero" string="Numero discado" required="1" />
+                                            <field name="respondio" required="0" />
+                                            <field name="conversacion" />
+                                            <field name="estado_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" />
+                                            <field name="es_promesa_de_pago" />
+                                            <field name="fecha_promesa_de_pago" attrs="{'required': [('es_promesa_de_pago','=',True)],'invisible': [('es_promesa_de_pago','=',False)]}" />
+                                            <field name="proxima_accion_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" required="1" />
+                                            <field name="proxima_accion_fecha" required="1" />
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+                        </notebook>
+
+                        <!-- <notebook>
+                            <page name="chatter" string="Emails">
+                                <div class="oe_chatter">
+                                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                                    <field name="message_ids" widget="mail_thread"/>
+                                </div>
+                            </page>
+                        </notebook> -->
+                    </sheet>
+                    <footer>
+                        <button name="write" type="object" string="Guardar" class="oe_highlight" />
+                        <button name="cancel" string="Cancel" special="cancel" class="oe_link" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="cobranza_mora_action">
+            <field name="name">Deudores</field>
+            <field name="res_model">res.partner</field>
+            <field name="context">{'search_default_gestion_interna':1,'search_default_group_mora_id':1}</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('mora_id','!=', False)]</field>
+            <field name="view_ids" eval="[(5, 0, 0), 
         (0, 0, {'view_mode': 'tree', 'view_id': ref('cobranza_mora_cliente_tree')}),
         (0, 0, {'view_mode': 'form', 'view_id': ref('cobranza_mora_cliente_sesion_form')})]
-        "/>
-    </record>
+        " />
+        </record>
 
-		<!-- Vista Form Partner Deudor para Sesion -->
-
-    <record id="cobranza_mora_cliente_sesion_form"  model="ir.ui.view">
-      <field name="name">cobranza.mora.form</field>
-      <field name="model">res.partner</field>
-      <field name="arch" type="xml">
-        <form>
-          <header>
-						<button type="object" string="Enviar sms" name= "wizard_enviar_sms" class="oe_highlight"/>
-						<button type="object" string="Enviar email" name= "wizard_enviar_email" class="oe_highlight"/>
-          </header>
-          <sheet>
-						<script>
-							$(document).ready(function(){
-								$('.modal-dialog').css({'width': '76%', 'height': '97%'});
-								$('.modal-content').css({'height': '100%'});
-								$('.modal-body').css({'height': '100%'});
-							});
-					</script>
-            <group name="generales">
-							<group name="generales_columna_1">
-								<field name="company_id" groups="base.group_erp_manager"/>
-								<field name="name" readonly="1"/>
-								<field name="phone" readonly="1"/>
-								<field name="mobile" readonly="1"/>
-								<field name="email" readonly="1"/>
-                <field name="cobranza_disponible" invisible="0"/>
-							</group>
-							<group name="generales_columna_2">
-								<field name="cobranza_externa_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
-							</group>
-            </group>
-            <notebook>
-              <page string="CONTACTOS">
-                <field name="contacto_ids" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" readonly="0">
-                  <tree create="true" delete="false" limit="5">
-                    <field name="create_date" invisible="1"/>
-										<field name="name"/>
-                    <field name="relacion"/>
-                    <field name="movil"/>
-										<field name="telefono"/>
-                    <field name="email"/>
-                  </tree>
-									<form>
-										<group>
-											<field name="create_date" invisible="1"/>
-											<field name="name" required="1"/>
-											<field name="relacion"/>
-											<field name="movil"/>
-											<field name="telefono"/>
-											<field name="email"/>
-										</group>
-									</form>
-                </field>
-              </page>
-            </notebook>
-            <notebook>
-              <page string="DEUDA">
-                <field name="cuota_mora_ids" readonly="0">
-                  <tree decoration-success="state == 'cobrada'" decoration-danger="state_mora in ['moraMedia', 'moraTardia', 'incobrable']" decoration-warning="state_mora in ['preventiva', 'moraTemprana']" decoration-info="state == 'borrador'" decoration-muted="state == 'cobrada'" string="Cuotas" limit="5"
-										create="false" delete="false">
-                    <field name="display_numero_cuota" readonly="1"/>
-                    <field name="prestamo_id" readonly="1" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
-                    <field name="fecha_vencimiento" readonly="1"/>
-                    <field name="total" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1"/>
-                    <field name="cobrado" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1"/>
-                    <field name="saldo" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1"/>
-                    <field name="sucursal_id" readonly="1" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
-                    <field name="state" readonly="1"/>
-                    <field name="state_mora" readonly="1"/>
-                    <field name="fecha_vencimiento_pre_semana" invisible="1"/>
-                    <field name="fecha_vencimiento_pos_semana" invisible="1"/>
-										<field name="pagos_360_generar_pago_voluntario" invisible="1"/>
-										<button name="button_renovar_solicitud_cupon" type="object" string="Renovar cupon" class="oe_highlight" attrs="{'invisible': [('pagos_360_generar_pago_voluntario','=', False)]}"/>
-										<button name="action_cupon_sent" type="object" string="Enviar cupon" class="oe_highlight" attrs="{'invisible': [('pagos_360_generar_pago_voluntario','=', False)]}"/>
-										<field name="mobbex_suscripcion_suscriptor_confirm" invisible="1"/>
-										<!-- <button name="mobbex_subscriber_execution" type="object" string="Debitar" class="oe_highlight" attrs="{'invisible': [('mobbex_suscripcion_suscriptor_confirm','=', False)]}" confirm="Esta seguro?"/> -->
-                  </tree>
-									<form>
-										<sheet>
-											<group>
-												<field name="display_numero_cuota" readonly="1"/>
-												<field name="prestamo_id" readonly="1" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
-												<field name="fecha_vencimiento" readonly="1"/>
-												<field name="total" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1"/>
-												<field name="cobrado" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1"/>
-												<field name="saldo" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" readonly="1"/>
-												<field name="sucursal_id" readonly="1" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
-												<field name="state" readonly="1"/>
-												<field name="state_mora" readonly="1"/>
-												<field name="fecha_vencimiento_pre_semana" invisible="1"/>
-												<field name="fecha_vencimiento_pos_semana" invisible="1"/>
-												<field name="pagos_360_generar_pago_voluntario" invisible="1"/>
-												<field name="pagos_360_solicitud_state" readonly="1"/>
-												<field name="pagos_360_first_due_date" readonly="1"/>
-												<field name="pagos_360_first_total" readonly="1"/>
-												<field name="pagos_360_second_due_date" readonly="1"/>
-												<field name="pagos_360_second_total" readonly="1"/>
-												<button name="button_renovar_solicitud_cupon" type="object" string="Renovar cupon" class="oe_highlight" attrs="{'invisible': [('pagos_360_generar_pago_voluntario','=', False)]}"/>
-												<button name="action_cupon_sent" type="object" string="Enviar cupon" class="oe_highlight" attrs="{'invisible': [('pagos_360_generar_pago_voluntario','=', False)]}"/>
-												<field name="mobbex_suscripcion_suscriptor_confirm" invisible="1"/>
-												<!-- <button name="mobbex_subscriber_execution" type="object" string="Debitar" class="oe_highlight" attrs="{'invisible': [('mobbex_suscripcion_suscriptor_confirm','=', False)]}" confirm="Esta seguro?"/> -->
-											</group>
-										</sheet>
-										<footer>
-											<div class="oe_chatter">
-												<!-- <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/> -->
-												<field name="message_ids" widget="mail_thread"/>
-											</div>
-										</footer>
-									</form>
-                </field>
-              </page>
-            </notebook>
-            <group>
-              <field name="saldo_mora" readonly="1"/>
-            </group>
-						<notebook>
-							<page name="notificaiones" string="Notificaciones de deuda">
-								<field name="notificacion_ids">
-									<tree limit="5" editable="top">
-										<field name="fecha" required="1"/>
-										<field name="item_id" required="1" widget="many2one_unclickable" options="{'no_quick_create':True,'no_create_edit':True,'no_open':True}"/>
-									</tree>
-								</field>
-							</page>
-						</notebook>
-            <notebook>
-              <page string="HISTORIAL DE CONTACTABILIDAD">
-                <field name="cobranza_historial_conversacion_ids" context="{'active_id':id}">
-                  <tree limit="5" delete="false">
-                    <field name="create_date" string="Fecha" readonly="1"/>
-                    <field name="create_uid" string="Creado por" readonly="1"/>
-                    <field name="saldo_mora" readonly="1"/>
-                    <field name="numero" string="Numero discado" readonly="1"/>
-										<field name="respondio" readonly="1"/>
-										<field name="conversacion"/>
-                    <field name="estado_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" readonly="1"/>
-										<field name="es_promesa_de_pago" readonly="1"/>
-										<field name="fecha_promesa_de_pago" attrs="{'required': [('es_promesa_de_pago','=',True)],'invisible': [('es_promesa_de_pago','=',False)]}"/>
-                    <field name="proxima_accion_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" readonly="1"/>
-                    <field name="proxima_accion_fecha" readonly="1"/>
-                  </tree>
-									<form>
-										<group>
-											<field name="numero" string="Numero discado" required="1"/>
-											<field name="respondio" required="0"/>
-											<field name="conversacion"/>
-											<field name="estado_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>
-											<field name="es_promesa_de_pago"/>
-											<field name="fecha_promesa_de_pago" 
-												attrs="{'required': [('es_promesa_de_pago','=',True)],'invisible': [('es_promesa_de_pago','=',False)]}"/>
-											<field name="proxima_accion_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}" required="1"/>
-											<field name="proxima_accion_fecha" required="1"/>
-										</group>
-									</form>
-                </field>
-              </page>
-            </notebook>
-						
-						<!-- <notebook>
-							<page name="chatter" string="Emails">
-								<div class="oe_chatter">
-									<field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
-									<field name="message_ids" widget="mail_thread"/>
-								</div>
-							</page>
-						</notebook> -->
-          </sheet>
-          <footer>
-            <button name="write" type="object" string="Guardar" class="oe_highlight"/>
-            <button name="cancel" string="Cancel" special="cancel" class="oe_link"/> 
-          </footer>
-        </form>
-      </field>
-    </record>
-
-    <record model="ir.actions.act_window" id="cobranza_mora_sesion_action">
-      <field name="name">Sesion de cobranza</field>
-      <field name="res_model">res.partner</field>
-      <field name="view_mode">form</field>
-      <field name="view_ids" eval="[(5, 0, 0), 
+        <record model="ir.actions.act_window" id="cobranza_mora_sesion_action">
+            <field name="name">Sesion de cobranza</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">form</field>
+            <field name="view_ids" eval="[(5, 0, 0), 
         (0, 0, {'view_mode': 'form', 'view_id': ref('cobranza_mora_cliente_sesion_form')})]
-        "/>
-    </record>
+        " />
+        </record>
 
 
-  </data>
+    </data>
 </openerp>

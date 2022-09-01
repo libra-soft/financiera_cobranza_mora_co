@@ -53,5 +53,9 @@
 		<menuitem name="Codigos BNA" id="menu_bna_code_action" parent="menu_cobranza_cbu_configuracion" 
 			action="res_bank_bna_code_action" sequence="140" groups="base.group_erp_manager"/>
 
+	<!-- Desde Modulo Cobranza y seguimiento -->
+	<menuitem name="Enviar SMS" id="menu_cobranza_message_masive_action" parent="menu_cobranza" 
+	action="financiera_sms.financiera_sms_message_masive_action" sequence="25"/>
+
   </data>
 </openerp>

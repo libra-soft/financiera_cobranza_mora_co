@@ -54,7 +54,7 @@
 			view_id="debt_to_file_wizard"
 			view_type="form" view_mode="form"
 			key2="client_action_multi" target="new"
-			groups="financiera_app.user"
+			groups="financiera_cobranza_mora.user"
 		/>
 
 </odoo>
