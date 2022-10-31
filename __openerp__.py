@@ -19,7 +19,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'financiera_prestamos', 'financiera_pagos_360', 'financiera_mobbex','financiera_sms'],
+    'depends': ['base', 'financiera_prestamos'],
 
     # always loaded
     'data': [
@@ -27,23 +27,18 @@
         'security/ir.model.access.csv',
         'security/security.xml',
 				'views/cobranza_config.xml',
-				'views/cobranza_cbu_config.xml',
-				'views/cobranza_cbu.xml',
 				'views/cobranza_externa.xml',
         'views/cobranza_historial_conversacion.xml',
         'views/cobranza_sesion.xml',
 				'views/cobranza_notificacion.xml',
         'views/extends_res_partner.xml',
 				'views/extends_res_company.xml',
-				'views/res_bank_bna_code.xml',
-				'views/extends_financiera_prestamo.xml',
         'views/views.xml',
-				'wizards/res_partner_debt_to_bank_file_wizard.xml',
 				'reports/generic_reports.xml',
         'data/ir_cron.xml',
     ],
     # only loaded in demonstration mode
-    'demo': [
-        'demo/demo.xml',
-    ],
+    # 'demo': [
+    #     'demo/demo.xml',
+    # ],
 }

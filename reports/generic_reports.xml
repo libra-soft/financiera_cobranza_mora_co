@@ -7,10 +7,10 @@
 		model="res.partner"
 		string="Carta documento"
 		report_type="qweb-pdf"
-		name="financiera_cobranza_mora.carta_documento_report_view"
-		file="financiera_cobranza_mora.carta_documento_report_view"
+		name="financiera_cobranza_mora_co.carta_documento_report_view"
+		file="financiera_cobranza_mora_co.carta_documento_report_view"
 		/>
-		<record id="financiera_cobranza_mora.carta_documento_report" model="ir.actions.report.xml">
+		<record id="financiera_cobranza_mora_co.carta_documento_report" model="ir.actions.report.xml">
 			<field name="attachment_use" eval="False"/>
 		</record>
 

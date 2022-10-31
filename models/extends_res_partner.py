@@ -124,7 +124,7 @@ class ExtendsResPartner(models.Model):
 	def carta_documento_report(self):
 		self.ensure_one()
 		if len(self.company_id.cobranza_config_id) > 0:
-			return self.env['report'].get_action(self, "financiera_cobranza_mora.carta_documento_report_view")
+			return self.env['report'].get_action(self, "financiera_cobranza_mora_co.carta_documento_report_view")
 		else:
 			raise UserError("Modulo cobranza no esta contartado.")
 

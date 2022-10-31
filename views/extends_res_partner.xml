@@ -131,11 +131,6 @@
                                         <field name="state_mora" readonly="1" />
                                         <field name="fecha_vencimiento_pre_semana" invisible="1" />
                                         <field name="fecha_vencimiento_pos_semana" invisible="1" />
-                                        <field name="pagos_360_generar_pago_voluntario" invisible="1" />
-                                        <button name="button_renovar_solicitud_cupon" type="object" string="Renovar cupon" class="oe_highlight" attrs="{'invisible': [('pagos_360_generar_pago_voluntario','=', False)]}" />
-                                        <button name="action_cupon_sent" type="object" string="Enviar cupon" class="oe_highlight" attrs="{'invisible': [('pagos_360_generar_pago_voluntario','=', False)]}" />
-                                        <field name="mobbex_suscripcion_suscriptor_confirm" invisible="1" />
-                                        <!-- <button name="mobbex_subscriber_execution" type="object" string="Debitar" class="oe_highlight" attrs="{'invisible': [('mobbex_suscripcion_suscriptor_confirm','=', False)]}" confirm="Esta seguro?"/> -->
                                     </tree>
                                     <form>
                                         <sheet>
@@ -151,16 +146,6 @@
                                                 <field name="state_mora" readonly="1" />
                                                 <field name="fecha_vencimiento_pre_semana" invisible="1" />
                                                 <field name="fecha_vencimiento_pos_semana" invisible="1" />
-                                                <field name="pagos_360_generar_pago_voluntario" invisible="1" />
-                                                <field name="pagos_360_solicitud_state" readonly="1" />
-                                                <field name="pagos_360_first_due_date" readonly="1" />
-                                                <field name="pagos_360_first_total" readonly="1" />
-                                                <field name="pagos_360_second_due_date" readonly="1" />
-                                                <field name="pagos_360_second_total" readonly="1" />
-                                                <button name="button_renovar_solicitud_cupon" type="object" string="Renovar cupon" class="oe_highlight" attrs="{'invisible': [('pagos_360_generar_pago_voluntario','=', False)]}" />
-                                                <button name="action_cupon_sent" type="object" string="Enviar cupon" class="oe_highlight" attrs="{'invisible': [('pagos_360_generar_pago_voluntario','=', False)]}" />
-                                                <field name="mobbex_suscripcion_suscriptor_confirm" invisible="1" />
-                                                <!-- <button name="mobbex_subscriber_execution" type="object" string="Debitar" class="oe_highlight" attrs="{'invisible': [('mobbex_suscripcion_suscriptor_confirm','=', False)]}" confirm="Esta seguro?"/> -->
                                             </group>
                                         </sheet>
                                         <footer>

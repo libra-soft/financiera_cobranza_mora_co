@@ -3,31 +3,31 @@
 
     <!-- Top menu item -->
     
-    <menuitem name="Cobranza y Seguimiento" id="menu_cobranza" web_icon="financiera_cobranza_mora,static/description/image.png"
-    groups="financiera_cobranza_mora.user"/>
+    <menuitem name="Cobranza y Seguimiento" id="menu_cobranza" web_icon="financiera_cobranza_mora_co,static/description/image.png"
+    groups="financiera_cobranza_mora_co.user"/>
 
     <!-- Submenu -->
-    <menuitem name="Sesion de cobranza" id="menu_sesion" sequence="10" parent="menu_cobranza" groups="financiera_cobranza_mora.user"/>
-		<menuitem name="Clientes" id="menu_morosos" sequence="20" parent="menu_cobranza" groups="financiera_cobranza_mora.manager"/>
-		<menuitem name="Promesas de pago" id="menu_promesas_pago" sequence="25" parent="menu_cobranza" groups="financiera_cobranza_mora.user"/>
-		<menuitem name="Configuracion" id="menu_config" sequence="30" parent="menu_cobranza" groups="financiera_cobranza_mora.manager"/>
+    <menuitem name="Sesion de cobranza" id="menu_sesion" sequence="10" parent="menu_cobranza" groups="financiera_cobranza_mora_co.user"/>
+		<menuitem name="Clientes" id="menu_morosos" sequence="20" parent="menu_cobranza" groups="financiera_cobranza_mora_co.manager"/>
+		<menuitem name="Promesas de pago" id="menu_promesas_pago" sequence="25" parent="menu_cobranza" groups="financiera_cobranza_mora_co.user"/>
+		<menuitem name="Configuracion" id="menu_config" sequence="30" parent="menu_cobranza" groups="financiera_cobranza_mora_co.manager"/>
 
 		<!-- Action -->
 		<menuitem name="Sesiones" id="menu_sesion_action" parent="menu_sesion" 
 		action="cobranza_sesion_action"/>
 
 		<menuitem name="Clientes" id="menu_morosos_action" parent="menu_morosos" action="cobranza_mora_action" 
-		groups="financiera_cobranza_mora.manager" sequence="10"/>
-    <menuitem name="Notificaicones" id="menu_notificacion_deudor_action" parent="menu_morosos" action="cobranza_notificaciones_action" 
-		groups="financiera_cobranza_mora.manager" sequence="20"/>
-    <menuitem name="Contactabilidad" id="menu_contactabilidad_action" parent="menu_morosos" action="contactabilidad_action" 
-		groups="financiera_cobranza_mora.manager" sequence="30"/>
+		groups="financiera_cobranza_mora_co.manager" sequence="10"/>
+		<menuitem name="Notificaicones" id="menu_notificacion_deudor_action" parent="menu_morosos" action="cobranza_notificaciones_action" 
+		groups="financiera_cobranza_mora_co.manager" sequence="20"/>
+		<menuitem name="Contactabilidad" id="menu_contactabilidad_action" parent="menu_morosos" action="contactabilidad_action" 
+		groups="financiera_cobranza_mora_co.manager" sequence="30"/>
 
 		<menuitem name="Calendario" id="menu_promesas_pagos_action" parent="menu_promesas_pago" action="calendar_promesa_pago_action" 
-		groups="financiera_cobranza_mora.user"/>
+		groups="financiera_cobranza_mora_co.user"/>
 
 		<menuitem name="Configuracion" id="menu_config_action" parent="menu_config" 
-      action="cobranza_config_action" sequence="1"/>
+		action="cobranza_config_action" sequence="1"/>
 		<menuitem name="Estados de conversacion" id="menu_estados_action" parent="menu_config" 
 		action="cobranza_historial_estado_action" sequence="10"/>
 		<menuitem name="Acciones de conversacion" id="menu_acciones_action" parent="menu_config" 
@@ -37,25 +37,6 @@
 		<menuitem name="Estudios de cobranza externa" id="menu_cobranza_externa_action" parent="menu_config" 
 		action="cobranza_externa_action" sequence="40"/>
 
-		<!-- Top menu item -->
-    
-    <menuitem name="Cobranza por CBU" id="menu_cobranza_cbu" web_icon="financiera_cobranza_mora,static/description/cobranza_cbu.png"
-    groups="financiera_cobranza_mora.user"/>
 
-		<!-- Submenu -->
-		<menuitem name="Cobranza" id="menu_cobranza_cbu_action" sequence="10" parent="menu_cobranza_cbu" groups="financiera_cobranza_mora.user"
-		action="cobranza_cbu_action"/>
-		<menuitem name="Configuracion" id="menu_cobranza_cbu_configuracion" sequence="100" parent="menu_cobranza_cbu" groups="financiera_cobranza_mora.user"/>
-
-		<!-- Action -->
-		<menuitem name="Configuracion" id="menu_cobranza_cbu_configuracion_action" parent="menu_cobranza_cbu_configuracion"
-			action="cobranza_cbu_config_action" sequence="10"/>
-		<menuitem name="Codigos BNA" id="menu_bna_code_action" parent="menu_cobranza_cbu_configuracion" 
-			action="res_bank_bna_code_action" sequence="140" groups="base.group_erp_manager"/>
-
-	<!-- Desde Modulo Cobranza y seguimiento -->
-	<menuitem name="Enviar SMS" id="menu_cobranza_message_masive_action" parent="menu_cobranza" 
-	action="financiera_sms.financiera_sms_message_masive_action" sequence="25"/>
-
-  </data>
+	</data>
 </openerp>

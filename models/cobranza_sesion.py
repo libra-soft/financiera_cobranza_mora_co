@@ -122,9 +122,9 @@ class CobranzaSesion(models.Model):
 			self.current_item_id = new_item_id.id
 			self.count_item_historial = len(deudor_id.cobranza_historial_conversacion_ids)
 
-			action = self.env.ref('financiera_cobranza_mora.cobranza_mora_sesion_action')
+			action = self.env.ref('financiera_cobranza_mora_co.cobranza_mora_sesion_action')
 			result = action.read()[0]
-			form_view = self.env.ref('financiera_cobranza_mora.cobranza_mora_cliente_sesion_form')
+			form_view = self.env.ref('financiera_cobranza_mora_co.cobranza_mora_cliente_sesion_form')
 			result['views'] = [(form_view.id, 'form')]
 			result['res_id'] = deudor_id.id
 			result['target'] = 'new'
@@ -134,9 +134,9 @@ class CobranzaSesion(models.Model):
 
 	@api.multi
 	def editar_item(self):
-		action = self.env.ref('financiera_cobranza_mora.cobranza_mora_sesion_action')
+		action = self.env.ref('financiera_cobranza_mora_co.cobranza_mora_sesion_action')
 		result = action.read()[0]
-		form_view = self.env.ref('financiera_cobranza_mora.cobranza_mora_cliente_sesion_form')
+		form_view = self.env.ref('financiera_cobranza_mora_co.cobranza_mora_cliente_sesion_form')
 		result['views'] = [(form_view.id, 'form')]
 		result['res_id'] = self.current_item_id.partner_id.id
 		result['target'] = 'new'
@@ -183,9 +183,9 @@ class CobranzaSesionItem(models.Model):
 
 	@api.multi
 	def editar_item(self):
-		action = self.env.ref('financiera_cobranza_mora.cobranza_mora_sesion_action')
+		action = self.env.ref('financiera_cobranza_mora_co.cobranza_mora_sesion_action')
 		result = action.read()[0]
-		form_view = self.env.ref('financiera_cobranza_mora.cobranza_mora_cliente_sesion_form')
+		form_view = self.env.ref('financiera_cobranza_mora_co.cobranza_mora_cliente_sesion_form')
 		result['views'] = [(form_view.id, 'form')]
 		result['res_id'] = self.partner_id.id
 		result['target'] = 'new'
